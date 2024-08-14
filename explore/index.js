@@ -15,9 +15,9 @@ const aliasSkip = 5;
 
 const building = {
     lifts: [],
-    isAccessible: false,
     floors: new Array(floorCount).fill(0).map((_, floorId) => ({
         floorId,
+        isAccessible: false,
         floorAlias: floorId + 1,
         rooms: new Array(floorWidth).fill(0).map((_, roomId) => (
             createRoom(floorId, roomId)

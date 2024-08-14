@@ -120,6 +120,7 @@ export function generateMap(building, config) {
     }
     console.log(`unique lifts`, sortBy(building.lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
 
+    populateLiftDoors(building);
 }
 
 export function generateLiftRandomly(building, accessible, config, isExpanding) {
@@ -178,6 +179,8 @@ export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
 
     lifts.push(newLift);
     for (let i = fromFloorId + direction; Math.sign(toFloorId - i) == direction; i += direction) {
+        // this for-loop may or may not cover the lift doors, but i don't care.
+        // the rest of the code can handle null room.shaft just fine
         const floor = floors[i];
         console.log(`(Lift ${newLift.liftId}) Create shaft at (${i}) on room '${roomId}'`);
         floor.rooms[roomId].shaft = newLift.liftId;
@@ -202,6 +205,15 @@ export function mergeLiftsInBuilding(building) {
 
                 const room = floors[floorId].rooms[roomId];
                 console.log(`lift-${lift.liftId} (${floorId}, ${roomId})`);
+
+                // here, room is also modified in place, 
+                // and we scan by physical position, not by lift sorting.
+                // so i can safely assume the follow case to be covered:
+                // [ 1:  o----o              ]
+                // [ 2:             o-----o  ]
+                // [ 3:       o-----o        ]
+                // expect to become:
+                // [ 1:  o----o-----o-----o  ]
 
                 if (room.liftDoor && room.liftDoor.liftId != lift.liftId) {
                     mergeLifts(building,
@@ -242,6 +254,10 @@ export function mergeLifts(building, toLiftId, fromLiftId) {
         }
         if (room.shaft != null) room.shaft = toLiftId;
     }
+}
+
+export function populateLiftDoors(building) {
+    const { floors, lifts } = building;
 }
 
 export function printMap(building) {

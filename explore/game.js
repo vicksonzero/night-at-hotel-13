@@ -61,7 +61,7 @@ function render() {
     //     ` ${('' + (floorAlias)).padStart(2, ' ')}/F `,
     //     `      `
     // );
-    console.log('position', JSON.stringify(position));
+    console.log('position', JSON.stringify({ x: position.roomId, y: position.floorId }));
     printRoomSeparator(outputBuffer);
     for (let i = -2; i <= 2; i++) {
         const room = rooms[(position.roomId + i + floorWidth) % floorWidth];
@@ -81,10 +81,10 @@ function render() {
     console.log(outputBuffer[0]);
     console.log(outputBuffer[1]);
     console.log(outputBuffer[2]);
-
-
     console.log(new Array(lineLength).fill('-').join(''));
-    console.log(new Array(lineLength/2).fill(' ').join('')+'^');
+
+
+    console.log(new Array(lineLength / 2).fill(' ').join('') + '^');
 }
 
 const stdin = process.stdin;

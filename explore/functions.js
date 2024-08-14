@@ -26,10 +26,11 @@ export function createLift(liftId, roomId, floorIds = []) {
         floorIds,
     }
 }
-export function printRoom(floorBuffer, room, isAccessible, isPlayMode = false) {
+export function printRoom(floorBuffer, room, floors, isAccessible, isPlayMode = false) {
     if (room.liftDoor) {
-        const upStr = room.liftDoor.up != null ? ('' + room.liftDoor.up).padStart(2, ' ') : '--';
-        const downStr = room.liftDoor.down != null ? ('' + room.liftDoor.down).padStart(2, ' ') : '--';
+        
+        const upStr = room.liftDoor.up != null ? ('' + floors[room.liftDoor.up].floorAlias).padStart(2, ' ') : '--';
+        const downStr = room.liftDoor.down != null ? ('' + floors[room.liftDoor.down].floorAlias).padStart(2, ' ') : '--';
         floorBuffer[0] += `  ${upStr}  `;
         if (room.liftDoor.up == null && room.liftDoor.down == null)
             floorBuffer[1] += ` |${('' + room.liftDoor.liftId).padStart(2, ' ')}| `;
@@ -144,6 +145,21 @@ export function generateMap(config) {
     console.log(`unique lifts`, sortBy(building.lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
 
     populateLiftDoors(building);
+
+    const [floorAliasList, skipped] = generateFloorAlias({
+        aliasMax,
+        aliasMin,
+        aliasSkip,
+    });
+
+    console.log('floorAliasList', floorAliasList);
+    console.log('skipped', skipped);
+
+    let i=0;
+    for (let floorIndex = floors.length - 1; floorIndex >= 0; floorIndex--) {
+        floors[floorIndex].floorAlias = floorAliasList[i];
+        i++;
+    }
 
     return building;
 }
@@ -308,6 +324,27 @@ export function populateLiftDoors(building) {
 
 }
 
+export function generateFloorAlias(config) {
+    const {
+        aliasMax,
+        aliasMin,
+        aliasSkip,
+    } = config;
+
+    const result = [];
+
+    const skippedAliasList = [];
+
+    for (let i = aliasMax; i >= aliasMin; i--) {
+        result.push(i);
+    }
+    for (let i = 0; i < aliasSkip; i++) {
+        skippedAliasList.push(...result.splice(Math.floor(Math.random() * result.length), 1));
+    }
+
+    return [result, skippedAliasList];
+}
+
 export function printMap(building) {
     const { floors, lifts } = building;
     console.log('');
@@ -324,7 +361,7 @@ export function printMap(building) {
         );
         printRoomSeparator(outputBuffer);
         for (const room of rooms) {
-            printRoom(outputBuffer, room, isAccessible);
+            printRoom(outputBuffer, room, floors, isAccessible);
             printRoomSeparator(outputBuffer);
         }
 

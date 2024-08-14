@@ -65,7 +65,7 @@ function render() {
     printRoomSeparator(outputBuffer);
     for (let i = -2; i <= 2; i++) {
         const room = rooms[(position.roomId + i + floorWidth) % floorWidth];
-        printRoom(outputBuffer, room, isAccessible, true);
+        printRoom(outputBuffer, room, floors, isAccessible, true);
         printRoomSeparator(outputBuffer);
     }
 

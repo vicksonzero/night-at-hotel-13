@@ -1,0 +1,1306 @@
+{
+    "lifts": [
+        {
+            "liftId": 0,
+            "roomId": 6,
+            "floorIds": [
+                1,
+                5,
+                7,
+                12
+            ]
+        },
+        {
+            "liftId": 1,
+            "roomId": 11,
+            "floorIds": [
+                1,
+                3,
+                7,
+                10,
+                11
+            ]
+        },
+        {
+            "liftId": 2,
+            "roomId": 5,
+            "floorIds": [
+                7,
+                9
+            ]
+        },
+        {
+            "liftId": 3,
+            "roomId": 8,
+            "floorIds": [
+                4,
+                6,
+                7,
+                9,
+                12
+            ]
+        },
+        {
+            "liftId": 4,
+            "roomId": 0,
+            "floorIds": [
+                1,
+                4,
+                8
+            ]
+        },
+        null,
+        {
+            "liftId": 6,
+            "roomId": 3,
+            "floorIds": [
+                4,
+                6
+            ]
+        },
+        {
+            "liftId": 7,
+            "roomId": 2,
+            "floorIds": [
+                4,
+                6
+            ]
+        },
+        null,
+        null,
+        {
+            "liftId": 10,
+            "roomId": 9,
+            "floorIds": [
+                0,
+                1,
+                11,
+                12
+            ]
+        },
+        null,
+        {
+            "liftId": 12,
+            "roomId": 4,
+            "floorIds": [
+                2,
+                9
+            ]
+        },
+        null,
+        null,
+        null
+    ],
+    "floors": [
+        {
+            "floorId": 0,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 3,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 6
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 8
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 9,
+                    "liftDoor": {
+                        "liftId": 10,
+                        "up": 1,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 11
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 0,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 1,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 4,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 0,
+                    "liftDoor": {
+                        "liftId": 4,
+                        "up": 4,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 6,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": 5,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 8
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 9,
+                    "liftDoor": {
+                        "liftId": 10,
+                        "up": 11,
+                        "down": 0
+                    },
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 11,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 3,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 1,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 2,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 5,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 0,
+                    "shaft": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 4,
+                    "liftDoor": {
+                        "liftId": 12,
+                        "up": 9,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 8
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 11,
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 3,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 6,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 0,
+                    "shaft": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 4,
+                    "shaft": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 8
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 11,
+                    "shaft": 1,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 7,
+                        "down": 1
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 4,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 7,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 0,
+                    "liftDoor": {
+                        "liftId": 4,
+                        "up": 8,
+                        "down": 1
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 2,
+                    "liftDoor": {
+                        "liftId": 7,
+                        "up": 6,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 3,
+                    "liftDoor": {
+                        "liftId": 6,
+                        "up": 6,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 4,
+                    "shaft": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 8,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 6,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 11,
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 4,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 5,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 10,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 0,
+                    "shaft": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 2,
+                    "shaft": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 3,
+                    "shaft": 6
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 4,
+                    "shaft": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 6,
+                    "shaft": 0,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": 7,
+                        "down": 1
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 8,
+                    "shaft": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 11,
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 5,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 6,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 12,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 0,
+                    "shaft": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 2,
+                    "liftDoor": {
+                        "liftId": 7,
+                        "up": null,
+                        "down": 4
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 3,
+                    "liftDoor": {
+                        "liftId": 6,
+                        "up": null,
+                        "down": 4
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 4,
+                    "shaft": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 8,
+                    "shaft": 3,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 7,
+                        "down": 4
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 11,
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 6,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 7,
+            "isAccessible": true,
+            "isExit": true,
+            "floorAlias": 13,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 0,
+                    "shaft": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 4,
+                    "shaft": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 5,
+                    "liftDoor": {
+                        "liftId": 2,
+                        "up": 9,
+                        "down": null
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 6,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": 12,
+                        "down": 5
+                    },
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 8,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 9,
+                        "down": 6
+                    },
+                    "shaft": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 11,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 10,
+                        "down": 3
+                    },
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 7,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 8,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 15,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 0,
+                    "liftDoor": {
+                        "liftId": 4,
+                        "up": null,
+                        "down": 4
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 4,
+                    "shaft": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 5,
+                    "shaft": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 8,
+                    "shaft": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 11,
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 9,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 16,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 4,
+                    "liftDoor": {
+                        "liftId": 12,
+                        "up": null,
+                        "down": 2
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 5,
+                    "liftDoor": {
+                        "liftId": 2,
+                        "up": null,
+                        "down": 7
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 8,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 12,
+                        "down": 7
+                    },
+                    "shaft": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 11,
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 9,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 10,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 17,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 8,
+                    "shaft": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 9,
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 11,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 11,
+                        "down": 7
+                    },
+                    "shaft": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 10,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 11,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 18,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 6,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 8,
+                    "shaft": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 9,
+                    "liftDoor": {
+                        "liftId": 10,
+                        "up": 12,
+                        "down": 1
+                    },
+                    "shaft": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 11,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": null,
+                        "down": 10
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 11,
+                    "roomId": 13
+                }
+            ]
+        },
+        {
+            "floorId": 12,
+            "isAccessible": true,
+            "isExit": false,
+            "floorAlias": 19,
+            "rooms": [
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 1
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 2
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 4
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 5
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 6,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": null,
+                        "down": 7
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 7
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 8,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": null,
+                        "down": 9
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 9,
+                    "liftDoor": {
+                        "liftId": 10,
+                        "up": null,
+                        "down": 11
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 11
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 12
+                },
+                {
+                    "t": "room",
+                    "floorId": 12,
+                    "roomId": 13
+                }
+            ]
+        }
+    ]
+}

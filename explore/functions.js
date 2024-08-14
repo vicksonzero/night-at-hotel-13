@@ -28,10 +28,13 @@ export function createLift(liftId, roomId, floorIds = []) {
 }
 export function printRoom(floorBuffer, room, isAccessible) {
     if (room.liftDoor) {
-        const upStr = room.liftDoor.up ? ('' + room.liftDoor.up).padStart(2, ' ') : '--';
-        const downStr = room.liftDoor.down ? ('' + room.liftDoor.down).padStart(2, ' ') : '--';
+        const upStr = room.liftDoor.up != null ? ('' + room.liftDoor.up).padStart(2, ' ') : '--';
+        const downStr = room.liftDoor.down != null ? ('' + room.liftDoor.down).padStart(2, ' ') : '--';
         floorBuffer[0] += `  ${upStr}  `;
-        floorBuffer[1] += ` |${('' + room.liftDoor.liftId).padStart(2, ' ')}| `;
+        if (room.liftDoor.up == null && room.liftDoor.down == null)
+            floorBuffer[1] += ` |${('' + room.liftDoor.liftId).padStart(2, ' ')}| `;
+        else
+            floorBuffer[1] += ` |^v| `;
         floorBuffer[2] += `  ${downStr}  `;
     } else if (room.shaft != null) {
         floorBuffer[0] += `  ||  `;
@@ -116,6 +119,7 @@ export function generateMap(building, config) {
     mergeLiftsInBuilding(building);
     console.log(`merged lifts`, sortBy(building.lifts, (a, b) => a.roomId - b.roomId));
     for (const lift of building.lifts) {
+        lift.floorIds = lift.floorIds.filter(onlyUnique);
         lift.floorIds.sort((a, b) => a - b);
     }
     console.log(`unique lifts`, sortBy(building.lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
@@ -258,6 +262,29 @@ export function mergeLifts(building, toLiftId, fromLiftId) {
 
 export function populateLiftDoors(building) {
     const { floors, lifts } = building;
+
+    lifts.forEach((lift, i) => {
+        if (lift.liftId != i) {
+            lifts[i] = null;
+        }
+    });
+    for (const lift of lifts) {
+        if (lift == null) continue;
+        const { roomId } = lift;
+        for (let i = 0; i < lift.floorIds.length; i++) {
+            const floorId = lift.floorIds[i];
+            const downFloorId = i > 0
+                ? lift.floorIds[i - 1]
+                : null;
+            const upFloorId = i < lift.floorIds.length - 1
+                ? lift.floorIds[i + 1]
+                : null;
+
+            floors[floorId].rooms[roomId].liftDoor.up = upFloorId;
+            floors[floorId].rooms[roomId].liftDoor.down = downFloorId;
+        }
+    }
+
 }
 
 export function printMap(building) {

@@ -1,9 +1,31 @@
 //@ts-check
-import { readFileSync } from 'fs';
-import { createFloorBuffer, printB, printRoom, printRoomSeparator } from "./functions.js";
+import { existsSync, readFileSync } from 'fs';
+import { createFloorBuffer, generateMap, printB, printRoom, printRoomSeparator } from "./functions.js";
 
-const json = readFileSync('_out/building.json').toString();
-const building = JSON.parse(json);
+
+
+const building = (() => {
+    const filename = '_out/building.json';
+    if (existsSync(filename)) {
+        const json = readFileSync(filename).toString();
+        return JSON.parse(json);
+
+    }
+    return generateMap({
+        floorCount: 13,
+        floorWidth: 14,
+
+        liftPerFloorMin: 2,
+        liftPerFloorMax: 4,
+        liftRandomCount: 8,
+        accessibleFloorCount: 13,
+
+        aliasMax: 20,
+        aliasMin: 3,
+        aliasSkip: 5,
+    });
+
+})();
 
 const accessibleFloors = building.floors.filter(f => f.isAccessible);
 
@@ -32,7 +54,7 @@ function render() {
     const { floors } = building;
     let outputBuffer = createFloorBuffer();
 
-    const { floorId, floorAlias, rooms, isAccessible } = floors[position.floorId];
+    const { floorId, floorAlias, rooms, isAccessible, isExit } = floors[position.floorId];
     const floorWidth = building.floors[0].rooms.length;
     // printB(outputBuffer,
     //     `      `,
@@ -41,7 +63,7 @@ function render() {
     // );
     console.log('position', JSON.stringify(position));
     printRoomSeparator(outputBuffer);
-    for (let i = -1; i <= 1; i++) {
+    for (let i = -2; i <= 2; i++) {
         const room = rooms[(position.roomId + i + floorWidth) % floorWidth];
         printRoom(outputBuffer, room, isAccessible, true);
         printRoomSeparator(outputBuffer);
@@ -51,7 +73,7 @@ function render() {
 
     printB(outputBuffer,
         `      `,
-        ` [${('' + (floorId)).padStart(2, ' ')}] `,
+        ` [${('' + (floorId)).padStart(2, ' ')}]${isExit ? ' isExit' : ''} `,
         `      `
     );
 
@@ -62,6 +84,7 @@ function render() {
 
 
     console.log(new Array(lineLength).fill('-').join(''));
+    console.log(new Array(lineLength/2).fill(' ').join('')+'^');
 }
 
 const stdin = process.stdin;

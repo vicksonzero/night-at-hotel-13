@@ -73,15 +73,33 @@ export function printB(floorBuffer, line0, line1, line2) {
     floorBuffer[1] += line1;
     floorBuffer[2] += line2;
 }
-export function generateMap(building, config) {
+export function generateMap(config) {
     const {
+        floorCount,
+        floorWidth,
+
         liftPerFloorMax,
         liftRandomCount,
         accessibleFloorCount,
+
         aliasMax,
         aliasMin,
         aliasSkip,
     } = config;
+
+    const building = {
+        /** @type {Array<any>} */
+        lifts: [],
+        floors: new Array(floorCount).fill(0).map((_, floorId) => ({
+            floorId,
+            isAccessible: false,
+            isExit: false,
+            floorAlias: floorId + 1,
+            rooms: new Array(floorWidth).fill(0).map((_, roomId) => (
+                createRoom(floorId, roomId)
+            ))
+        }))
+    }
 
     const { floors } = building;
 
@@ -126,6 +144,8 @@ export function generateMap(building, config) {
     console.log(`unique lifts`, sortBy(building.lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
 
     populateLiftDoors(building);
+
+    return building;
 }
 
 export function generateLiftRandomly(building, accessible, config, isExpanding) {

@@ -15,21 +15,11 @@ const aliasMax = 20;
 const aliasMin = 3;
 const aliasSkip = 5;
 
+;
 
-const building = {
-    lifts: [],
-    floors: new Array(floorCount).fill(0).map((_, floorId) => ({
-        floorId,
-        isAccessible: false,
-        // isExit: false,
-        floorAlias: floorId + 1,
-        rooms: new Array(floorWidth).fill(0).map((_, roomId) => (
-            createRoom(floorId, roomId)
-        ))
-    }))
-};
-
-generateMap(building, {
+const building = generateMap({
+    floorCount,
+    floorWidth,
     liftPerFloorMax,
     liftRandomCount,
     accessibleFloorCount,

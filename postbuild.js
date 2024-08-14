@@ -15,15 +15,21 @@ output.on('close', function () {
   const bytes = archive.pointer()
   const percent = (bytes / MAX * 100).toFixed(2)
   const left = MAX - bytes;
+  const msg = (bytes > MAX)
+    ? (`Size overflow: ${bytes} bytes (${percent}%)\n` +
+      `               ${('' + (-left)).padStart(5, ' ')} bytes over.`)
+    : (bytes / MAX > 0.8)
+      ? (`Size: ${('' + bytes).padStart(5, ' ')} bytes (${percent}%)` +
+        `      ${('' + left).padStart(5, ' ')} bytes left.`)
+      : (`Size: ${bytes} bytes (${percent}%)`)
+    ;
   if (bytes > MAX) {
-    console.error(`Size overflow: ${bytes} bytes (${percent}%)`)
-    console.log(`               ${('' + (-left)).padStart(5, ' ')} bytes over.`)
-  } else if (bytes / MAX > 0.8) {
-    console.log(`Size: ${('' + bytes).padStart(5, ' ')} bytes (${percent}%)`)
-    console.log(`      ${('' + left).padStart(5, ' ')} bytes left.`)
+    console.error(msg)
   } else {
-    console.log(`Size: ${bytes} bytes (${percent}%)`)
+    console.log(msg)
   }
+
+  fs.writeFileSync('buildSize.txt', msg);
 })
 
 archive.on('warning', function (err) {

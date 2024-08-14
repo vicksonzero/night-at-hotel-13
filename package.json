@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Walk a fine line between the Spectral Dimension and Physical Dimension in this Twin Stick Shooter.",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
@@ -37,7 +38,7 @@
   },
   "dependencies": {
     "canvas": "^2.9.3",
-    "kontra": "^8.0.0",
+    "kontra": "^10.0.0",
     "readdirp": "^3.6.0"
   }
 }

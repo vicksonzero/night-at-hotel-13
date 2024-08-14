@@ -7,29 +7,31 @@ export function createRoom(floorId, roomId) {
     return {
         t: 'room',
         floorId, roomId,
-        // lift: createLift(liftId)
+        // liftDoor: createLiftDoor(liftId)
         // shaft: liftId
     };
 }
 
-export function createLift(liftId) {
+export function createLiftDoor(liftId) {
     return {
         liftId,
         // up, down
     }
 }
-export function createLiftMaster(liftId) {
+export function createLift(liftId, roomId, floorIds = []) {
+    floorIds.sort((a, b) => a - b);
     return {
         liftId,
-        floorIds: [],
+        roomId,
+        floorIds,
     }
 }
 export function printRoom(floorBuffer, room, isAccessible) {
-    if (room.lift) {
-        const upStr = room.lift.up ? ('' + room.lift.up).padStart(2, ' ') : '--';
-        const downStr = room.lift.down ? ('' + room.lift.down).padStart(2, ' ') : '--';
+    if (room.liftDoor) {
+        const upStr = room.liftDoor.up ? ('' + room.liftDoor.up).padStart(2, ' ') : '--';
+        const downStr = room.liftDoor.down ? ('' + room.liftDoor.down).padStart(2, ' ') : '--';
         floorBuffer[0] += `  ${upStr}  `;
-        floorBuffer[1] += ` |${('' + room.lift.liftId).padStart(2, ' ')}| `;
+        floorBuffer[1] += ` |${('' + room.liftDoor.liftId).padStart(2, ' ')}| `;
         floorBuffer[2] += `  ${downStr}  `;
     } else if (room.shaft != null) {
         floorBuffer[0] += `  ||  `;
@@ -109,6 +111,15 @@ export function generateMap(building, config) {
         console.log(``);
         console.log(``);
     }
+
+    console.log(`merging lifts`, sortBy(building.lifts, (a, b) => a.roomId - b.roomId));
+    mergeLiftsInBuilding(building);
+    console.log(`merged lifts`, sortBy(building.lifts, (a, b) => a.roomId - b.roomId));
+    for (const lift of building.lifts) {
+        lift.floorIds.sort((a, b) => a - b);
+    }
+    console.log(`unique lifts`, sortBy(building.lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
+
 }
 
 export function generateLiftRandomly(building, accessible, config, isExpanding) {
@@ -121,7 +132,7 @@ export function generateLiftRandomly(building, accessible, config, isExpanding) 
     //         result = accessible[Math.floor(Math.random() * accessible.length)];
 
     //         const floor = floors[result];
-    //         liftCount = floor.rooms.filter(r => r.lift).length;
+    //         liftCount = floor.rooms.filter(r => r.liftDoor).length;
 
     //         console.log(`Random floor: ${result} (${liftCount} lifts)`);
     //     } while (!(liftCount < liftPerFloorMax));
@@ -131,9 +142,9 @@ export function generateLiftRandomly(building, accessible, config, isExpanding) 
 
     const floor = floors[floorId];
     const { rooms } = floor;
-    let availableRooms = rooms.filter(r => r.lift);
+    let availableRooms = rooms.filter(r => r.liftDoor);
     if (availableRooms.length < liftPerFloorMax) {
-        availableRooms = rooms.filter(r => !r.lift);
+        availableRooms = rooms.filter(r => !r.liftDoor);
     }
     const randomRoomId = availableRooms[Math.floor(Math.random() * availableRooms.length)];
 
@@ -146,76 +157,91 @@ export function generateLiftRandomly(building, accessible, config, isExpanding) 
         return result;
     })(floorId);
 
-    if (isExpanding) {
-        generateLift(building, floorId, randomRoomId.roomId, toFloorId);
-    } else {
-        generateLift(building, toFloorId, randomRoomId.roomId, floorId);
-    }
+    generateLiftDraft(building, floorId, randomRoomId.roomId, toFloorId);
 
     floors[toFloorId].isAccessible = true;
     accessible.push(toFloorId);
 }
 
-export function generateLift(building, draftFromFloorId, roomId, draftToFloorId) {
+export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
     // try to build a lift on the same roomId, from floorId to tooFloorId
     // if can't, then connect to existing lift
     const { floors, lifts } = building;
 
-    if (draftFromFloorId == draftToFloorId) throw new Error(`Cannot create lift on the same level '${draftFromFloorId}'`);
+    if (fromFloorId == toFloorId) throw new Error(`Cannot create lift on the same level '${fromFloorId}'`);
 
-
-    const direction = Math.sign(draftToFloorId - draftFromFloorId);
-
-    console.log(`Create lift (${draftFromFloorId}->${draftToFloorId}) on room '${roomId}', dir=${direction}`);
-
-    const [fromFloorId, toFloorId, liftId] = rayCast(building, draftFromFloorId, roomId, draftToFloorId);
-
-    floors[fromFloorId].rooms[roomId].lift = createLift(liftId);
-    for (let i = fromFloorId + direction; i != toFloorId; i += direction) {
-        console.log(`(Lift ${liftId}) Create shaft at (${i}) on room '${roomId}'`);
-        floors[i].rooms[roomId].shaft = liftId;
-    }
-    floors[toFloorId].rooms[roomId].lift = createLift(liftId);
-}
-
-export function rayCast(building, fromFloorId, roomId, toFloorId) {
-    const { floors, lifts } = building;
-
-    if (fromFloorId == toFloorId) throw new Error(`Cannot rayCast lift on the same level '${fromFloorId}'`);
 
     const direction = Math.sign(toFloorId - fromFloorId);
 
-    console.log(`rayCast lift (${fromFloorId}->${toFloorId}) on room '${roomId}', dir=${direction}`);
+    const newLift = createLift(lifts.length, roomId, [fromFloorId, toFloorId]);
+    console.log(`Create lift #${newLift.liftId} (${fromFloorId}->${toFloorId}) on room '${roomId}', dir=${direction}`);
 
-    const fromRoom = floors[fromFloorId].rooms[roomId];
-    if (fromRoom.lift) {
-        console.log(`(rayCast) Floor-${fromFloorId}) is already lift, liftId = ${fromRoom.lift.liftId}'`);
-        return [fromFloorId, toFloorId, fromRoom.lift.liftId];
-    }
-    if (fromRoom.shaft) {
-        console.log(`(rayCast) Floor-${toFloorId}) is shaft, liftId = ${fromRoom.shaft.liftId}'`);
-        return [fromFloorId, toFloorId, fromRoom.shaft.liftId];
-    }
-
-    for (let i = fromFloorId + direction; i != toFloorId; i += direction) {
-        const room = floors[i].rooms[roomId];
-
-        if (room.lift) {
-            console.log(`(rayCast) Floor-${i}) is lift, liftId = ${room.lift.liftId}'`);
-            return [fromFloorId, i, room.lift.liftId];
-        }
-
-        console.log(`(rayCast) Floor-${i}) is ok'`);
-    }
-    const room = floors[toFloorId].rooms[roomId];
-    if (room.lift) {
-        console.log(`(rayCast) Floor-${toFloorId}) is lift, liftId = ${room.lift.liftId}'`);
-        return [fromFloorId, toFloorId, room.lift.liftId];
-    }
-    console.log(`(rayCast) Floor-${toFloorId}) is ok, create new liftId'`);
-    const newLift = createLiftMaster(lifts.length);
     lifts.push(newLift);
-    return [fromFloorId, toFloorId, newLift.liftId];
+    for (let i = fromFloorId + direction; Math.sign(toFloorId - i) == direction; i += direction) {
+        const floor = floors[i];
+        console.log(`(Lift ${newLift.liftId}) Create shaft at (${i}) on room '${roomId}'`);
+        floor.rooms[roomId].shaft = newLift.liftId;
+    }
+    floors[fromFloorId].rooms[roomId].liftDoor = createLiftDoor(newLift.liftId);
+    floors[toFloorId].rooms[roomId].liftDoor = createLiftDoor(newLift.liftId);
+}
+
+export function mergeLiftsInBuilding(building) {
+    const { floors, lifts } = building;
+
+    for (let roomId = 0; roomId < floors[0].rooms.length; roomId++) {
+        const liftsByRoomId = lifts.filter(lift => lift.roomId == roomId);
+        console.log(`Trying to merge '${liftsByRoomId.length}' lifts at room-${roomId}`);
+
+        liftsByRoomId.sort((a, b) => a.liftId - b.liftId);
+
+        for (const lift of liftsByRoomId) {
+            const sortedFloorIds = sortBy(lift.floorIds, (a, b) => a - b);
+            const lastFloorId = sortedFloorIds[sortedFloorIds.length - 1];
+            for (let floorId = sortedFloorIds[0]; floorId <= lastFloorId; floorId++) {
+
+                const room = floors[floorId].rooms[roomId];
+                console.log(`lift-${lift.liftId} (${floorId}, ${roomId})`);
+
+                if (room.liftDoor && room.liftDoor.liftId != lift.liftId) {
+                    mergeLifts(building,
+                        Math.min(lift.liftId, room.liftDoor.liftId),
+                        Math.max(lift.liftId, room.liftDoor.liftId)
+                    );
+                    break;
+                } else if (room.shaft && room.shaft != lift.liftId) {
+                    mergeLifts(building,
+                        Math.min(lift.liftId, room.shaft),
+                        Math.max(lift.liftId, room.shaft)
+                    );
+                    break;
+                }
+            }
+        }
+        console.log('');
+    }
+}
+
+
+export function mergeLifts(building, toLiftId, fromLiftId) {
+    console.log(`Merge lift-${fromLiftId} into lift-${toLiftId}`);
+    const { floors, lifts } = building;
+
+    lifts[fromLiftId].liftId = toLiftId; // point to parent
+
+    const { roomId, floorIds } = lifts[fromLiftId];
+
+    const sortedFloorIds = sortBy(floorIds, (a, b) => a - b);
+    const lastFloorId = sortedFloorIds[sortedFloorIds.length - 1];
+    for (let floorId = sortedFloorIds[0]; floorId <= lastFloorId; floorId++) {
+        const room = floors[floorId].rooms[roomId];
+
+        if (room.liftDoor && room.liftDoor.liftId == fromLiftId) {
+            room.liftDoor.liftId = toLiftId;
+            lifts[toLiftId].floorIds.push(floorId);
+        }
+        if (room.shaft != null) room.shaft = toLiftId;
+    }
 }
 
 export function printMap(building) {
@@ -253,4 +279,8 @@ export function printMap(building) {
 }
 
 
-
+function sortBy(array, predicate) {
+    const copy = [...array];
+    copy.sort(predicate);
+    return copy;
+}

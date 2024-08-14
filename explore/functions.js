@@ -26,7 +26,7 @@ export function createLift(liftId, roomId, floorIds = []) {
         floorIds,
     }
 }
-export function printRoom(floorBuffer, room, isAccessible) {
+export function printRoom(floorBuffer, room, isAccessible, isPlayMode = false) {
     if (room.liftDoor) {
         const upStr = room.liftDoor.up != null ? ('' + room.liftDoor.up).padStart(2, ' ') : '--';
         const downStr = room.liftDoor.down != null ? ('' + room.liftDoor.down).padStart(2, ' ') : '--';
@@ -36,7 +36,7 @@ export function printRoom(floorBuffer, room, isAccessible) {
         else
             floorBuffer[1] += ` |^v| `;
         floorBuffer[2] += `  ${downStr}  `;
-    } else if (room.shaft != null) {
+    } else if (!isPlayMode && room.shaft != null) {
         floorBuffer[0] += `  ||  `;
         floorBuffer[1] += `  ||  `;
         floorBuffer[2] += `  ||  `;
@@ -90,6 +90,7 @@ export function generateMap(building, config) {
     let accessible = [];
     accessible.push(exitFloor);
     floors[exitFloor].isAccessible = true;
+    floors[exitFloor].isExit = true;
 
     for (let i = 0; i < liftRandomCount; i++) {
 

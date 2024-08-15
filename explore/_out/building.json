@@ -2,102 +2,118 @@
     "lifts": [
         {
             "liftId": 0,
-            "roomId": 1,
+            "roomId": 9,
             "floorIds": [
-                5,
-                6,
+                7,
+                9
+            ]
+        },
+        {
+            "liftId": 1,
+            "roomId": 5,
+            "floorIds": [
                 7,
                 12
             ]
         },
         {
-            "liftId": 1,
-            "roomId": 13,
-            "floorIds": [
-                9,
-                12
-            ]
-        },
-        {
             "liftId": 2,
-            "roomId": 13,
+            "roomId": 4,
             "floorIds": [
-                5,
-                6
+                7,
+                12
             ]
         },
         {
             "liftId": 3,
-            "roomId": 4,
+            "roomId": 8,
             "floorIds": [
-                8,
-                12
+                4,
+                5,
+                6,
+                9
             ]
         },
         {
             "liftId": 4,
             "roomId": 11,
             "floorIds": [
-                0,
-                6
+                7,
+                8
             ]
         },
-        null,
+        {
+            "liftId": 5,
+            "roomId": 13,
+            "floorIds": [
+                11,
+                12
+            ]
+        },
         {
             "liftId": 6,
-            "roomId": 2,
+            "roomId": 3,
             "floorIds": [
-                0,
-                2
+                9,
+                10,
+                12
             ]
         },
         {
             "liftId": 7,
-            "roomId": 0,
+            "roomId": 12,
             "floorIds": [
-                0,
-                4,
-                8,
-                10
+                5,
+                7
             ]
         },
         {
             "liftId": 8,
-            "roomId": 12,
+            "roomId": 7,
             "floorIds": [
                 0,
+                1,
+                3,
                 11
             ]
         },
         {
             "liftId": 9,
-            "roomId": 3,
+            "roomId": 2,
             "floorIds": [
-                1,
-                11
+                0,
+                4
             ]
         },
         null,
         {
             "liftId": 11,
-            "roomId": 10,
+            "roomId": 4,
             "floorIds": [
                 3,
-                11
+                5
             ]
-        }
+        },
+        null,
+        {
+            "liftId": 13,
+            "roomId": 4,
+            "floorIds": [
+                0,
+                2
+            ]
+        },
+        null
     ],
     "alias": {
         "floors": [
             23,
             21,
             20,
-            19,
-            18,
             17,
             16,
+            15,
             14,
-            12,
             11,
             10,
             9,
@@ -106,15 +122,16 @@
             6,
             5,
             4,
+            3,
             2,
             1
         ],
         "skipped": [
-            24,
             22,
-            15,
+            19,
+            18,
             13,
-            3
+            12
         ]
     },
     "floors": [
@@ -122,17 +139,12 @@
             "floorId": 0,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 8,
+            "floorAlias": 6,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 0,
-                    "roomId": 0,
-                    "liftDoor": {
-                        "liftId": 7,
-                        "up": 4,
-                        "down": null
-                    }
+                    "roomId": 0
                 },
                 {
                     "t": "room",
@@ -144,8 +156,8 @@
                     "floorId": 0,
                     "roomId": 2,
                     "liftDoor": {
-                        "liftId": 6,
-                        "up": 2,
+                        "liftId": 9,
+                        "up": 4,
                         "down": null
                     }
                 },
@@ -157,7 +169,12 @@
                 {
                     "t": "room",
                     "floorId": 0,
-                    "roomId": 4
+                    "roomId": 4,
+                    "liftDoor": {
+                        "liftId": 13,
+                        "up": 2,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
@@ -172,7 +189,12 @@
                 {
                     "t": "room",
                     "floorId": 0,
-                    "roomId": 7
+                    "roomId": 7,
+                    "liftDoor": {
+                        "liftId": 8,
+                        "up": 1,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
@@ -192,22 +214,12 @@
                 {
                     "t": "room",
                     "floorId": 0,
-                    "roomId": 11,
-                    "liftDoor": {
-                        "liftId": 4,
-                        "up": 6,
-                        "down": null
-                    }
+                    "roomId": 11
                 },
                 {
                     "t": "room",
                     "floorId": 0,
-                    "roomId": 12,
-                    "liftDoor": {
-                        "liftId": 8,
-                        "up": 11,
-                        "down": null
-                    }
+                    "roomId": 12
                 },
                 {
                     "t": "room",
@@ -220,13 +232,12 @@
             "floorId": 1,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 9,
+            "floorAlias": 7,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 1,
-                    "roomId": 0,
-                    "shaft": 7
+                    "roomId": 0
                 },
                 {
                     "t": "room",
@@ -237,22 +248,18 @@
                     "t": "room",
                     "floorId": 1,
                     "roomId": 2,
-                    "shaft": 6
+                    "shaft": 9
                 },
                 {
                     "t": "room",
                     "floorId": 1,
-                    "roomId": 3,
-                    "liftDoor": {
-                        "liftId": 9,
-                        "up": 11,
-                        "down": null
-                    }
+                    "roomId": 3
                 },
                 {
                     "t": "room",
                     "floorId": 1,
-                    "roomId": 4
+                    "roomId": 4,
+                    "shaft": 13
                 },
                 {
                     "t": "room",
@@ -267,7 +274,13 @@
                 {
                     "t": "room",
                     "floorId": 1,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8,
+                    "liftDoor": {
+                        "liftId": 8,
+                        "up": 3,
+                        "down": 0
+                    }
                 },
                 {
                     "t": "room",
@@ -287,14 +300,12 @@
                 {
                     "t": "room",
                     "floorId": 1,
-                    "roomId": 11,
-                    "shaft": 4
+                    "roomId": 11
                 },
                 {
                     "t": "room",
                     "floorId": 1,
-                    "roomId": 12,
-                    "shaft": 8
+                    "roomId": 12
                 },
                 {
                     "t": "room",
@@ -307,13 +318,12 @@
             "floorId": 2,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 10,
+            "floorAlias": 8,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 2,
-                    "roomId": 0,
-                    "shaft": 7
+                    "roomId": 0
                 },
                 {
                     "t": "room",
@@ -324,22 +334,22 @@
                     "t": "room",
                     "floorId": 2,
                     "roomId": 2,
-                    "liftDoor": {
-                        "liftId": 6,
-                        "up": null,
-                        "down": 0
-                    }
-                },
-                {
-                    "t": "room",
-                    "floorId": 2,
-                    "roomId": 3,
                     "shaft": 9
                 },
                 {
                     "t": "room",
                     "floorId": 2,
-                    "roomId": 4
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 2,
+                    "roomId": 4,
+                    "liftDoor": {
+                        "liftId": 13,
+                        "up": null,
+                        "down": 0
+                    }
                 },
                 {
                     "t": "room",
@@ -354,7 +364,8 @@
                 {
                     "t": "room",
                     "floorId": 2,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8
                 },
                 {
                     "t": "room",
@@ -374,14 +385,12 @@
                 {
                     "t": "room",
                     "floorId": 2,
-                    "roomId": 11,
-                    "shaft": 4
+                    "roomId": 11
                 },
                 {
                     "t": "room",
                     "floorId": 2,
-                    "roomId": 12,
-                    "shaft": 8
+                    "roomId": 12
                 },
                 {
                     "t": "room",
@@ -394,13 +403,12 @@
             "floorId": 3,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 11,
+            "floorAlias": 9,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 3,
-                    "roomId": 0,
-                    "shaft": 7
+                    "roomId": 0
                 },
                 {
                     "t": "room",
@@ -410,18 +418,23 @@
                 {
                     "t": "room",
                     "floorId": 3,
-                    "roomId": 2
-                },
-                {
-                    "t": "room",
-                    "floorId": 3,
-                    "roomId": 3,
+                    "roomId": 2,
                     "shaft": 9
                 },
                 {
                     "t": "room",
                     "floorId": 3,
-                    "roomId": 4
+                    "roomId": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 3,
+                    "roomId": 4,
+                    "liftDoor": {
+                        "liftId": 11,
+                        "up": 5,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
@@ -436,7 +449,13 @@
                 {
                     "t": "room",
                     "floorId": 3,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8,
+                    "liftDoor": {
+                        "liftId": 8,
+                        "up": 11,
+                        "down": 1
+                    }
                 },
                 {
                     "t": "room",
@@ -451,24 +470,17 @@
                 {
                     "t": "room",
                     "floorId": 3,
-                    "roomId": 10,
-                    "liftDoor": {
-                        "liftId": 11,
-                        "up": 11,
-                        "down": null
-                    }
+                    "roomId": 10
                 },
                 {
                     "t": "room",
                     "floorId": 3,
-                    "roomId": 11,
-                    "shaft": 4
+                    "roomId": 11
                 },
                 {
                     "t": "room",
                     "floorId": 3,
-                    "roomId": 12,
-                    "shaft": 8
+                    "roomId": 12
                 },
                 {
                     "t": "room",
@@ -481,18 +493,12 @@
             "floorId": 4,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 12,
+            "floorAlias": 10,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 0,
-                    "shaft": 7,
-                    "liftDoor": {
-                        "liftId": 7,
-                        "up": 8,
-                        "down": 0
-                    }
+                    "roomId": 0
                 },
                 {
                     "t": "room",
@@ -502,18 +508,23 @@
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 2
+                    "roomId": 2,
+                    "liftDoor": {
+                        "liftId": 9,
+                        "up": null,
+                        "down": 0
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 3,
-                    "shaft": 9
+                    "roomId": 3
                 },
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 4
+                    "roomId": 4,
+                    "shaft": 11
                 },
                 {
                     "t": "room",
@@ -528,12 +539,18 @@
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8
                 },
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 8
+                    "roomId": 8,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 5,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
@@ -543,20 +560,17 @@
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 10,
-                    "shaft": 11
+                    "roomId": 10
                 },
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 11,
-                    "shaft": 4
+                    "roomId": 11
                 },
                 {
                     "t": "room",
                     "floorId": 4,
-                    "roomId": 12,
-                    "shaft": 8
+                    "roomId": 12
                 },
                 {
                     "t": "room",
@@ -568,24 +582,18 @@
         {
             "floorId": 5,
             "isAccessible": true,
-            "isExit": true,
-            "floorAlias": 14,
+            "isExit": false,
+            "floorAlias": 11,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 0,
-                    "shaft": 7
+                    "roomId": 0
                 },
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 1,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": 6,
-                        "down": null
-                    }
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -595,13 +603,17 @@
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 3,
-                    "shaft": 9
+                    "roomId": 3
                 },
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 4
+                    "roomId": 4,
+                    "liftDoor": {
+                        "liftId": 11,
+                        "up": null,
+                        "down": 3
+                    }
                 },
                 {
                     "t": "room",
@@ -616,12 +628,19 @@
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8
                 },
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 8
+                    "roomId": 8,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 6,
+                        "down": 4
+                    },
+                    "shaft": 3
                 },
                 {
                     "t": "room",
@@ -631,30 +650,27 @@
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 10,
-                    "shaft": 11
+                    "roomId": 10
                 },
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 11,
-                    "shaft": 4
+                    "roomId": 11
                 },
                 {
                     "t": "room",
                     "floorId": 5,
                     "roomId": 12,
-                    "shaft": 8
+                    "liftDoor": {
+                        "liftId": 7,
+                        "up": 7,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 5,
-                    "roomId": 13,
-                    "liftDoor": {
-                        "liftId": 2,
-                        "up": 6,
-                        "down": null
-                    }
+                    "roomId": 13
                 }
             ]
         },
@@ -662,24 +678,17 @@
             "floorId": 6,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 16,
+            "floorAlias": 14,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 0,
-                    "shaft": 7
+                    "roomId": 0
                 },
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 1,
-                    "shaft": 0,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": 7,
-                        "down": 5
-                    }
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -689,8 +698,7 @@
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 3,
-                    "shaft": 9
+                    "roomId": 3
                 },
                 {
                     "t": "room",
@@ -710,12 +718,19 @@
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8
                 },
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 8
+                    "roomId": 8,
+                    "shaft": 3,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 9,
+                        "down": 5
+                    }
                 },
                 {
                     "t": "room",
@@ -725,59 +740,41 @@
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 10,
-                    "shaft": 11
+                    "roomId": 10
                 },
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 11,
-                    "liftDoor": {
-                        "liftId": 4,
-                        "up": null,
-                        "down": 0
-                    }
+                    "roomId": 11
                 },
                 {
                     "t": "room",
                     "floorId": 6,
                     "roomId": 12,
-                    "shaft": 8
+                    "shaft": 7
                 },
                 {
                     "t": "room",
                     "floorId": 6,
-                    "roomId": 13,
-                    "liftDoor": {
-                        "liftId": 2,
-                        "up": null,
-                        "down": 5
-                    }
+                    "roomId": 13
                 }
             ]
         },
         {
             "floorId": 7,
             "isAccessible": true,
-            "isExit": false,
-            "floorAlias": 17,
+            "isExit": true,
+            "floorAlias": 15,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 0,
-                    "shaft": 7
+                    "roomId": 0
                 },
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 1,
-                    "shaft": 0,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": 12,
-                        "down": 6
-                    }
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -787,18 +784,27 @@
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 3,
-                    "shaft": 9
+                    "roomId": 3
                 },
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 4
+                    "roomId": 4,
+                    "liftDoor": {
+                        "liftId": 2,
+                        "up": 12,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 5
+                    "roomId": 5,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 12,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
@@ -808,34 +814,49 @@
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8
                 },
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 8
+                    "roomId": 8,
+                    "shaft": 3
                 },
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 9
+                    "roomId": 9,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": 9,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 10,
-                    "shaft": 11
+                    "roomId": 10
                 },
                 {
                     "t": "room",
                     "floorId": 7,
-                    "roomId": 11
+                    "roomId": 11,
+                    "liftDoor": {
+                        "liftId": 4,
+                        "up": 8,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 7,
                     "roomId": 12,
-                    "shaft": 8
+                    "liftDoor": {
+                        "liftId": 7,
+                        "up": null,
+                        "down": 5
+                    }
                 },
                 {
                     "t": "room",
@@ -848,24 +869,17 @@
             "floorId": 8,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 18,
+            "floorAlias": 16,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 8,
-                    "roomId": 0,
-                    "shaft": 7,
-                    "liftDoor": {
-                        "liftId": 7,
-                        "up": 10,
-                        "down": 4
-                    }
+                    "roomId": 0
                 },
                 {
                     "t": "room",
                     "floorId": 8,
-                    "roomId": 1,
-                    "shaft": 0
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -875,23 +889,19 @@
                 {
                     "t": "room",
                     "floorId": 8,
-                    "roomId": 3,
-                    "shaft": 9
+                    "roomId": 3
                 },
                 {
                     "t": "room",
                     "floorId": 8,
                     "roomId": 4,
-                    "liftDoor": {
-                        "liftId": 3,
-                        "up": 12,
-                        "down": null
-                    }
+                    "shaft": 2
                 },
                 {
                     "t": "room",
                     "floorId": 8,
-                    "roomId": 5
+                    "roomId": 5,
+                    "shaft": 1
                 },
                 {
                     "t": "room",
@@ -901,34 +911,40 @@
                 {
                     "t": "room",
                     "floorId": 8,
-                    "roomId": 7
-                },
-                {
-                    "t": "room",
-                    "floorId": 8,
-                    "roomId": 8
-                },
-                {
-                    "t": "room",
-                    "floorId": 8,
-                    "roomId": 9
-                },
-                {
-                    "t": "room",
-                    "floorId": 8,
-                    "roomId": 10,
-                    "shaft": 11
-                },
-                {
-                    "t": "room",
-                    "floorId": 8,
-                    "roomId": 11
-                },
-                {
-                    "t": "room",
-                    "floorId": 8,
-                    "roomId": 12,
+                    "roomId": 7,
                     "shaft": 8
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 8,
+                    "shaft": 3
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 9,
+                    "shaft": 0
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 10
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 11,
+                    "liftDoor": {
+                        "liftId": 4,
+                        "up": null,
+                        "down": 7
+                    }
+                },
+                {
+                    "t": "room",
+                    "floorId": 8,
+                    "roomId": 12
                 },
                 {
                     "t": "room",
@@ -941,19 +957,17 @@
             "floorId": 9,
             "isAccessible": true,
             "isExit": false,
-            "floorAlias": 19,
+            "floorAlias": 17,
             "rooms": [
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 0,
-                    "shaft": 7
+                    "roomId": 0
                 },
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 1,
-                    "shaft": 0
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -964,18 +978,23 @@
                     "t": "room",
                     "floorId": 9,
                     "roomId": 3,
-                    "shaft": 9
+                    "liftDoor": {
+                        "liftId": 6,
+                        "up": 10,
+                        "down": null
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 9,
                     "roomId": 4,
-                    "shaft": 3
+                    "shaft": 2
                 },
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 5
+                    "roomId": 5,
+                    "shaft": 1
                 },
                 {
                     "t": "room",
@@ -985,23 +1004,33 @@
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8
                 },
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 8
+                    "roomId": 8,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": null,
+                        "down": 6
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 9
+                    "roomId": 9,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": null,
+                        "down": 7
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 10,
-                    "shaft": 11
+                    "roomId": 10
                 },
                 {
                     "t": "room",
@@ -1011,18 +1040,12 @@
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 12,
-                    "shaft": 8
+                    "roomId": 12
                 },
                 {
                     "t": "room",
                     "floorId": 9,
-                    "roomId": 13,
-                    "liftDoor": {
-                        "liftId": 1,
-                        "up": 12,
-                        "down": null
-                    }
+                    "roomId": 13
                 }
             ]
         },
@@ -1035,18 +1058,12 @@
                 {
                     "t": "room",
                     "floorId": 10,
-                    "roomId": 0,
-                    "liftDoor": {
-                        "liftId": 7,
-                        "up": null,
-                        "down": 8
-                    }
+                    "roomId": 0
                 },
                 {
                     "t": "room",
                     "floorId": 10,
-                    "roomId": 1,
-                    "shaft": 0
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -1057,18 +1074,24 @@
                     "t": "room",
                     "floorId": 10,
                     "roomId": 3,
-                    "shaft": 9
+                    "shaft": 6,
+                    "liftDoor": {
+                        "liftId": 6,
+                        "up": 12,
+                        "down": 9
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 10,
                     "roomId": 4,
-                    "shaft": 3
+                    "shaft": 2
                 },
                 {
                     "t": "room",
                     "floorId": 10,
-                    "roomId": 5
+                    "roomId": 5,
+                    "shaft": 1
                 },
                 {
                     "t": "room",
@@ -1078,7 +1101,8 @@
                 {
                     "t": "room",
                     "floorId": 10,
-                    "roomId": 7
+                    "roomId": 7,
+                    "shaft": 8
                 },
                 {
                     "t": "room",
@@ -1093,8 +1117,7 @@
                 {
                     "t": "room",
                     "floorId": 10,
-                    "roomId": 10,
-                    "shaft": 11
+                    "roomId": 10
                 },
                 {
                     "t": "room",
@@ -1104,14 +1127,12 @@
                 {
                     "t": "room",
                     "floorId": 10,
-                    "roomId": 12,
-                    "shaft": 8
+                    "roomId": 12
                 },
                 {
                     "t": "room",
                     "floorId": 10,
-                    "roomId": 13,
-                    "shaft": 1
+                    "roomId": 13
                 }
             ]
         },
@@ -1129,8 +1150,7 @@
                 {
                     "t": "room",
                     "floorId": 11,
-                    "roomId": 1,
-                    "shaft": 0
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -1141,22 +1161,19 @@
                     "t": "room",
                     "floorId": 11,
                     "roomId": 3,
-                    "liftDoor": {
-                        "liftId": 9,
-                        "up": null,
-                        "down": 1
-                    }
+                    "shaft": 6
                 },
                 {
                     "t": "room",
                     "floorId": 11,
                     "roomId": 4,
-                    "shaft": 3
+                    "shaft": 2
                 },
                 {
                     "t": "room",
                     "floorId": 11,
-                    "roomId": 5
+                    "roomId": 5,
+                    "shaft": 1
                 },
                 {
                     "t": "room",
@@ -1166,7 +1183,12 @@
                 {
                     "t": "room",
                     "floorId": 11,
-                    "roomId": 7
+                    "roomId": 7,
+                    "liftDoor": {
+                        "liftId": 8,
+                        "up": null,
+                        "down": 3
+                    }
                 },
                 {
                     "t": "room",
@@ -1181,12 +1203,7 @@
                 {
                     "t": "room",
                     "floorId": 11,
-                    "roomId": 10,
-                    "liftDoor": {
-                        "liftId": 11,
-                        "up": null,
-                        "down": 3
-                    }
+                    "roomId": 10
                 },
                 {
                     "t": "room",
@@ -1196,18 +1213,17 @@
                 {
                     "t": "room",
                     "floorId": 11,
-                    "roomId": 12,
-                    "liftDoor": {
-                        "liftId": 8,
-                        "up": null,
-                        "down": 0
-                    }
+                    "roomId": 12
                 },
                 {
                     "t": "room",
                     "floorId": 11,
                     "roomId": 13,
-                    "shaft": 1
+                    "liftDoor": {
+                        "liftId": 5,
+                        "up": 12,
+                        "down": null
+                    }
                 }
             ]
         },
@@ -1225,12 +1241,7 @@
                 {
                     "t": "room",
                     "floorId": 12,
-                    "roomId": 1,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": null,
-                        "down": 7
-                    }
+                    "roomId": 1
                 },
                 {
                     "t": "room",
@@ -1240,22 +1251,32 @@
                 {
                     "t": "room",
                     "floorId": 12,
-                    "roomId": 3
+                    "roomId": 3,
+                    "liftDoor": {
+                        "liftId": 6,
+                        "up": null,
+                        "down": 10
+                    }
                 },
                 {
                     "t": "room",
                     "floorId": 12,
                     "roomId": 4,
                     "liftDoor": {
-                        "liftId": 3,
+                        "liftId": 2,
                         "up": null,
-                        "down": 8
+                        "down": 7
                     }
                 },
                 {
                     "t": "room",
                     "floorId": 12,
-                    "roomId": 5
+                    "roomId": 5,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": null,
+                        "down": 7
+                    }
                 },
                 {
                     "t": "room",
@@ -1297,9 +1318,9 @@
                     "floorId": 12,
                     "roomId": 13,
                     "liftDoor": {
-                        "liftId": 1,
+                        "liftId": 5,
                         "up": null,
-                        "down": 9
+                        "down": 11
                     }
                 }
             ]

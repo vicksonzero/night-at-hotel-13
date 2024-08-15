@@ -35,8 +35,11 @@ writeFileSync(`./_out/building.json`, JSON.stringify(building, null, 4));
 
 printMap(building);
 
-
+const merged = [...building.alias.floors, ...building.alias.skipped];
+merged.sort((a, b) => b - a);
+console.log('all', merged.join(', '));
 console.log('skipped', building.alias.skipped.join(', '));
+console.log('alias.floors', building.alias.floors.join(', '));
 const exit = building.floors.find(x => x.isExit);
 console.log(`Exit floor: ${exit?.floorAlias} [${exit?.floorId}]`);
 

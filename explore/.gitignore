@@ -1,0 +1,3 @@
+_out/*
+!_out/.gitkeep
+!_out/building.json

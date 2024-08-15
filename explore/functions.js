@@ -117,7 +117,7 @@ export function generateMap(config) {
 
     const { floors } = building;
 
-    const exitFloor = 13 - (floorAliasList.length - floorCount + 1) - 1;
+    const exitFloor = 13 - (floorAliasList.length - floorCount + 1);
     console.log('exitFloor', exitFloor);
     let accessible = [];
     accessible.push(exitFloor);

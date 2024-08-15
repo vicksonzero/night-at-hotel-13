@@ -11,8 +11,9 @@ const liftPerFloorMax = 4;
 const liftRandomCount = 8;
 const accessibleFloorCount = 13;
 
-const aliasMax = 20;
-const aliasMin = 3;
+const aliasMax = 22;
+const aliasMin = 14;
+const aliasSafe = 3;
 const aliasSkip = 5;
 
 ;
@@ -25,6 +26,7 @@ const building = generateMap({
     accessibleFloorCount,
     aliasMax,
     aliasMin,
+    aliasSafe,
     aliasSkip,
 });
 
@@ -32,3 +34,9 @@ writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, J
 writeFileSync(`./_out/building.json`, JSON.stringify(building, null, 4));
 
 printMap(building);
+
+
+console.log('skipped', building.alias.skipped.join(', '));
+const exit = building.floors.find(x => x.isExit);
+console.log(`Exit floor: ${exit?.floorAlias} [${exit?.floorId}]`);
+

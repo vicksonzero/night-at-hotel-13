@@ -1,38 +1,17 @@
 //@ts-check
-import { existsSync, readFileSync } from 'fs';
-import { createFloorBuffer, generateMap, printB, printRoom, printRoomSeparator } from "./functions.js";
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { createFloorBuffer, generateMap, printB, printMap, printRoom, printRoomSeparator } from "./functions.js";
+import { DateTime } from 'luxon';
 
 
-
-const building = (() => {
-    const filename = '_out/building.json';
-    if (existsSync(filename)) {
-        const json = readFileSync(filename).toString();
-        return JSON.parse(json);
-
-    }
-    return generateMap({
-        floorCount: 13,
-        floorWidth: 14,
-
-        liftPerFloorMin: 2,
-        liftPerFloorMax: 4,
-        liftRandomCount: 8,
-        accessibleFloorCount: 13,
-
-        aliasMax: 20,
-        aliasMin: 3,
-        aliasSkip: 5,
-    });
-
-})();
-
-const accessibleFloors = building.floors.filter(f => f.isAccessible);
-
-let position = {
-    floorId: accessibleFloors[Math.floor(Math.random() * accessibleFloors.length)].floorId,
-    roomId: Math.floor(Math.random() * building.floors[0].rooms.length),
-};
+let isTransitioning = false;
+let isGameOver = false;
+let lastAnswer = '';
+let lastSkipped = '';
+let isWin = false;
+let building = loadOrGenerateBuilding(true);
+writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, JSON.stringify(building, null, 4));
+let position = getStartingPosition(building);
 
 function move({ floorDir, roomDir }) {
     const room = building.floors[position.floorId].rooms[position.roomId];
@@ -50,7 +29,68 @@ function move({ floorDir, roomDir }) {
     }
 }
 
-function render() {
+function tryExit() {
+    const isExit = building.floors[position.floorId].isExit;
+
+    if (isExit) {
+        isGameOver = true;
+        isWin = true;
+    } else {
+        lastAnswer = `${building.floors.find(x => x.isExit)?.floorAlias}/F [${building.floors.find(x => x.isExit)?.floorId}]`;
+        lastSkipped = building.alias.skipped.join(', ');
+        building = loadOrGenerateBuilding(true);
+        writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, JSON.stringify(building, null, 4));
+        position = getStartingPosition(building);
+
+        isTransitioning = true;
+        setTimeout(() => {
+            isTransitioning = false;
+            console.clear();
+            render(`Building randomized.`);
+        }, 5000);
+
+    }
+}
+
+function render(message) {
+    if (message != null) {
+        console.log('press arrow keys or ctrl-c');
+        console.log('Press enter when you find the exit floor');
+        console.log(`${message}`);
+    }
+    if (isGameOver) {
+
+        printMap(building);
+        console.log('');
+        console.log('');
+        console.log('===============================================');
+        console.log('    You have successfully escaped the Hotel    ');
+        console.log('===============================================');
+        console.log('');
+        console.log('             Press spacebar to exit            ');
+        console.log('');
+
+        return;
+    }
+
+    if (isTransitioning) {
+
+        console.log('');
+        console.log('===============================================');
+        console.log('                 Wrong exit !                  ');
+        console.log('===============================================');
+        console.log('');
+        console.log(`       The correct exit was ${lastAnswer}.     `);
+        console.log(`   Superstitious floors: ${lastSkipped}     `);
+        console.log('');
+        console.log('    The old hotel disintegrate into pieces.    ');
+        console.log('            You fall into the void,            ');
+        console.log('   And then land on a newly randomized hotel   ');
+        console.log('');
+
+        return;
+    }
+
     const { floors } = building;
     let outputBuffer = createFloorBuffer();
 
@@ -71,9 +111,14 @@ function render() {
 
     const lineLength = outputBuffer[0].length;
 
+    // printB(outputBuffer,
+    //     `      `,
+    //     ` [${('' + (floorId)).padStart(2, ' ')}]${isExit ? ' isExit' : ''} `,
+    //     `      `
+    // );
     printB(outputBuffer,
         `      `,
-        ` [${('' + (floorId)).padStart(2, ' ')}]${isExit ? ' isExit' : ''} `,
+        ` ${('' + (floorAlias)).padStart(2, ' ')}/F `,
         `      `
     );
 
@@ -85,6 +130,53 @@ function render() {
 
 
     console.log(new Array(lineLength / 2).fill(' ').join('') + '^');
+
+
+    const room = rooms[(position.roomId + floorWidth) % floorWidth];
+    console.log(new Array(lineLength / 2).fill(' ').join('') + (
+        room.liftDoor
+            ? building.lifts[room.liftDoor.liftId].floorIds.map(x => building.floors[x].floorAlias).join(', ')
+            : ''
+    ));
+}
+
+
+
+
+function loadOrGenerateBuilding(isNew) {
+    const filename = '_out/building.json';
+    if (!isNew && existsSync(filename)) {
+        const json = readFileSync(filename).toString();
+        return JSON.parse(json);
+
+    }
+    return generateMap({
+        floorCount: 13,
+        floorWidth: 14,
+
+        liftPerFloorMin: 2,
+        liftPerFloorMax: 4,
+        liftRandomCount: 8,
+        accessibleFloorCount: 13,
+
+        aliasMax: 22,
+        aliasMin: 14,
+        aliasSafe: 3,
+        aliasSkip: 5,
+    });
+
+}
+
+function getStartingPosition(building) {
+
+    const accessibleFloors = building.floors.filter(f => f.isAccessible);
+
+    let position = {
+        floorId: accessibleFloors[Math.floor(Math.random() * accessibleFloors.length / 2)].floorId,
+        roomId: Math.floor(Math.random() * building.floors[0].rooms.length),
+    };
+
+    return position;
 }
 
 const stdin = process.stdin;
@@ -92,43 +184,70 @@ stdin.setRawMode(true);
 stdin.resume();
 stdin.setEncoding('utf8');
 console.clear();
-process.stdout.write('press arrow keys or ctrl-c\n');
-process.stdout.write('\n');
-render();
+render('');
 
 stdin.on('data', function (key) {
     if (key.toString() == '\u001B\u005B\u0041') {
+        if (isGameOver) return;
+        if (isTransitioning) return;
         move({ floorDir: 1, roomDir: 0 });
         console.clear();
-        process.stdout.write('press arrow keys or ctrl-c\n');
-        process.stdout.write('up\n');
-        render();
+        render('up');
     }
-    if (key.toString() == '\u001B\u005B\u0043') {
+    else if (key.toString() == '\u001B\u005B\u0043') {
+        if (isGameOver) return;
+        if (isTransitioning) return;
         move({ floorDir: 0, roomDir: 1 });
         console.clear();
-        process.stdout.write('press arrow keys or ctrl-c\n');
-        process.stdout.write('right\n');
-        render();
+        render('right');
     }
-    if (key.toString() == '\u001B\u005B\u0042') {
+    else if (key.toString() == '\u001B\u005B\u0042') {
+        if (isGameOver) return;
+        if (isTransitioning) return;
         move({ floorDir: -1, roomDir: 0 });
         console.clear();
-        process.stdout.write('press arrow keys or ctrl-c\n');
-        process.stdout.write('down\n');
-        render();
+        render(`down`);
     }
-    if (key.toString() == '\u001B\u005B\u0044') {
+    else if (key.toString() == '\u001B\u005B\u0044') {
+        if (isGameOver) return;
+        if (isTransitioning) return;
         move({ floorDir: 0, roomDir: -1 });
         console.clear();
-        process.stdout.write('press arrow keys or ctrl-c\n');
-        process.stdout.write('left\n');
-        render();
+        render(`left`);
     }
 
-    if (key.toString() == '\u0003') {  // ctrl-c
+    else if (key.toString() == '\u0003') {  // ctrl-c
 
         process.stdout.write('\nbye bye');
         process.exit();
     }
+
+    else if (key.toString() == '\u000d') { // enter
+        if (isGameOver) return;
+        if (isTransitioning) return;
+        tryExit();
+        console.clear();
+        render('enter');
+    }
+    else if (key.toString() == '\u0020') {
+        if (!isGameOver) return;
+        if (isTransitioning) return;
+        process.stdout.write('\nbye bye');
+        process.exit();
+    }
+    else {
+        if (isGameOver) return;
+        if (isTransitioning) return;
+        console.clear();
+        render('key: ' + key.toString().toUnicode());
+    }
 });
+
+String.prototype.toUnicode = function () {
+    var result = "";
+    for (var i = 0; i < this.length; i++) {
+        // Assumption: all characters are < 0xffff
+        result += "\\u" + ("000" + this[i].charCodeAt(0).toString(16)).substr(-4);
+    }
+    return result;
+};

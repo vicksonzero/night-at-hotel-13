@@ -28,7 +28,7 @@ export function createLift(liftId, roomId, floorIds = []) {
 }
 export function printRoom(floorBuffer, room, floors, isAccessible, isPlayMode = false) {
     if (room.liftDoor) {
-        
+
         const upStr = room.liftDoor.up != null ? ('' + floors[room.liftDoor.up].floorAlias).padStart(2, ' ') : '--';
         const downStr = room.liftDoor.down != null ? ('' + floors[room.liftDoor.down].floorAlias).padStart(2, ' ') : '--';
         floorBuffer[0] += `  ${upStr}  `;
@@ -83,14 +83,27 @@ export function generateMap(config) {
         liftRandomCount,
         accessibleFloorCount,
 
+        aliasMax, // maximum amount of floors in the alias naming
+        aliasMin, // minimum amount of floors in the alias naming
+        aliasSafe, // floors lower than this are never superstitious
+        aliasSkip, // amount of superstitious floors that we want to skip
+    } = config;
+
+
+    const [floorAliasList, skipped] = generateFloorAlias({
         aliasMax,
         aliasMin,
+        aliasSafe,
         aliasSkip,
-    } = config;
+    });
+
+    console.log('floorAliasList', floorAliasList);
+    console.log('skipped', skipped);
 
     const building = {
         /** @type {Array<any>} */
         lifts: [],
+        alias: { floors: floorAliasList, skipped },
         floors: new Array(floorCount).fill(0).map((_, floorId) => ({
             floorId,
             isAccessible: false,
@@ -104,7 +117,7 @@ export function generateMap(config) {
 
     const { floors } = building;
 
-    const exitFloor = Math.floor(Math.random() * floors.length / 2 + floors.length / 2);
+    const exitFloor = 13 - (floorAliasList.length - floorCount + 1) - 1;
     console.log('exitFloor', exitFloor);
     let accessible = [];
     accessible.push(exitFloor);
@@ -146,18 +159,9 @@ export function generateMap(config) {
 
     populateLiftDoors(building);
 
-    const [floorAliasList, skipped] = generateFloorAlias({
-        aliasMax,
-        aliasMin,
-        aliasSkip,
-    });
-
-    console.log('floorAliasList', floorAliasList);
-    console.log('skipped', skipped);
-
-    let i=0;
+    let i = 0;
     for (let floorIndex = floors.length - 1; floorIndex >= 0; floorIndex--) {
-        floors[floorIndex].floorAlias = floorAliasList[i];
+        floors[floorIndex].floorAlias = building.alias.floors[i];
         i++;
     }
 
@@ -329,19 +333,35 @@ export function generateFloorAlias(config) {
         aliasMax,
         aliasMin,
         aliasSkip,
+        aliasSafe,
     } = config;
 
     const result = [];
 
     const skippedAliasList = [];
 
-    for (let i = aliasMax; i >= aliasMin; i--) {
+    const countFloors = Math.floor(Math.random() * (aliasMax - aliasMin)) + aliasMin + aliasSkip;
+    for (let i = countFloors; i > 0; i--) {
         result.push(i);
     }
-    for (let i = 0; i < aliasSkip; i++) {
-        skippedAliasList.push(...result.splice(Math.floor(Math.random() * result.length), 1));
+
+    console.log('Building height: ', countFloors);
+    console.log('Building alias: ', result.join(', '));
+    // skip 13
+    skippedAliasList.push(...result.splice(result.indexOf(13), 1));
+
+    // skip the rest
+    for (let i = 0; i < aliasSkip - 1; i++) {
+        let skippingFloor;
+
+        const safeFloors = new Array(aliasSafe).fill(0).map((_, i) => i);
+        do {
+            skippingFloor = Math.floor(Math.random() * result.length);
+        } while (!(!safeFloors.includes(result[skippingFloor])));
+        skippedAliasList.push(...result.splice(skippingFloor, 1));
     }
 
+    skippedAliasList.sort((a, b) => -(a - b));
     return [result, skippedAliasList];
 }
 

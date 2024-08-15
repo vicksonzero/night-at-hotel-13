@@ -8,7 +8,6 @@ let isTransitioning = false;
 let isGameOver = false;
 let lastAnswer = '';
 let lastSkipped = '';
-// @ts-ignore
 let isWin = false;
 let building = loadOrGenerateBuilding(true);
 writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, JSON.stringify(building, null, 4));
@@ -61,7 +60,7 @@ function render(message) {
         console.log('Press enter when you find the exit floor');
         console.log(`${message}`);
     }
-    if (isGameOver) {
+    if (isGameOver && isWin) {
 
         printMap(building);
         console.log('');

@@ -8,6 +8,7 @@ let isTransitioning = false;
 let isGameOver = false;
 let lastAnswer = '';
 let lastSkipped = '';
+// @ts-ignore
 let isWin = false;
 let building = loadOrGenerateBuilding(true);
 writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, JSON.stringify(building, null, 4));
@@ -31,7 +32,9 @@ function move({ floorDir, roomDir }) {
 
 function tryExit() {
     const isExit = building.floors[position.floorId].isExit;
+    const isEscapeDoor = building.floors[position.floorId].rooms[position.roomId].escapeDoor;
 
+    if (!isEscapeDoor) return;
     if (isExit) {
         isGameOver = true;
         isWin = true;
@@ -94,6 +97,7 @@ function render(message) {
     const { floors } = building;
     let outputBuffer = createFloorBuffer();
 
+    // @ts-ignore
     const { floorId, floorAlias, rooms, isAccessible, isExit } = floors[position.floorId];
     const floorWidth = building.floors[0].rooms.length;
     // printB(outputBuffer,
@@ -133,11 +137,14 @@ function render(message) {
 
 
     const room = rooms[(position.roomId + floorWidth) % floorWidth];
-    console.log(new Array(lineLength / 2).fill(' ').join('') + (
-        room.liftDoor
-            ? building.lifts[room.liftDoor.liftId].floorIds.map(x => building.floors[x].floorAlias).join(', ')
-            : ''
-    ));
+    if (room.liftDoor)
+        console.log(new Array(lineLength / 2).fill(' ').join('') +
+            ' Lift to ' + building.lifts[room.liftDoor.liftId].floorIds.map(x => building.floors[x].floorAlias).join(', ')
+        );
+    else if (room.escapeDoor)
+        console.log(new Array(lineLength / 2).fill(' ').join('') +
+            ` Press Enter to try escape`
+        );
 }
 
 
@@ -239,10 +246,12 @@ stdin.on('data', function (key) {
         if (isGameOver) return;
         if (isTransitioning) return;
         console.clear();
+        // @ts-ignore
         render('key: ' + key.toString().toUnicode());
     }
 });
 
+// @ts-ignore
 String.prototype.toUnicode = function () {
     var result = "";
     for (var i = 0; i < this.length; i++) {

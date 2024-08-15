@@ -4,7 +4,7 @@ import { writeFileSync } from 'fs';
 import { DateTime } from 'luxon';
 
 const floorCount = 13;
-const floorWidth = 14;
+const floorWidth = 15;
 
 const liftPerFloorMin = 2;
 const liftPerFloorMax = 4;

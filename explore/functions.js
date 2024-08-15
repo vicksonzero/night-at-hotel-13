@@ -7,6 +7,7 @@ export function createRoom(floorId, roomId) {
     return {
         t: 'room',
         floorId, roomId,
+        escapeDoor: false,
         // liftDoor: createLiftDoor(liftId)
         // shaft: liftId
     };
@@ -37,6 +38,10 @@ export function printRoom(floorBuffer, room, floors, isAccessible, isPlayMode = 
         else
             floorBuffer[1] += ` |^v| `;
         floorBuffer[2] += `  ${downStr}  `;
+    } else if (room.escapeDoor) {
+        floorBuffer[0] += ` >ESC `;
+        floorBuffer[1] += ` [  ] `;
+        floorBuffer[2] += ` [  ] `;
     } else if (!isPlayMode && room.shaft != null) {
         floorBuffer[0] += `  ||  `;
         floorBuffer[1] += `  ||  `;
@@ -124,6 +129,11 @@ export function generateMap(config) {
     floors[exitFloor].isAccessible = true;
     floors[exitFloor].isExit = true;
 
+
+    for (const floor of floors) {
+        floor.rooms[0].escapeDoor = true;
+    }
+
     for (let i = 0; i < liftRandomCount; i++) {
 
         generateLiftRandomly(building, accessible, { liftPerFloorMax }, true);
@@ -188,9 +198,10 @@ export function generateLiftRandomly(building, accessible, config, isExpanding) 
 
     const floor = floors[floorId];
     const { rooms } = floor;
-    let availableRooms = rooms.filter(r => r.liftDoor);
-    if (availableRooms.length < liftPerFloorMax) {
-        availableRooms = rooms.filter(r => !r.liftDoor);
+    let liftDoorRooms = rooms.filter(r => r.liftDoor);
+    let availableRooms = rooms.filter(r => !r.escapeDoor && !r.liftDoor);
+    if (liftDoorRooms.length >= liftPerFloorMax) {
+        availableRooms = liftDoorRooms;
     }
     const randomRoomId = availableRooms[Math.floor(Math.random() * availableRooms.length)];
 

@@ -1,24 +1,30 @@
-# night-at-hotel-13
-Walk a fine line between the Spectral Dimension and Physical Dimension in this Twin Stick Shooter.
+# Night-at-Hotel-13
+Escape from a looping nightmare staying at a haunted hotel
 
-Made for the js13k game jam 2022
+Made for the js13k game jam 2024
 
 
 # About
 
-Undeads don't actually die. 
-They just go into the spectral world, and resurrect after some time.
+You check-in to a hotel. It has skipped floors due to superstitions.\
+A kid in the same lift counted the floors normally,\
+and you find yourself given room 13 at the 13th floor,\
+even though it is not labelled such.
 
-You are an undead hunter, gifted with the ability to move 
-between the physical world, and the spectral world.
-Dive into the spectral world to kill them for good.
+You thought it was ok so you got in and slept immediately...
 
-Move around using WASD, ZQSD, or ← ↓ ↑ →
-Aim with mouse and shoot by holding left click.
+Now, get trapped in an infinite dream until you find out where the true 13/F is!
 
-If you ever find yourself dead, 
-just collect some souls from the spectral world to revive.
 
+# Controls
+
+- Use WASD, ZQSD, or Arrow keys to move.
+- Space to jump
+- Shift to dash
+- E to interact
+  - Ride lift
+  - Hold E to hide behind things
+- Click hints to jot notes; drag note items to reorder.
 
 
 # Credits
@@ -118,18 +124,14 @@ Mapping:
 
 ## Milestone 1 (Code)
 
-Assets
-- [x] kenney 1-bit sprite for a start
-- [x] use kontra.js for minimal library
-- [x] use 8-bit sound effects
-
-Language
-- [x] use esm + js + webpack5
-- [x] use base64 for images. no loading
-- [x] use zipping and size-counting
-
-
-## Minimize
-
-- [ ] ModuleConcatenationPlugin
-- [ ] https://lifthrasiir.github.io/roadroller/
+- [x] building generation (cli)
+- [ ] building traversal
+  - [ ] rendering
+  - [ ] run
+  - [ ] dash
+  - [ ] ride lift
+- [ ] clue collection
+- [ ] boss chasing, circular corridor
+- [ ] hiding mechanics
+- [ ] enemies, combat
+- [ ] unlockable tools like faster shoes

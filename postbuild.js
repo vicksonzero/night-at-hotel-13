@@ -19,7 +19,7 @@ output.on('close', function () {
     ? (`Size overflow: ${bytes} bytes (${percent}%)\n` +
       `               ${('' + (-left)).padStart(5, ' ')} bytes over.`)
     : (bytes / MAX > 0.8)
-      ? (`Size: ${('' + bytes).padStart(5, ' ')} bytes (${percent}%)` +
+      ? (`Size: ${('' + bytes).padStart(5, ' ')} bytes (${percent}%)\n` +
         `      ${('' + left).padStart(5, ' ')} bytes left.`)
       : (`Size: ${bytes} bytes (${percent}%)`)
     ;

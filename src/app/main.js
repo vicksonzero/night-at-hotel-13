@@ -399,9 +399,15 @@ async function start() {
             scene.camera.x = player.x;
 
             const loopIndex = Math.round((player.bd.x + map_w / 2) / map_w) - 1;
-            console.log('loopIndex', loopIndex, room_images.map(room_image => room_image.loopIndex + loopIndex));
+            // const a0 = Math.floor((loopIndex + 3 - 1) / 3) * 3 - 1;
+            // const a1 = Math.floor((loopIndex + 3 - 2) / 3) * 3 - 0;
+            // const a2 = Math.floor((loopIndex + 3 - 3) / 3) * 3 + 1;
+            // console.log('loopIndex', loopIndex, [a0, a1, a2]);
+            // room_images[0].x = a0 * map_w * tile_w;
+            // room_images[1].x = a1 * map_w * tile_w;
+            // room_images[2].x = a2 * map_w * tile_w;
             for (const room_image of room_images) {
-                room_image.x = (loopIndex - 1 + room_image.loopIndex) * map_w * tile_w;
+                room_image.x = (Math.floor((loopIndex + 2 - room_image.loopIndex) / 3) * 3 - 1 + room_image.loopIndex) * map_w * tile_w;
             }
             scene.render();
         },

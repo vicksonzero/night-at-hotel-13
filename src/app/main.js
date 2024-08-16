@@ -218,13 +218,13 @@ async function start() {
 
     // Inputs (see https://xem.github.io/articles/jsgamesinputs.html)
     const input = {
-        u: 0,
-        d: 0,
-        l: 0,
-        r: 0,
-        a: 0, /* attack */
-        c1: 0, /* cheats */
-        c2: 0, /* cheats */
+        // u: 0,
+        // d: 0,
+        // l: 0,
+        // r: 0,
+        // a: 0, /* attack */
+        // c1: 0, /* cheats */
+        // c2: 0, /* cheats */
     };
 
     let gameIsFocused = true;
@@ -253,7 +253,7 @@ async function start() {
             // 75: 'a', /* K */
             // 48: 'c1', /* 0 */ // cheat 1
             32: 's', /* space */
-            8: 'b', /* backspace */
+            // 8: 'b', /* backspace */
             13: 'en', /* enter */
             9: 'tb', /* tab */
             16: 'sh', /* shift (L and R) */

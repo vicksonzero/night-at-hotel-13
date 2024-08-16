@@ -9,6 +9,7 @@ import { colors } from './colors.js';
 
 import { loadImages } from './images.js';
 import { ArcadeAudio } from './audio.js';
+import { generateMap } from './explore/functions.js';
 // import { CanvasRenderingContext2D } from 'canvas';
 
 
@@ -83,6 +84,22 @@ async function start() {
         id: 'a',
         objects: [],
     });
+
+    let building = generateMap({
+        floorCount: 13,
+        floorWidth: 14,
+
+        liftPerFloorMin: 2,
+        liftPerFloorMax: 4,
+        liftRandomCount: 8,
+        accessibleFloorCount: 13,
+
+        aliasMax: 22,
+        aliasMin: 14,
+        aliasSafe: 3,
+        aliasSkip: 5,
+    });
+    console.log('building', building);
 
     // context2.imageSmoothingEnabled = false;
     initPointer();

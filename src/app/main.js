@@ -1,6 +1,6 @@
 // @ts-check
 import {
-    /* system */ init, Sprite, GameLoop, Pool,
+    /* system */ init, Sprite, GameLoop, Pool, Scene,
     /* mouse  */ initPointer, track, getPointer, pointerPressed,
     /* maths  */ angleToTarget, clamp, movePoint, lerp
     /* Vector is imported through Sprite, GameObject, Updatable */
@@ -12,22 +12,59 @@ import { ArcadeAudio } from './audio.js';
 // import { CanvasRenderingContext2D } from 'canvas';
 
 
+
+/**
+ * @typedef ITransform
+ * @property {number} x          - 
+ * @property {number} y          - 
+ * @property {number} w          - 
+ * @property {number} h          - 
+ */
+
+/**
+ * @typedef IEntity
+ * @property {string} type       - 
+ * @property {number} x          - 
+ * @property {number} y          - 
+ * @property {number} w          - 
+ * @property {number} h          - 
+ * @property {number} fc         - facing direction. -1 means left, 1 means right
+ * @property {number} [gd]       - grounded
+ * @property {number} [gv]       - gravity
+ * @property {number} [cj]       - can jump
+ * @property {number} [vx]       - velocity x, used for knock back or others
+ * @property {number} [vy]       - velocity y, used for gravity
+ */
+
+
+// World
+const g1 = 0.012;    // jumping gravity in tiles/frame²
+const g2 = 0.018;    // falling gravity in tiles/frame²
+const tile_w = 32;  // tiles width in px
+const tile_h = 32;  // tiles height in px
+const player_speed1 = 0.1;    // player move speed (walking) in tiles/frame²
+const player_speed2 = 0.2;    // player move speed (running) in tiles/frame²
+
+
+let map = [
+    '11111111111111',
+    '10000000000001',
+    '10000000000001',
+    '10000000000001',
+    '10000000000001',
+    '10000000000001',
+    '11111111111111',
+];
+let map_w = map[0].length;  // map width in tiles
+let map_h = map.length;     // map height in tiles
+
 async function start() {
-    /**
-     * behaviours:
-     * w=walk(strafe, speed, targetX, targetY), // infinite aggro range
-     * <=chase,  // chase at speed of 1
-     * >=avoid,  // avoid at speed of 1
-     * .=wander, // wander at speed of 0.2
-     * d=solid,  // try not to collide with others
-     * D=static, // stops others from hitting
-     * W=wall,   // static, plus absorbs bullets
-     * m=melee,  // does knockback on both sides
-     * s=shooty(spellCard),
-     * // b=box()     // gives item
-     */
 
+    const fixedDeltaTime = (1000 / 60) | 0;
 
+    let fixedGameTime = 0;
+
+    const a_room_cache = document.createElement("canvas");
     // loading
     const images = await loadImages();
 
@@ -42,9 +79,49 @@ async function start() {
     let { canvas, context } = init('a');
     canvas.addEventListener('pointerenter', _focus);
     context.imageSmoothingEnabled = false;
+    let scene = Scene({
+        id: 'a',
+        objects: [],
+    });
+
     // context2.imageSmoothingEnabled = false;
     initPointer();
 
+
+    // let player = Sprite({
+    //     /* #IfDev */
+    //     name: 'player',
+    //     /* #EndIfDev */
+    //     x: canvas.width / 2,        // starting x,y position of the sprite
+    //     y: canvas.height / 2 + 50,
+    //     // color: 'red',  // fill color of the sprite rectangle
+    //     // width: 20,     // width and height of the sprite rectangle
+    //     // height: 40,
+    //     // dx: 2,
+    //     // dy: 2,
+    //     image: images.playerPhysical,
+    //     anchor: { x: 0.5, y: 0.5 },
+
+    //     // custom properties
+    //     dimension: 0, // 0=physical, 1=spectral
+    // });
+
+    cache_map(a_room_cache, map);
+
+    let room_image = Sprite({
+        /* #IfDev */
+        name: 'room_tiles',
+        /* #EndIfDev */
+        x: 0,        // starting x,y position of the sprite
+        y: 0,
+        // color: '#5f1e09',  // fill color of the sprite rectangle
+        width: a_room_cache.width,     // width and height of the sprite rectangle
+        height: a_room_cache.height,
+        // dx: 2,
+        // dy: 2,
+        image: a_room_cache,
+        anchor: { x: 0, y: 0 },
+    });
 
     let player = Sprite({
         /* #IfDev */
@@ -52,17 +129,19 @@ async function start() {
         /* #EndIfDev */
         x: canvas.width / 2,        // starting x,y position of the sprite
         y: canvas.height / 2 + 50,
-        // color: 'red',  // fill color of the sprite rectangle
-        // width: 20,     // width and height of the sprite rectangle
-        // height: 40,
-        // dx: 2,
-        // dy: 2,
-        image: images.playerPhysical,
-        anchor: { x: 0.5, y: 0.5 },
+        color: 'red',  // fill color of the sprite rectangle
+        width: 20,     // width and height of the sprite rectangle
+        height: 40,
+        anchor: { x: 0, y: 0 },
 
         // custom properties
         dimension: 0, // 0=physical, 1=spectral
+        /** @type {IEntity} - player body */
+        bd: { x: 10, y: 2, w: .6, h: 1, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
+        isSprinting: false,
     });
+    scene.add(room_image);
+    scene.add(player);
 
     // function lerpRadians(a, b, lerpFactor)// Lerps from angle a to b (both between 0.f and 2*Math.PI), taking the shortest path
     // {
@@ -128,7 +207,7 @@ async function start() {
         c2: 0, /* cheats */
     };
 
-    let inputLocked = true;
+    let gameIsFocused = true;
     const keyHandler = (e) => {
         const w = e.keyCode, t = e.type;
 
@@ -157,22 +236,35 @@ async function start() {
             8: 'b', /* backspace */
             13: 'en', /* enter */
             9: 'tb', /* tab */
+            16: 'sh', /* shift (L and R) */
             77: 'm', /* m */
         };
 
         if (!keyMap[w]) return;
 
+        if ('tb' == keyMap[w]) {
+            if (+(t[3] < 'u')) {
+                gameIsFocused = !gameIsFocused;
+                //#IfDev
+                console.log('gameIsFocused', gameIsFocused);
+                //#EndIfDev
+                //@ts-ignore
+                txa.disabled = gameIsFocused;
+                //@ts-ignore
+                if (!gameIsFocused) txa.focus();
+                input.tb = 0;
+            }
 
-        input[keyMap[w]] = +(t[3] < 'u');
-
-        if (input.tb && 'tb' == keyMap[w]) {
-            inputLocked = !inputLocked;
-            input.tb = 0;
-
+            //#IfDev
+            // console.log('preventDefault');
+            //#EndIfDev
             e.preventDefault();
             e.stopPropagation();
         }
-        if (!inputLocked) return
+
+        input[keyMap[w]] = gameIsFocused ? +(t[3] < 'u') : 0;
+
+        if (!gameIsFocused) return;
 
         // toggles quick hack
         // if (input.c1 && 'c1' == keyMap[w]) {
@@ -188,35 +280,21 @@ async function start() {
             audio.volume = !audio.volume;
             input.m = 0;
         }
-        // if (input.s && 's' == keyMap[w]) {
-        //     if (gameIsOver) {
-        //         restart();
-        //     }
-        //     if (tutIsShown) {
-        //         tutIsShown = false;
-        //     }
-        //     if (tutProgress == 0) {
-        //         tutProgress++;
-        //         tutIsShown = true;
-        //     } else if (tutProgress == 1) {
-        //         tutProgress++;
-        //         tutIsShown = true;
-        //     } else if (tutProgress == 2) {
-        //         tutProgress++;
-        //         nextSpawnTick = fixedGameTime + 500;
-        //         nextWaveTime = fixedGameTime + waves[waveID][0] * 1000;
-        //     }
-        //     if (tutUpgrade) {
-        //         tutUpgrade = -1;
-        //     }
-        //     if (tutDeath) {
-        //         tutDeath = -1;
-        //     }
-        //     input.s = 0;
-        // }
+        if (input.sh && 'sh' == keyMap[w]) {
+            //#IfDev
+            console.log('start sprint');
+            //#EndIfDev
+            player.isSprinting = true;
+            input.sh = 0;
+        }
+
+
 
         // END toggles quick hack
 
+        //#IfDev
+        // console.log('preventDefault');
+        //#EndIfDev
         e.preventDefault();
         e.stopPropagation();
     };
@@ -228,17 +306,95 @@ async function start() {
             // if (gameIsOver) return;
             // if (gameIsPaused) return;
             // if (tutIsShown) return;
-            // fixedGameTime += fixedDeltaTime;
+            fixedGameTime += fixedDeltaTime;
             // console.log('fixedGameTime', fixedGameTime);
 
 
+
+
+            // Compute hero position:
+            // The hero's bounding rectangle's corners have the following coordinates:
+            //
+            //           [hero_x, hero_y]      [hero_x + hero_w, hero_y]
+            //                           ______
+            //                          |     |  
+            //                          |     |  
+            //                          |     |  
+            //                          |     |  
+            //                          |_____|
+            //
+            // [hero_x, hero_y + hero_h]      [hero_x + hero_w, hero_y + hero_h]
+
+            // Reset grounded state
+            player.bd.gd = 0;
+
+            // Apply gravity to Y speed, Y acceleration to Y speed and Y speed to Y position
+            player.bd.vy += player.bd.gv;
+            if (player.bd.vy > 0) player.bd.gv = g2;
+            if (player.bd.vy > 0.2) player.bd.vy = 0.2;
+            player.bd.vx -= (Math.sign(player.bd.vx) * Math.min(Math.abs(player.bd.vx), .02));
+
+
+            player.bd.y = tryMoveY(
+                player.bd,
+                player.bd.vy,
+                map,
+                () => {
+                    if (player.bd.vy > 0) {
+                        player.bd.gd = fixedGameTime + 5 * fixedDeltaTime; // 5 frames of coyote time
+                        player.bd.vy = 0;
+                        player.bd.gv = g1;
+                    }
+                    // If moving up
+                    if (player.bd.vy < 0) {
+                        // If this tile is solid, put the player on the bottom side of it and let it fall
+                        player.bd.vy = 0;
+                    }
+                }
+            ).y;
+
+            const mv = input.l ? -1 : input.r ? 1 : 0;
+            if (!mv) player.isSprinting = false;
+            tryMoveX(
+                player.bd,
+                mv * (player.isSprinting ? player_speed2 : player_speed1) + player.bd.vx,
+                map,
+                () => {
+                    // if (can_do_climb) {
+                    //     hero.vy = -.07;
+                    // }
+                }
+            );
+
+
+            // If up key is pressed and the hero is grounded, jump
+            if (input.u && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
+                // console.log('jump', player.bd.gd, fixedGameTime);
+                player.bd.vy = -.315;
+                player.bd_g = g1;
+                player.bd.cj = 0;
+            }
+            if (!input.u) {
+                player.bd.cj = 1;
+                if (player.bd.vy < 0) {
+                    if (player.bd.vy < -0.15) player.bd.vy = -0.15;
+                    player.bd_g = g2;
+                }
+            }
         },
         render() { // render the game state
             // context2.clearRect(0, 0, canvas2.width, canvas2.height);
             context.save();
             // background
             // context.fillStyle = BACKGROUND_COLOR;
+            context.fillStyle = '#000000';
             context.fillRect(0, 0, canvas.width, canvas.height);
+
+            player.x = player.bd.x * tile_w;
+            player.y = player.bd.y * tile_h;
+
+            scene.camera.x = player.x;
+            scene.render();
         },
 
     });
@@ -255,6 +411,84 @@ async function start() {
         // restart
         start();
     }
+}
+
+function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
+    entity.x += dx;
+    if (dx <= 0) {
+        entity.x = Math.max(entity.x, 0);
+    } else {
+        entity.x = Math.min(map_w - entity.w, entity.x);
+    }
+
+    const probeX = (dx <= 0 ? entity.x : entity.x + entity.w);
+
+    const tile1 = +map[~~(entity.y)][~~(probeX)];
+    const tile2 = +map[~~(entity.y + entity.h - .1)][~~(probeX)];
+
+    if (tile1 == 1 || tile2 == 1) {
+        entity.x = (dx <= 0 ? Math.ceil(entity.x) : ~~(entity.x + entity.w) - entity.w);
+        if (solidCallback) solidCallback();
+    }
+
+    return entity;
+}
+
+function tryMoveY(/** @type {ITransform}*/ entity, dy, map, solidCallback) {
+    entity.y += dy;
+    if (dy <= 0) {
+        entity.y = Math.max(entity.y, 0);
+    } else {
+        entity.y = Math.min(map_h - entity.h, entity.y);
+    }
+
+    const probeY = (dy <= 0 ? entity.y : entity.y + entity.h);
+
+    const tile1 = +map[~~(probeY)][~~(entity.x)];
+    const tile2 = +map[~~(probeY)][~~(entity.x + entity.w - .1)];
+
+    if (tile1 == 1 || tile2 == 1) {
+        entity.y = (dy <= 0 ? Math.ceil(entity.y) : ~~(entity.y + entity.h) - entity.h);
+        if (solidCallback) solidCallback();
+    }
+
+    return entity;
+}
+
+function cache_map(cache, _map) {
+    const cache_c = cache.getContext('2d');
+    // -10 bytes zipped compared to nested for-loops
+    cache.width = _map[0].length * tile_w;
+    cache.height = _map.length * tile_h;
+
+    // Create a linear gradient
+    // The start gradient point is at x=20, y=0
+    // The end gradient point is at x=220, y=0
+    const gradient = cache_c.createLinearGradient(0, 0, 0, cache.height);
+
+    // Add three color stops
+    gradient.addColorStop(0, "#9babf2");
+    gradient.addColorStop(1, "#34418c");
+
+    // Set the fill style and draw a rectangle
+    cache_c.fillStyle = gradient;
+    cache_c.fillRect(0, 0, cache.width, cache.height);
+
+    _map.forEach((row, y) => row.split('').forEach((tile, x) => {
+        if (tile == '1') {
+            cache_c.fillStyle = "#831";
+            cache_c.fillRect(x * tile_w, y * tile_h, tile_w, tile_h);
+
+            if (y > 1 && _map[y - 1][x] != '1') {
+                cache_c.fillStyle = "#454";
+                cache_c.fillRect(x * tile_w, y * tile_h, tile_w, 12);
+            }
+        }
+        if (tile == 'w' || (tile != 'w' && row[x - 1] == 'w' && row[x + 1] == 'w')) {
+            cache_c.fillStyle = "#0B0";
+            cache_c.fillRect(x * tile_w, y * tile_h + 6, tile_w, tile_h - 6);
+        }
+    }));
 }
 
 window.onload = start;

@@ -128,12 +128,14 @@ async function start() {
         c2: 0, /* cheats */
     };
 
+    let inputLocked = true;
     const keyHandler = (e) => {
         const w = e.keyCode, t = e.type;
 
         // console.log("keyHandler", w, t);
 
         // not using event.code because we have ascii magic going on
+
 
         // -4 bytes zipped compared to if-statements
         // ['WASD', 'ZQSD', '↑←↓→']
@@ -160,7 +162,17 @@ async function start() {
 
         if (!keyMap[w]) return;
 
+
         input[keyMap[w]] = +(t[3] < 'u');
+
+        if (input.tb && 'tb' == keyMap[w]) {
+            inputLocked = !inputLocked;
+            input.tb = 0;
+
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (!inputLocked) return
 
         // toggles quick hack
         // if (input.c1 && 'c1' == keyMap[w]) {
@@ -202,10 +214,7 @@ async function start() {
         //     }
         //     input.s = 0;
         // }
-        // if (input.tb && 'tb' == keyMap[w] && !gameIsOver) {
-        //     gameIsPaused = !gameIsPaused;
-        //     input.tb = 0;
-        // }
+
         // END toggles quick hack
 
         e.preventDefault();

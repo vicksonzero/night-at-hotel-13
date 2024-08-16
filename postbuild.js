@@ -4,7 +4,7 @@ import archiver from 'archiver'
 unlinkSync('./dist/main.js')
 unlinkSync('./dist/main.css')
 
-let output = createWriteStream('./dist/spectral-shooter.zip')
+let output = createWriteStream('./dist/night-at-hotel-13.zip')
 let archive = archiver('zip', {
   zlib: { level: 9 } // set compression to best
 })

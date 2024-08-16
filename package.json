@@ -1,5 +1,5 @@
 {
-  "name": "spectral-shooter",
+  "name": "night-at-hotel-13",
   "version": "1.0.0",
   "description": "Walk a fine line between the Spectral Dimension and Physical Dimension in this Twin Stick Shooter.",
   "main": "index.html",
@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vicksonzero/spectral-shooter.git"
+    "url": "git+https://github.com/vicksonzero/night-at-hotel-13.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vicksonzero/spectral-shooter/issues"
+    "url": "https://github.com/vicksonzero/night-at-hotel-13/issues"
   },
-  "homepage": "https://github.com/vicksonzero/spectral-shooter#readme",
+  "homepage": "https://github.com/vicksonzero/night-at-hotel-13#readme",
   "devDependencies": {
     "@effortlessmotion/html-webpack-inline-source-plugin": "^1.0.3",
     "archiver": "^5.3.1",

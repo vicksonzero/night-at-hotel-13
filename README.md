@@ -1,4 +1,4 @@
-# Spectral-Shooter
+# night-at-hotel-13
 Walk a fine line between the Spectral Dimension and Physical Dimension in this Twin Stick Shooter.
 
 Made for the js13k game jam 2022
@@ -80,7 +80,7 @@ Object.values({
 }).map(a=>Math.floor(a*1000)/1000)
 ```
 
-(See https://github.com/vicksonzero/spectral-shooter/blob/master/src/lib/jsfxr.js#L31-L54)
+(See https://github.com/vicksonzero/night-at-hotel-13/blob/master/src/lib/jsfxr.js#L31-L54)
 
 Mapping:
 

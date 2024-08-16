@@ -38,8 +38,8 @@ import { ArcadeAudio } from './audio.js';
 
 
 // World
-const g1 = 0.012;    // jumping gravity in tiles/frame²
-const g2 = 0.018;    // falling gravity in tiles/frame²
+const g1 = 0.016;    // jumping gravity in tiles/frame²
+const g2 = 0.021;    // falling gravity in tiles/frame²
 const tile_w = 32;  // tiles width in px
 const tile_h = 32;  // tiles height in px
 const player_speed1 = 0.1;    // player move speed (walking) in tiles/frame²
@@ -47,13 +47,13 @@ const player_speed2 = 0.2;    // player move speed (running) in tiles/frame²
 
 
 let map = [
-    '11111111111111',
-    '10000000000001',
-    '10000000000001',
-    '10000000000001',
-    '10000000000001',
-    '10000000000001',
-    '11111111111111',
+    '111111111111111111',
+    '000000000000000000',
+    '000000000000000000',
+    '000000000000000000',
+    '000011100000000000',
+    '000000000111000000',
+    '111111111111111111',
 ];
 let map_w = map[0].length;  // map width in tiles
 let map_h = map.length;     // map height in tiles
@@ -108,20 +108,23 @@ async function start() {
 
     cache_map(a_room_cache, map);
 
-    let room_image = Sprite({
+    let room_images = [0, 1, 2].map((i) => Sprite({
         /* #IfDev */
         name: 'room_tiles',
         /* #EndIfDev */
-        x: 0,        // starting x,y position of the sprite
+        x: i * map_w * tile_w,        // starting x,y position of the sprite
         y: 0,
         // color: '#5f1e09',  // fill color of the sprite rectangle
         width: a_room_cache.width,     // width and height of the sprite rectangle
         height: a_room_cache.height,
+        scaleX: 1.005,
         // dx: 2,
         // dy: 2,
         image: a_room_cache,
         anchor: { x: 0, y: 0 },
-    });
+
+        loopIndex: i,
+    }));
 
     let player = Sprite({
         /* #IfDev */
@@ -137,10 +140,10 @@ async function start() {
         // custom properties
         dimension: 0, // 0=physical, 1=spectral
         /** @type {IEntity} - player body */
-        bd: { x: 10, y: 2, w: .6, h: 1, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
+        bd: { x: 15, y: 2, w: .6, h: 1, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
         isSprinting: false,
     });
-    scene.add(room_image);
+    scene.add(room_images);
     scene.add(player);
 
     // function lerpRadians(a, b, lerpFactor)// Lerps from angle a to b (both between 0.f and 2*Math.PI), taking the shortest path
@@ -368,13 +371,13 @@ async function start() {
 
 
             // If up key is pressed and the hero is grounded, jump
-            if (input.u && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
+            if (input.s && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
                 // console.log('jump', player.bd.gd, fixedGameTime);
                 player.bd.vy = -.315;
                 player.bd_g = g1;
                 player.bd.cj = 0;
             }
-            if (!input.u) {
+            if (!input.s) {
                 player.bd.cj = 1;
                 if (player.bd.vy < 0) {
                     if (player.bd.vy < -0.15) player.bd.vy = -0.15;
@@ -394,6 +397,12 @@ async function start() {
             player.y = player.bd.y * tile_h;
 
             scene.camera.x = player.x;
+
+            const loopIndex = Math.round((player.bd.x + map_w / 2) / map_w) - 1;
+            console.log('loopIndex', loopIndex, room_images.map(room_image => room_image.loopIndex + loopIndex));
+            for (const room_image of room_images) {
+                room_image.x = (loopIndex - 1 + room_image.loopIndex) * map_w * tile_w;
+            }
             scene.render();
         },
 
@@ -415,21 +424,29 @@ async function start() {
 
 function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
     entity.x += dx;
-    if (dx <= 0) {
-        entity.x = Math.max(entity.x, 0);
-    } else {
-        entity.x = Math.min(map_w - entity.w, entity.x);
-    }
+    // if (dx <= 0) {
+    //     entity.x = Math.max(entity.x, 0);
+    // } else {
+    //     entity.x = Math.min(map_w - entity.w, entity.x);
+    // }
 
-    const probeX = (dx <= 0 ? entity.x : entity.x + entity.w);
+    let probeX = (dx <= 0 ? entity.x : entity.x + entity.w);
+    while (probeX < 0) probeX += map_w;
+    probeX = probeX % map_w;
 
     const tile1 = +map[~~(entity.y)][~~(probeX)];
     const tile2 = +map[~~(entity.y + entity.h - .1)][~~(probeX)];
 
+    // const oldX = entity.x;
     if (tile1 == 1 || tile2 == 1) {
-        entity.x = (dx <= 0 ? Math.ceil(entity.x) : ~~(entity.x + entity.w) - entity.w);
+        // @ts-ignore (using && to do if-else)
+        entity.x = (dx <= 0 ? Math.ceil(entity.x) : ~~(entity.x + (entity.x > 0 && entity.w)) - entity.w);
         if (solidCallback) solidCallback();
     }
+    // if (dx != 0) {
+    //     // console.log('tryMoveX', oldX, entity.x, entity.x + entity.w);
+    //     console.log('tryMoveX', entity.x, Math.round((entity.x + map_w / 2) / map_w) - 1);
+    // }
 
     return entity;
 }
@@ -442,10 +459,13 @@ function tryMoveY(/** @type {ITransform}*/ entity, dy, map, solidCallback) {
         entity.y = Math.min(map_h - entity.h, entity.y);
     }
 
+    let probeX = entity.x;
+    while (probeX < 0) probeX += map_w;
+    probeX = probeX % map_w;
     const probeY = (dy <= 0 ? entity.y : entity.y + entity.h);
 
-    const tile1 = +map[~~(probeY)][~~(entity.x)];
-    const tile2 = +map[~~(probeY)][~~(entity.x + entity.w - .1)];
+    const tile1 = +map[~~(probeY)][~~(probeX)];
+    const tile2 = +map[~~(probeY)][~~(probeX + entity.w - .1)];
 
     if (tile1 == 1 || tile2 == 1) {
         entity.y = (dy <= 0 ? Math.ceil(entity.y) : ~~(entity.y + entity.h) - entity.h);

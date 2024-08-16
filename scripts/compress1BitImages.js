@@ -1,10 +1,11 @@
-const { dirname, join } = require('path');
-const { fileURLToPath } = require('url');
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-const { readFileSync } = require('fs');
-const readdirp = require('readdirp');
+import { readFileSync } from 'fs';
+import readdirp from 'readdirp';
+const __dirname = import.meta.dirname;
 
-const { loadImage, createCanvas } = require('canvas');
+import { loadImage, createCanvas } from 'canvas';
 
 const assetsDir = '../src/assets';
 

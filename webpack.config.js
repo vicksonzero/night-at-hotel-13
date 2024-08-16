@@ -1,11 +1,11 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const HtmlWebpackInlineSourcePlugin = require('@effortlessmotion/html-webpack-inline-source-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import HtmlWebpackInlineSourcePlugin from '@effortlessmotion/html-webpack-inline-source-plugin'
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 
 const isProduction = process.env.npm_lifecycle_event === 'build'
 
-module.exports = {
+export default {
     entry: './src',
     devtool: !isProduction && 'source-map',
     module: {

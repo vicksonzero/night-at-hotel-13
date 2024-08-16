@@ -1,10 +1,10 @@
-const fs = require('fs')
-const archiver = require('archiver')
+import { unlinkSync, createWriteStream, writeFileSync, createReadStream } from 'fs'
+import archiver from 'archiver'
 
-fs.unlinkSync('./dist/main.js')
-fs.unlinkSync('./dist/main.css')
+unlinkSync('./dist/main.js')
+unlinkSync('./dist/main.css')
 
-let output = fs.createWriteStream('./dist/spectral-shooter.zip')
+let output = createWriteStream('./dist/spectral-shooter.zip')
 let archive = archiver('zip', {
   zlib: { level: 9 } // set compression to best
 })
@@ -29,7 +29,7 @@ output.on('close', function () {
     console.log(msg)
   }
 
-  fs.writeFileSync('buildSize.txt', msg);
+  writeFileSync('buildSize.txt', msg);
 })
 
 archive.on('warning', function (err) {
@@ -46,7 +46,7 @@ archive.on('error', function (err) {
 
 archive.pipe(output)
 archive.append(
-  fs.createReadStream('./dist/index.html'), {
+  createReadStream('./dist/index.html'), {
   name: 'index.html'
 }
 )

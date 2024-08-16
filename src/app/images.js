@@ -1,5 +1,6 @@
-import * as imageList from './imageList';
-import { colors } from './colors'
+//@ts-check
+import * as imageList from './imageList.js';
+import { colors } from './colors.js'
 
 export async function loadImages() {
     return {
@@ -22,12 +23,8 @@ export async function loadImages() {
         // boxWhite: decompress(imageList.tile121, colors.white),
         // boxDarkGray: decompress(imageList.tile121, colors.lightGray),
 
-        dualPistolOrange: decompress(imageList.tile478_c, colors.orange),
-        machineGunOrange: decompress(imageList.tile481, colors.orange),
-        shotgunOrange: decompress(imageList.tile480, colors.orange),
         // spiritRevolverBlue: decompress(imageList.tile479, colors.blue),
 
-        floorTile1: decompress(imageList.tile002, colors.lightGray),
         // floorTile2: decompress(imageList.tile002, colors.lightGray),
     };
 }
@@ -39,6 +36,9 @@ function decompress(bitArray2D, color = '#fff') {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = compressed.length;
+
+    /** @type {CanvasRenderingContext2D} */
+    // @ts-ignore
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = color;
 

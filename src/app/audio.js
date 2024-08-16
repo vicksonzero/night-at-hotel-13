@@ -1,5 +1,5 @@
-import { jsfxr } from '../lib/jsfxr';
-
+import * as jsfxrJS from '../lib/jsfxr.js';
+const { jsfxr }=jsfxrJS;
 // thanks https://codepen.io/jackrugile/post/arcade-audio-for-js13k-games
 export class ArcadeAudio {
     constructor() {

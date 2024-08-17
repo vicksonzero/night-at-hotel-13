@@ -41,8 +41,8 @@ import { generateMap } from './explore/functions.js';
 // World
 const g1 = 0.016;    // jumping gravity in tiles/frame²
 const g2 = 0.021;    // falling gravity in tiles/frame²
-const tile_w = 16;  // tiles width in px
-const tile_h = 16;  // tiles height in px
+const tile_w = 32;  // tiles width in px
+const tile_h = 32;  // tiles height in px
 const player_speed1 = 0.1;    // player move speed (walking) in tiles/frame²
 const player_speed2 = 0.2;    // player move speed (running) in tiles/frame²
 
@@ -149,18 +149,57 @@ async function start() {
         /* #EndIfDev */
         x: canvas.width / 2,        // starting x,y position of the sprite
         y: canvas.height / 2 + 50,
-        color: 'red',  // fill color of the sprite rectangle
-        width: .6 * tile_w,     // width and height of the sprite rectangle
-        height: 1 * tile_h,
-        anchor: { x: 0, y: 0 },
+        // color: 'red',  // fill color of the sprite rectangle
+        // width: .8 * tile_w,     // width and height of the sprite rectangle
+        // height: 1.5 * tile_h,
+        anchor: { x: 0.5, y: 1 },
+        image: images.playerIdle,
+        scaleX: 2,
+        scaleY: 2,
 
         // custom properties
         dimension: 0, // 0=physical, 1=spectral
         /** @type {IEntity} - player body */
-        bd: { x: 15, y: 2, w: .6, h: 1, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
+        bd: { x: 15, y: 2, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
         isSprinting: false,
     });
+
+    let liftDoor = Sprite({
+        /* #IfDev */
+        name: 'lift_door',
+        /* #EndIfDev */
+        x: 14 * tile_w,        // starting x,y position of the sprite
+        y: 6 * tile_h,
+        // color: 'red',  // fill color of the sprite rectangle
+        // width: .6 * tile_w,     // width and height of the sprite rectangle
+        // height: 1 * tile_h,
+        scaleX: 8,
+        scaleY: 8,
+        anchor: { x: 0, y: 1 },
+        image: images.liftDoor2,
+
+        // custom properties
+    });
+
+    let door = Sprite({
+        /* #IfDev */
+        name: 'door',
+        /* #EndIfDev */
+        x: 18 * tile_w,        // starting x,y position of the sprite
+        y: 6 * tile_h,
+        // color: 'red',  // fill color of the sprite rectangle
+        // width: .6 * tile_w,     // width and height of the sprite rectangle
+        // height: 1 * tile_h,
+        scaleX: 8,
+        scaleY: 8,
+        anchor: { x: 0, y: 1 },
+        image: images.door,
+
+        // custom properties
+    });
     scene.add(room_images);
+    scene.add(door);
+    scene.add(liftDoor);
     scene.add(player);
 
     // function lerpRadians(a, b, lerpFactor)// Lerps from angle a to b (both between 0.f and 2*Math.PI), taking the shortest path
@@ -410,8 +449,8 @@ async function start() {
             context.fillStyle = '#000000';
             context.fillRect(0, 0, canvas.width, canvas.height);
 
-            player.x = player.bd.x * tile_w;
-            player.y = player.bd.y * tile_h;
+            player.x = player.bd.x * tile_w + player.bd.w * .5 * tile_w;
+            player.y = player.bd.y * tile_h + player.bd.h * tile_h;
 
             scene.camera.x = player.x;
 
@@ -519,12 +558,12 @@ function cache_map(cache, _map) {
 
     _map.forEach((row, y) => row.split('').forEach((tile, x) => {
         if (tile == '1') {
-            cache_c.fillStyle = "#831";
+            cache_c.fillStyle = "rgb(143, 41, 41)";
             cache_c.fillRect(x * tile_w, y * tile_h, tile_w, tile_h);
 
             if (y > 1 && _map[y - 1][x] != '1') {
-                cache_c.fillStyle = "#454";
-                cache_c.fillRect(x * tile_w, y * tile_h, tile_w, 5);
+                cache_c.fillStyle = "rgb(160, 137, 123)";
+                cache_c.fillRect(x * tile_w, y * tile_h-10, tile_w, 10);
             }
         }
         if (tile == 'w' || (tile != 'w' && row[x - 1] == 'w' && row[x + 1] == 'w')) {

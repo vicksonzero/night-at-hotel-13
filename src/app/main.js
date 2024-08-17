@@ -322,9 +322,9 @@ async function start() {
         if ('tb' == keyMap[w]) {
             if (+(t[3] < 'u')) {
                 gameIsFocused = !gameIsFocused;
-                //#IfDev
+                /* #IfDev */
                 console.log('gameIsFocused', gameIsFocused);
-                //#EndIfDev
+                /* #EndIfDev */
                 //@ts-ignore
                 txa.disabled = gameIsFocused;
                 //@ts-ignore
@@ -332,9 +332,9 @@ async function start() {
                 input.tb = 0;
             }
 
-            //#IfDev
+            /* #IfDev */
             // console.log('preventDefault');
-            //#EndIfDev
+            /* #EndIfDev */
             e.preventDefault();
             e.stopPropagation();
         }
@@ -358,9 +358,9 @@ async function start() {
             input.m = 0;
         }
         if (input.sh && 'sh' == keyMap[w]) {
-            //#IfDev
+            /* #IfDev */
             console.log('start sprint');
-            //#EndIfDev
+            /* #EndIfDev */
             player.isSprinting = true;
             input.sh = 0;
         }
@@ -369,9 +369,9 @@ async function start() {
 
         // END toggles quick hack
 
-        //#IfDev
+        /* #IfDev */
         // console.log('preventDefault');
-        //#EndIfDev
+        /* #EndIfDev */
         e.preventDefault();
         e.stopPropagation();
     };

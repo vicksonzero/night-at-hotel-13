@@ -101,9 +101,10 @@ export function generateMap(config) {
         aliasSafe,
         aliasSkip,
     });
-
+    /* #IfDev */
     console.log('floorAliasList', floorAliasList);
     console.log('skipped', skipped);
+    /* #EndIfDev */
 
     const building = {
         /** @type {Array<any>} */
@@ -123,7 +124,9 @@ export function generateMap(config) {
     const { floors } = building;
 
     const exitFloor = 13 - (floorAliasList.length - floorCount + 1);
+    /* #IfDev */
     console.log('exitFloor', exitFloor);
+    /* #EndIfDev */
     let accessible = [];
     accessible.push(exitFloor);
     floors[exitFloor].isAccessible = true;
@@ -140,32 +143,44 @@ export function generateMap(config) {
 
         accessible = accessible.filter(onlyUnique);
         accessible.sort((a, b) => a - b);
+        /* #IfDev */
         console.log(`accessible`, accessible);
         console.log(``);
         console.log(``);
+        /* #EndIfDev */
     }
 
     for (let i = 0; i < floors.length; i++) {
         if (accessible.length >= accessibleFloorCount) break;
+        /* #IfDev */
         console.log(`(${i}) Adding more floors to ensure accessibleFloorCount becomes '${accessibleFloorCount}'`);
+        /* #EndIfDev */
 
         generateLiftRandomly(building, accessible, { liftPerFloorMax }, false);
 
         accessible = accessible.filter(onlyUnique);
         accessible.sort((a, b) => a - b);
+        /* #IfDev */
         console.log(`accessible`, accessible);
         console.log(``);
         console.log(``);
+        /* #EndIfDev */
     }
 
+    /* #IfDev */
     console.log(`merging lifts`, sortBy(building.lifts, (a, b) => a.roomId - b.roomId));
+    /* #EndIfDev */
     mergeLiftsInBuilding(building);
+    /* #IfDev */
     console.log(`merged lifts`, sortBy(building.lifts, (a, b) => a.roomId - b.roomId));
+    /* #EndIfDev */
     for (const lift of building.lifts) {
         lift.floorIds = lift.floorIds.filter(onlyUnique);
         lift.floorIds.sort((a, b) => a - b);
     }
+    /* #IfDev */
     console.log(`unique lifts`, sortBy(building.lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
+    /* #EndIfDev */
 
     populateLiftDoors(building);
 
@@ -209,7 +224,9 @@ export function generateLiftRandomly(building, accessible, config, isExpanding) 
         let result;
         do {
             result = Math.floor(Math.random() * floors.length)
+            /* #IfDev */
             if (!isExpanding) console.log(`round2 random: `, result, accessible.includes(result));
+            /* #EndIfDev */
         } while (!(result != fromFloorId && (isExpanding || !accessible.includes(result))));
         return result;
     })(floorId);
@@ -231,14 +248,18 @@ export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
     const direction = Math.sign(toFloorId - fromFloorId);
 
     const newLift = createLift(lifts.length, roomId, [fromFloorId, toFloorId]);
+    /* #IfDev */
     console.log(`Create lift #${newLift.liftId} (${fromFloorId}->${toFloorId}) on room '${roomId}', dir=${direction}`);
+    /* #EndIfDev */
 
     lifts.push(newLift);
     for (let i = fromFloorId + direction; Math.sign(toFloorId - i) == direction; i += direction) {
         // this for-loop may or may not cover the lift doors, but i don't care.
         // the rest of the code can handle null room.shaft just fine
         const floor = floors[i];
+        /* #IfDev */
         console.log(`(Lift ${newLift.liftId}) Create shaft at (${i}) on room '${roomId}'`);
+        /* #EndIfDev */
         floor.rooms[roomId].shaft = newLift.liftId;
     }
     floors[fromFloorId].rooms[roomId].liftDoor = createLiftDoor(newLift.liftId);
@@ -250,7 +271,9 @@ export function mergeLiftsInBuilding(building) {
 
     for (let roomId = 0; roomId < floors[0].rooms.length; roomId++) {
         const liftsByRoomId = lifts.filter(lift => lift.roomId == roomId);
+        /* #IfDev */
         console.log(`Trying to merge '${liftsByRoomId.length}' lifts at room-${roomId}`);
+        /* #EndIfDev */
 
         liftsByRoomId.sort((a, b) => a.liftId - b.liftId);
 
@@ -260,7 +283,9 @@ export function mergeLiftsInBuilding(building) {
             for (let floorId = sortedFloorIds[0]; floorId <= lastFloorId; floorId++) {
 
                 const room = floors[floorId].rooms[roomId];
+                /* #IfDev */
                 console.log(`lift-${lift.liftId} (${floorId}, ${roomId})`);
+                /* #EndIfDev */
 
                 // here, room is also modified in place, 
                 // and we scan by physical position, not by lift sorting.
@@ -286,13 +311,17 @@ export function mergeLiftsInBuilding(building) {
                 }
             }
         }
+        /* #IfDev */
         console.log('');
+        /* #EndIfDev */
     }
 }
 
 
 export function mergeLifts(building, toLiftId, fromLiftId) {
+    /* #IfDev */
     console.log(`Merge lift-${fromLiftId} into lift-${toLiftId}`);
+    /* #EndIfDev */
     const { floors, lifts } = building;
 
     lifts[fromLiftId].liftId = toLiftId; // point to parent
@@ -356,8 +385,10 @@ export function generateFloorAlias(config) {
         result.push(i);
     }
 
+    /* #IfDev */
     console.log('Building height: ', countFloors);
     console.log('Building alias: ', result.join(', '));
+    /* #EndIfDev */
     // skip 13
     skippedAliasList.push(...result.splice(result.indexOf(13), 1));
 
@@ -378,7 +409,9 @@ export function generateFloorAlias(config) {
 
 export function printMap(building) {
     const { floors, lifts } = building;
+    /* #IfDev */
     console.log('');
+    /* #EndIfDev */
 
     let outputBuffer = createFloorBuffer();
     for (let floorIndex = floors.length - 1; floorIndex >= 0; floorIndex--) {
@@ -402,12 +435,16 @@ export function printMap(building) {
             `      `
         );
 
+        /* #IfDev */
         console.log(new Array(outputBuffer[0].length).fill('-').join(''));
         console.log(outputBuffer[0]);
         console.log(outputBuffer[1]);
         console.log(outputBuffer[2]);
+        /* #EndIfDev */
     }
+    /* #IfDev */
     console.log(new Array(outputBuffer[0].length).fill('-').join(''));
+    /* #EndIfDev */
 }
 
 

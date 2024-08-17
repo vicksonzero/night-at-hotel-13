@@ -41,8 +41,8 @@ import { generateMap } from './explore/functions.js';
 // World
 const g1 = 0.016;    // jumping gravity in tiles/frame²
 const g2 = 0.021;    // falling gravity in tiles/frame²
-const tile_w = 32;  // tiles width in px
-const tile_h = 32;  // tiles height in px
+const tile_w = 16;  // tiles width in px
+const tile_h = 16;  // tiles height in px
 const player_speed1 = 0.1;    // player move speed (walking) in tiles/frame²
 const player_speed2 = 0.2;    // player move speed (running) in tiles/frame²
 
@@ -125,7 +125,7 @@ async function start() {
 
     cache_map(a_room_cache, map);
 
-    let room_images = [0, 1, 2].map((i) => Sprite({
+    let room_images = [-1, 0, 1].map((i) => Sprite({
         /* #IfDev */
         name: 'room_tiles',
         /* #EndIfDev */
@@ -150,8 +150,8 @@ async function start() {
         x: canvas.width / 2,        // starting x,y position of the sprite
         y: canvas.height / 2 + 50,
         color: 'red',  // fill color of the sprite rectangle
-        width: 20,     // width and height of the sprite rectangle
-        height: 40,
+        width: .6 * tile_w,     // width and height of the sprite rectangle
+        height: 1 * tile_h,
         anchor: { x: 0, y: 0 },
 
         // custom properties
@@ -424,7 +424,7 @@ async function start() {
             // room_images[1].x = a1 * map_w * tile_w;
             // room_images[2].x = a2 * map_w * tile_w;
             for (const room_image of room_images) {
-                room_image.x = (Math.floor((loopIndex + 2 - room_image.loopIndex) / 3) * 3 - 1 + room_image.loopIndex) * map_w * tile_w;
+                room_image.x = (Math.floor((loopIndex + 1 - room_image.loopIndex) / 3) * 3 + room_image.loopIndex) * map_w * tile_w;
             }
             scene.render();
         },
@@ -524,7 +524,7 @@ function cache_map(cache, _map) {
 
             if (y > 1 && _map[y - 1][x] != '1') {
                 cache_c.fillStyle = "#454";
-                cache_c.fillRect(x * tile_w, y * tile_h, tile_w, 12);
+                cache_c.fillRect(x * tile_w, y * tile_h, tile_w, 5);
             }
         }
         if (tile == 'w' || (tile != 'w' && row[x - 1] == 'w' && row[x + 1] == 'w')) {

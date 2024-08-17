@@ -402,8 +402,7 @@ async function start() {
             //
             // [hero_x, hero_y + hero_h]      [hero_x + hero_w, hero_y + hero_h]
 
-            // Reset grounded state
-            player.bd.gd = 0;
+            // coyote: don't Reset grounded state
 
             // Apply gravity to Y speed, Y acceleration to Y speed and Y speed to Y position
             player.bd.vy += player.bd.gv;
@@ -446,7 +445,7 @@ async function start() {
 
             // If up key is pressed and the hero is grounded, jump
             if (input.s && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
-                // console.log('jump', player.bd.gd, fixedGameTime);
+                // console.log('jump', player.bd.gd, fixedGameTime, player.bd.gd - fixedGameTime);
                 player.bd.vy = -.315;
                 player.bd_g = g1;
                 player.bd.cj = 0;

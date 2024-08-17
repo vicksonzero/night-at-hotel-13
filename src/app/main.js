@@ -197,8 +197,26 @@ async function start() {
 
         // custom properties
     });
+
+    let exitDoor = Sprite({
+        /* #IfDev */
+        name: 'exitDoor',
+        /* #EndIfDev */
+        x: 0 * tile_w,        // starting x,y position of the sprite
+        y: 6 * tile_h,
+        // color: 'red',  // fill color of the sprite rectangle
+        // width: .6 * tile_w,     // width and height of the sprite rectangle
+        // height: 1 * tile_h,
+        scaleX: 8,
+        scaleY: 8,
+        anchor: { x: 0, y: 1 },
+        image: images.exitDoor2,
+
+        // custom properties
+    });
     scene.add(room_images);
     scene.add(door);
+    scene.add(exitDoor);
     scene.add(liftDoor);
     scene.add(player);
 
@@ -497,10 +515,11 @@ function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
     probeX = probeX % map_w;
 
     const tile1 = +map[~~(entity.y)][~~(probeX)];
-    const tile2 = +map[~~(entity.y + entity.h - .1)][~~(probeX)];
+    const tile2 = +map[~~(entity.y + 0.5 * entity.h)][~~(probeX)];
+    const tile3 = +map[~~(entity.y + entity.h - .1)][~~(probeX)];
 
     // const oldX = entity.x;
-    if (tile1 == 1 || tile2 == 1) {
+    if (tile1 == 1 || tile2 == 1 || tile3 == 1) {
         // @ts-ignore (using && to do if-else)
         entity.x = (dx <= 0 ? Math.ceil(entity.x) : ~~(entity.x + (entity.x > 0 && entity.w)) - entity.w);
         if (solidCallback) solidCallback();
@@ -562,8 +581,8 @@ function cache_map(cache, _map) {
             cache_c.fillRect(x * tile_w, y * tile_h, tile_w, tile_h);
 
             if (y > 1 && _map[y - 1][x] != '1') {
-                cache_c.fillStyle = "rgb(160, 137, 123)";
-                cache_c.fillRect(x * tile_w, y * tile_h-10, tile_w, 10);
+                cache_c.fillStyle = "rgb(132, 119, 110)";
+                cache_c.fillRect(x * tile_w, y * tile_h - 10, tile_w, 10);
             }
         }
         if (tile == 'w' || (tile != 'w' && row[x - 1] == 'w' && row[x + 1] == 'w')) {

@@ -7,6 +7,8 @@ import Lift_Door2 from '../assets/Lift_Door2.png'
 import Lift_Door3 from '../assets/Lift_Door3.png'
 import Player_idle from '../assets/Player_idle.png'
 import Door from '../assets/Door.png'
+import ExitDoor1 from '../assets/ExitDoor1.png'
+import ExitDoor2 from '../assets/ExitDoor2.png'
 
 export async function loadImages() {
     return {
@@ -27,6 +29,8 @@ export async function loadImages() {
         liftDoor3: await createImageAsync(Lift_Door3),
         playerIdle: await createImageAsync(Player_idle),
         door: await createImageAsync(Door),
+        exitDoor1: await createImageAsync(ExitDoor1),
+        exitDoor2: await createImageAsync(ExitDoor2),
 
         // boxWhite: decompress(imageList.tile121, colors.white),
         // boxDarkGray: decompress(imageList.tile121, colors.lightGray),

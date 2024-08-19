@@ -1,6 +1,6 @@
 // @ts-check
 import {
-    /* system */ init, Sprite, GameLoop, Pool, Scene,
+    /* system */ init, Sprite, Text, GameLoop, Pool, Scene,
     /* mouse  */ initPointer, track, getPointer, pointerPressed,
     /* maths  */ angleToTarget, clamp, movePoint, lerp
     /* Vector is imported through Sprite, GameObject, Updatable */
@@ -46,6 +46,7 @@ const tile_h = 32;  // tiles height in px
 const player_speed1 = 0.1;    // player move speed (walking) in tiles/frame²
 const player_speed2 = 0.2;    // player move speed (running) in tiles/frame²
 
+const map_room_w = 7;
 
 async function start() {
 
@@ -64,21 +65,47 @@ async function start() {
         /* aliasSkip */ 5,
     );
     console.log('building', building);
-    
+
+    //#region Build level
+
+
+    let floorId = 5;
+    // let roomId = 3;
+
+
     /** @type {string[] & {w:number, h:number}} */
     // @ts-ignore
     let map = [
-        '111111111111111111',
-        '000000000000000000',
-        '000000000000000000',
-        '000000000000000000',
-        '000011100000000000',
-        '000000000111000000',
-        '111111111111111111',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
     ];
+
+    for (const room of building.floors[floorId].rooms) {
+        // @ts-ignore
+        map = map.map((row, i) => i != 5
+            ? row + Array(map_room_w).fill('0').join('')
+            : row + '0000000000');
+    }
 
     map.w = map[0].length;  // map width in tiles
     map.h = map.length;     // map height in tiles
+
+    map[0] = Array(map.w).fill('1').join('')
+    map[6] = Array(map.w).fill('1').join('')
+
+    /* #IfDev */
+
+    console.log('map.length: ', map.map(x => x.length));
+    /* #EndIfDev */
+
+
+    //#endregion
+
 
     const fixedDeltaTime = (1000 / 60) | 0;
 
@@ -97,12 +124,12 @@ async function start() {
     // const context2 = canvas2.getContext('2d');
     // init
     let { canvas, context } = init('a');
-    canvas.addEventListener('pointerenter', _focus);
-    context.imageSmoothingEnabled = false;
     let scene = Scene({
         id: 'a',
         objects: [],
     });
+    canvas.addEventListener('pointerenter', _focus);
+    context.imageSmoothingEnabled = false;
 
     // context2.imageSmoothingEnabled = false;
     initPointer();
@@ -142,6 +169,11 @@ async function start() {
         // dy: 2,
         image: a_room_cache,
         anchor: { x: 0, y: 0 },
+
+        /* #IfDev */
+        opacity: [0.8, 1, 0.9][i],
+        /* #EndIfDev */
+
 
         loopIndex: i,
     }));
@@ -184,22 +216,37 @@ async function start() {
         // custom properties
     });
 
-    let door = Sprite({
-        /* #IfDev */
-        name: 'door',
-        /* #EndIfDev */
-        x: 18 * tile_w,        // starting x,y position of the sprite
-        y: 6 * tile_h,
-        // color: 'red',  // fill color of the sprite rectangle
-        // width: .6 * tile_w,     // width and height of the sprite rectangle
-        // height: 1 * tile_h,
-        scaleX: 8,
-        scaleY: 8,
-        anchor: { x: 0, y: 1 },
-        image: images.door,
 
-        // custom properties
-    });
+    let doors = building.floors[floorId].rooms
+        .map((room, i) => (
+            Sprite({
+                /* #IfDev */
+                name: 'door',
+                /* #EndIfDev */
+                x: room.roomId * map_room_w * tile_w,        // starting x,y position of the sprite
+                y: 6 * tile_h,
+                // color: 'red',  // fill color of the sprite rectangle
+                // width: .6 * tile_w,     // width and height of the sprite rectangle
+                // height: 1 * tile_h,
+                scaleX: 8,
+                scaleY: 8,
+                anchor: { x: 0, y: 1 },
+                image: images.door,
+
+                // custom properties
+                floorId: floorId,
+                roomId: room.roomId,
+            }))
+        );
+    doors.forEach(door => door.addChild(Text({
+        text: door.roomId,
+        x: door.width / 2 + 1,
+        y: -10,
+        font: '3px Arial',
+        color: 'white',
+        anchor: { x: 0.5, y: 0.5 },
+        textAlign: 'center'
+    })));
 
     let exitDoor = Sprite({
         /* #IfDev */
@@ -217,8 +264,8 @@ async function start() {
 
         // custom properties
     });
-    scene.add(room_images[1]);
-    scene.add(door);
+    scene.add(room_images);
+    scene.add(doors);
     scene.add(exitDoor);
     scene.add(liftDoor);
     scene.add(player);
@@ -474,17 +521,26 @@ async function start() {
 
             scene.camera.x = player.x;
 
-            // const loopIndex = Math.round((player.bd.x + map.w / 2) / map.w) - 1;
-            // // const a0 = Math.floor((loopIndex + 3 - 1) / 3) * 3 - 1;
-            // // const a1 = Math.floor((loopIndex + 3 - 2) / 3) * 3 - 0;
-            // // const a2 = Math.floor((loopIndex + 3 - 3) / 3) * 3 + 1;
-            // // console.log('loopIndex', loopIndex, [a0, a1, a2]);
-            // // room_images[0].x = a0 * map.w * tile_w;
-            // // room_images[1].x = a1 * map.w * tile_w;
-            // // room_images[2].x = a2 * map.w * tile_w;
-            // for (const room_image of room_images) {
-            //     room_image.x = (Math.floor((loopIndex + 1 - room_image.loopIndex) / 3) * 3 + room_image.loopIndex) * map.w * tile_w;
-            // }
+            const loopIndex = Math.round((player.bd.x + map.w / 2) / map.w) - 1;
+            for (const room_image of room_images) {
+                room_image.x = (Math.floor((loopIndex + 1 - room_image.loopIndex) / 3) * 3 + room_image.loopIndex) * map.w * tile_w;
+            }
+
+            for (const door of doors) {
+                while (door.x - player.x > map.w / 2 * tile_w) {
+                    /* #IfDev */
+                    console.log(`door[${door.roomId}] is too right`);
+                    /* #EndIfDev */
+                    door.x -= map.w * tile_w;
+                }
+                while (player.x - door.x > map.w / 2 * tile_w) {
+                    /* #IfDev */
+                    console.log(`door[${door.roomId}] is too left`);
+                    /* #EndIfDev */
+                    door.x += map.w * tile_w;
+                }
+            }
+
             scene.render();
         },
 

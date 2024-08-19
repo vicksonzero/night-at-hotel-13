@@ -423,7 +423,7 @@ async function start() {
             player.bd.vx -= (Math.sign(player.bd.vx) * Math.min(Math.abs(player.bd.vx), .02));
 
 
-            player.bd.y = tryMoveY(
+            tryMoveY(
                 player.bd,
                 player.bd.vy,
                 map,
@@ -439,7 +439,7 @@ async function start() {
                         player.bd.vy = 0;
                     }
                 }
-            ).y;
+            );
 
             const mv = input.l ? -1 : input.r ? 1 : 0;
             if (!mv) player.sprint = false;

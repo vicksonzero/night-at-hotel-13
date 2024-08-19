@@ -138,7 +138,7 @@ export function generateMap(
 
     for (let i = 0; i < liftRandomCount; i++) {
 
-        generateLiftRandomly(building, accessible, { liftPerFloorMax }, true);
+        generateLiftRandomly(building, accessible, liftPerFloorMax, true);
 
         accessible = accessible.filter(onlyUnique);
         accessible.sort((a, b) => a - b);
@@ -155,7 +155,7 @@ export function generateMap(
         console.log(`(${i}) Adding more floors to ensure accessibleFloorCount becomes '${accessibleFloorCount}'`);
         /* #EndIfDev */
 
-        generateLiftRandomly(building, accessible, { liftPerFloorMax }, false);
+        generateLiftRandomly(building, accessible, liftPerFloorMax, false);
 
         accessible = accessible.filter(onlyUnique);
         accessible.sort((a, b) => a - b);
@@ -192,8 +192,7 @@ export function generateMap(
     return building;
 }
 
-export function generateLiftRandomly(building, accessible, config, isExpanding) {
-    const { liftPerFloorMax } = config
+export function generateLiftRandomly(building, accessible, liftPerFloorMax, isExpanding) {
     const { floors, lifts } = building;
     // const floorId = (() => {
     //     let result;

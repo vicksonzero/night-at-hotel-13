@@ -1,6 +1,6 @@
 //@ts-check
-import * as imageList from './imageList.js';
-import { colors } from './colors.js'
+// import * as imageList from './imageList.js';
+// import { colors } from './colors.js'
 
 import Lift_Door1 from '../assets/Lift_Door1.png'
 import Lift_Door2 from '../assets/Lift_Door2.png'

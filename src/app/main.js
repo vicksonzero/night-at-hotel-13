@@ -199,75 +199,58 @@ async function start() {
         isSprinting: false,
     });
 
-    let liftDoor = Sprite({
-        /* #IfDev */
-        name: 'lift_door',
-        /* #EndIfDev */
-        x: 14 * tile_w,        // starting x,y position of the sprite
-        y: 6 * tile_h,
-        // color: 'red',  // fill color of the sprite rectangle
-        // width: .6 * tile_w,     // width and height of the sprite rectangle
-        // height: 1 * tile_h,
-        scaleX: 8,
-        scaleY: 8,
-        anchor: { x: 0, y: 1 },
-        image: images.liftDoor2,
+    let doors = [];
 
-        // custom properties
-    });
+    for (const room of building.floors[floorId].rooms) {
+        const type = room.roomId == 0
+            ? 'ex'
+            : room.liftDoor
+                ? 'lf'
+                : room.shaft ? 'sh' : 'dr';
+        const door = Sprite({
+            /* #IfDev */
+            name: 'door',
+            /* #EndIfDev */
+            x: room.roomId * map_room_w * tile_w,        // starting x,y position of the sprite
+            y: 6 * tile_h,
+            // color: 'red',  // fill color of the sprite rectangle
+            // width: .6 * tile_w,     // width and height of the sprite rectangle
+            // height: 1 * tile_h,
+            scaleX: 8,
+            scaleY: 8,
+            anchor: { x: 0, y: 1 },
+            image: {
+                ex: images.exitDoor2,
+                lf: images.liftDoor2,
+                // sf: undefined,
+                dr: images.door
+            }[type],
 
+            // custom properties
+            type,
+            room,
+            floorId: floorId,
+            roomId: room.roomId,
+        });
+        door.addChild(Text({
+            text: {
+                // ex: undefined,
+                // lf: undefined,
+                // sf: undefined,
+                dr: building.alias.floors.at(-door.roomId),
+            }[type],
+            x: door.width / 2 + 1,
+            y: -10,
+            font: '3px Arial',
+            color: 'white',
+            anchor: { x: 0.5, y: 0.5 },
+            textAlign: 'center'
+        }));
+        doors.push(door);
+    }
 
-    let doors = building.floors[floorId].rooms
-        .map((room, i) => (
-            Sprite({
-                /* #IfDev */
-                name: 'door',
-                /* #EndIfDev */
-                x: room.roomId * map_room_w * tile_w,        // starting x,y position of the sprite
-                y: 6 * tile_h,
-                // color: 'red',  // fill color of the sprite rectangle
-                // width: .6 * tile_w,     // width and height of the sprite rectangle
-                // height: 1 * tile_h,
-                scaleX: 8,
-                scaleY: 8,
-                anchor: { x: 0, y: 1 },
-                image: images.door,
-
-                // custom properties
-                floorId: floorId,
-                roomId: room.roomId,
-            }))
-        );
-    doors.forEach(door => door.addChild(Text({
-        text: door.roomId,
-        x: door.width / 2 + 1,
-        y: -10,
-        font: '3px Arial',
-        color: 'white',
-        anchor: { x: 0.5, y: 0.5 },
-        textAlign: 'center'
-    })));
-
-    let exitDoor = Sprite({
-        /* #IfDev */
-        name: 'exitDoor',
-        /* #EndIfDev */
-        x: 0 * tile_w,        // starting x,y position of the sprite
-        y: 6 * tile_h,
-        // color: 'red',  // fill color of the sprite rectangle
-        // width: .6 * tile_w,     // width and height of the sprite rectangle
-        // height: 1 * tile_h,
-        scaleX: 8,
-        scaleY: 8,
-        anchor: { x: 0, y: 1 },
-        image: images.exitDoor2,
-
-        // custom properties
-    });
     scene.add(room_images);
     scene.add(doors);
-    scene.add(exitDoor);
-    scene.add(liftDoor);
     scene.add(player);
 
     // function lerpRadians(a, b, lerpFactor)// Lerps from angle a to b (both between 0.f and 2*Math.PI), taking the shortest path

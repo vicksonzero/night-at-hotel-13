@@ -165,7 +165,7 @@ async function start() {
         // width: .8 * tile_w,     // width and height of the sprite rectangle
         // height: 1.5 * tile_h,
         anchor: { x: 0.5, y: 1 },
-        image: images.playerIdle,
+        image: images.pi,
         scaleX: 2,
         scaleY: 2,
 
@@ -197,10 +197,10 @@ async function start() {
             scaleY: 8,
             anchor: { x: 0, y: 1 },
             image: {
-                ex: images.exitDoor2,
-                lf: images.liftDoor2,
+                ex: images.ed2,
+                lf: images.ld2,
                 // sf: undefined,
-                dr: images.door
+                dr: images.d
             }[type],
 
             // custom properties

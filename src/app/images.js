@@ -6,6 +6,9 @@ import Lift_Door1 from '../assets/Lift_Door1.png'
 import Lift_Door2 from '../assets/Lift_Door2.png'
 import Lift_Door3 from '../assets/Lift_Door3.png'
 import Player_idle from '../assets/Player_idle.png'
+import Player_fall from '../assets/Player_fall.png'
+import Player_run1 from '../assets/Player_run1.png'
+import Player_run2 from '../assets/Player_run2.png'
 import Door from '../assets/Door.png'
 import ExitDoor1 from '../assets/ExitDoor1.png'
 import ExitDoor2 from '../assets/ExitDoor2.png'
@@ -24,13 +27,16 @@ export async function loadImages() {
         // ghostFireZero: decompress(imageList.tile505, colors.zero),
 
         // playerPhysical: decompress(imageList.tile077, colors.darkGray),
-        liftDoor1: await createImageAsync(Lift_Door1),
-        liftDoor2: await createImageAsync(Lift_Door2),
-        liftDoor3: await createImageAsync(Lift_Door3),
-        playerIdle: await createImageAsync(Player_idle),
-        door: await createImageAsync(Door),
-        exitDoor1: await createImageAsync(ExitDoor1),
-        exitDoor2: await createImageAsync(ExitDoor2),
+        ld1: await createImageAsync(Lift_Door1),
+        ld2: await createImageAsync(Lift_Door2),
+        ld3: await createImageAsync(Lift_Door3),
+        pi: await createImageAsync(Player_idle),
+        pf: await createImageAsync(Player_fall),
+        pr1: await createImageAsync(Player_run1),
+        pr2: await createImageAsync(Player_run2),
+        d: await createImageAsync(Door),
+        ed1: await createImageAsync(ExitDoor1),
+        ed2: await createImageAsync(ExitDoor2),
 
         // boxWhite: decompress(imageList.tile121, colors.white),
         // boxDarkGray: decompress(imageList.tile121, colors.lightGray),

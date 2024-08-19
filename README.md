@@ -129,11 +129,12 @@ Mapping:
   - [x] Rendering
   - [x] Run
   - [ ] Dash
+  - [x] Doors
   - [ ] Ride lift
 - [ ] Clue collection
 - [ ] Boss chasing, circular corridor
   - [x] Player wrap around
-  - [ ] Doors wrap around
+  - [x] Doors wrap around
   - [ ] Enemies wrap around
 - [ ] Hiding mechanics
 - [ ] Enemies, combat

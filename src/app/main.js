@@ -77,21 +77,14 @@ async function start() {
 
     /** @type {string[] & {w:number, h:number}} */
     // @ts-ignore
-    let map = [
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-    ];
+    let map = Array(7).fill('');
 
     for (const room of building.floors[floorId].rooms) {
         // @ts-ignore
-        map = map.map((row, i) => i != 5
-            ? row + Array(map_room_w).fill('0').join('')
-            : row + '0000000000');
+        // map = map.map((row, i) => i != 5
+        //     ? row + Array(map_room_w).fill('0').join('')
+        //     : row + '0000000000');
+        map = map.map((row, i) => row + Array(map_room_w).fill('0').join(''));
     }
 
     map.w = map[0].length;  // map width in tiles
@@ -137,24 +130,6 @@ async function start() {
     initPointer();
 
 
-    // let player = Sprite({
-    //     /* #IfDev */
-    //     name: 'player',
-    //     /* #EndIfDev */
-    //     x: canvas.width / 2,        // starting x,y position of the sprite
-    //     y: canvas.height / 2 + 50,
-    //     // color: 'red',  // fill color of the sprite rectangle
-    //     // width: 20,     // width and height of the sprite rectangle
-    //     // height: 40,
-    //     // dx: 2,
-    //     // dy: 2,
-    //     image: images.playerPhysical,
-    //     anchor: { x: 0.5, y: 0.5 },
-
-    //     // custom properties
-    //     dimension: 0, // 0=physical, 1=spectral
-    // });
-
     cache_map(a_room_cache, map);
 
     let room_images = [-1, 0, 1].map((i) => Sprite({
@@ -198,7 +173,7 @@ async function start() {
         dimension: 0, // 0=physical, 1=spectral
         /** @type {IEntity} - player body */
         bd: { x: 15, y: 2, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
-        isSprinting: false,
+        sprint: false, // aka isSprinting
     });
 
     let doors = [];
@@ -396,7 +371,7 @@ async function start() {
             /* #IfDev */
             console.log('start sprint');
             /* #EndIfDev */
-            player.isSprinting = true;
+            player.sprint = true;
             input.sh = 0;
         }
 
@@ -465,10 +440,10 @@ async function start() {
             ).y;
 
             const mv = input.l ? -1 : input.r ? 1 : 0;
-            if (!mv) player.isSprinting = false;
+            if (!mv) player.sprint = false;
             tryMoveX(
                 player.bd,
-                mv * (player.isSprinting ? player_speed2 : player_speed1) + player.bd.vx,
+                mv * (player.sprint ? player_speed2 : player_speed1) + player.bd.vx,
                 map,
                 () => {
                     // if (can_do_climb) {

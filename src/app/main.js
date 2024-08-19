@@ -2,7 +2,7 @@
 import {
     /* system */ init, Sprite, Text, GameLoop, Pool, Scene,
     /* mouse  */ initPointer, track, getPointer, pointerPressed,
-    /* maths  */ angleToTarget, clamp, movePoint, lerp
+    /* maths  */ angleToTarget, clamp, movePoint, lerp, collides,
     /* Vector is imported through Sprite, GameObject, Updatable */
 } from 'kontra';
 import { colors } from './colors.js';
@@ -94,7 +94,6 @@ async function start() {
     map[6] = Array(map.w).fill('1').join('')
 
     /* #IfDev */
-
     console.log('map.length: ', map.map(x => x.length));
     /* #EndIfDev */
 
@@ -102,6 +101,21 @@ async function start() {
 
 
     //#endregion
+
+    function moveFloor(floorDir, room) {
+        /* #IfDev */
+        console.log('moveFloor:', floorDir, room);
+        /* #EndIfDev */
+        if (!room.liftDoor) return;
+        if (floorDir > 0 && room.liftDoor.up == null) return;
+        if (floorDir < 0 && room.liftDoor.down == null) return;
+        floorId = floorDir > 0
+            ? room.liftDoor.up
+            : room.liftDoor.down;
+        /* #IfDev */
+        console.log('moveFloor to: ', floorId);
+        /* #EndIfDev */
+    }
 
 
     const fixedDeltaTime = (1000 / 60) | 0;
@@ -214,11 +228,11 @@ async function start() {
         door.addChild(Text({
             text: {
                 // ex: undefined,
-                // lf: undefined,
+                lf: building.lifts[room.liftDoor?.liftId]?.floorIds.map(x => building.floors[x].floorAlias).reverse().join('\n'),
                 // sf: undefined,
                 dr: building.alias.floors.at(-door.roomId),
             }[type],
-            x: door.width / 2 + 1,
+            x: room.liftDoor ? door.width + 2 : door.width / 2 + 1,
             y: -10,
             font: '3px Arial',
             color: 'white',
@@ -361,6 +375,24 @@ async function start() {
         //     audio.play('test');
         //     input.s = 0;
         // }
+        if (input.u && 'u' == keyMap[w]) {
+            // move fontLanguageOverride: 
+            for (const door of doors) {
+                if (door.room.liftDoor && collides(player, door)) {
+                    moveFloor(1, door.room);
+                }
+            }
+            input.u = 0;
+        }
+        if (input.d && 'd' == keyMap[w]) {
+            // move floor
+            for (const door of doors) {
+                if (door.room.liftDoor && collides(player, door)) {
+                    moveFloor(-1, door.room);
+                }
+            }
+            input.d = 0;
+        }
         if (input.m && 'm' == keyMap[w]) {
 
             //@ts-ignore (type cast)
@@ -473,7 +505,7 @@ async function start() {
         },
         render() { // render the game state
             // context2.clearRect(0, 0, canvas2.width, canvas2.height);
-            context.save();
+            // context.save();
             // background
             // context.fillStyle = BACKGROUND_COLOR;
             context.fillStyle = '#000000';

@@ -64,7 +64,9 @@ async function start() {
         /* aliasSafe */ 3,
         /* aliasSkip */ 5,
     );
+    /* #IfDev */
     console.log('building', building);
+    /* #EndIfDev */
 
     //#region Build level
 

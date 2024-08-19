@@ -298,7 +298,7 @@ async function start() {
 
     let gameIsFocused = true;
     const keyHandler = (e) => {
-        const w = e.keyCode, t = e.type;
+        const w = e.keyCode;
 
         // console.log("keyHandler", w, t);
 
@@ -332,7 +332,7 @@ async function start() {
         if (!keyMap[w]) return;
 
         if ('tb' == keyMap[w]) {
-            if (+(t[3] < 'u')) {
+            if (+(e.type[3] < 'u')) {
                 gameIsFocused = !gameIsFocused;
                 /* #IfDev */
                 console.log('gameIsFocused', gameIsFocused);
@@ -351,7 +351,7 @@ async function start() {
             e.stopPropagation();
         }
 
-        input[keyMap[w]] = gameIsFocused ? +(t[3] < 'u') : 0;
+        input[keyMap[w]] = gameIsFocused ? +(e.type[3] < 'u') : 0;
 
         if (!gameIsFocused) return;
 

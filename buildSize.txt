@@ -1,2 +1,2 @@
-Size: 12422 bytes (93.31%)
-        890 bytes left.
+Size: 12420 bytes (93.30%)
+        892 bytes left.

@@ -64,6 +64,9 @@ async function start() {
         /* aliasSkip */ 5,
     );
     console.log('building', building);
+    
+    /** @type {string[] & {w:number, h:number}} */
+    // @ts-ignore
     let map = [
         '111111111111111111',
         '000000000000000000',
@@ -74,9 +77,7 @@ async function start() {
         '111111111111111111',
     ];
 
-    //@ts-ignore (assigning property to an array)
     map.w = map[0].length;  // map width in tiles
-    //@ts-ignore (assigning property to an array)
     map.h = map.length;     // map height in tiles
 
     const fixedDeltaTime = (1000 / 60) | 0;

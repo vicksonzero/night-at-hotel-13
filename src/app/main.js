@@ -181,7 +181,7 @@ async function start() {
     let doors = [];
 
     for (const room of building.floors[floorId].rooms) {
-        const type = room.roomId == 0
+        const type = room.escapeDoor
             ? 'ex'
             : room.liftDoor
                 ? 'lf'
@@ -228,9 +228,7 @@ async function start() {
         doors.push(door);
     }
 
-    scene.add(room_images);
-    scene.add(doors);
-    scene.add(player);
+    scene.add(room_images, doors, player);
 
     // function lerpRadians(a, b, lerpFactor)// Lerps from angle a to b (both between 0.f and 2*Math.PI), taking the shortest path
     // {
@@ -462,14 +460,14 @@ async function start() {
             if (input.s && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
                 // console.log('jump', player.bd.gd, fixedGameTime, player.bd.gd - fixedGameTime);
                 player.bd.vy = -.315;
-                player.bd_g = g1;
+                player.bd.gv = g1;
                 player.bd.cj = 0;
             }
             if (!input.s) {
                 player.bd.cj = 1;
                 if (player.bd.vy < 0) {
                     if (player.bd.vy < -0.15) player.bd.vy = -0.15;
-                    player.bd_g = g2;
+                    player.bd.gv = g2;
                 }
             }
         },

@@ -131,7 +131,12 @@ Mapping:
   - [ ] Dash
   - [x] Doors
   - [ ] Ride lift
+  - [ ] Game Over screen
+  - [ ] Win screen
 - [ ] Clue collection
+  - [ ] Click clue
+  - [ ] Render clue
+  - [ ] Arrange clues
 - [ ] Boss chasing, circular corridor
   - [x] Player wrap around
   - [x] Doors wrap around

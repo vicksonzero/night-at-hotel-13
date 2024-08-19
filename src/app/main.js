@@ -98,6 +98,8 @@ async function start() {
     console.log('map.length: ', map.map(x => x.length));
     /* #EndIfDev */
 
+    // TODO: build plants
+
 
     //#endregion
 
@@ -166,7 +168,7 @@ async function start() {
         // height: 1.5 * tile_h,
         anchor: { x: 0.5, y: 1 },
         image: images.pi,
-        scaleX: 2,
+        // scaleX: 2, // is set in render()
         scaleY: 2,
 
         // custom properties
@@ -451,6 +453,9 @@ async function start() {
                     // }
                 }
             );
+            player.bd.fc = mv || player.bd.fc;
+            // console.log('player.image', fixedGameTime, fixedGameTime * fixedDeltaTime, Math.ceil(fixedGameTime * fixedDeltaTime * 10) % 2);
+            player.image = !mv ? images.pi : (Math.ceil(fixedGameTime / (fixedDeltaTime * 10)) % 2 == 0 ? images.pr1 : images.pr2);
 
 
             // If up key is pressed and the hero is grounded, jump
@@ -478,6 +483,7 @@ async function start() {
 
             player.x = player.bd.x * tile_w + player.bd.w * .5 * tile_w;
             player.y = player.bd.y * tile_h + player.bd.h * tile_h;
+            player.scaleX = 2 * player.bd.fc;
 
             scene.camera.x = player.x;
 

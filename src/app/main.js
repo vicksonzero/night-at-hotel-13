@@ -47,19 +47,37 @@ const player_speed1 = 0.1;    // player move speed (walking) in tiles/frame²
 const player_speed2 = 0.2;    // player move speed (running) in tiles/frame²
 
 
-let map = [
-    '111111111111111111',
-    '000000000000000000',
-    '000000000000000000',
-    '000000000000000000',
-    '000011100000000000',
-    '000000000111000000',
-    '111111111111111111',
-];
-let map_w = map[0].length;  // map width in tiles
-let map_h = map.length;     // map height in tiles
-
 async function start() {
+
+    let building = generateMap(
+        /* floorCount */ 13,
+        /* floorWidth */ 14,
+
+        /* liftPerFloorMin */ 2,
+        /* liftPerFloorMax */ 4,
+        /* liftRandomCount */ 8,
+        /* accessibleFloorCount */ 13,
+
+        /* aliasMax */ 22,
+        /* aliasMin */ 14,
+        /* aliasSafe */ 3,
+        /* aliasSkip */ 5,
+    );
+    console.log('building', building);
+    let map = [
+        '111111111111111111',
+        '000000000000000000',
+        '000000000000000000',
+        '000000000000000000',
+        '000011100000000000',
+        '000000000111000000',
+        '111111111111111111',
+    ];
+
+    //@ts-ignore (assigning property to an array)
+    map.w = map[0].length;  // map width in tiles
+    //@ts-ignore (assigning property to an array)
+    map.h = map.length;     // map height in tiles
 
     const fixedDeltaTime = (1000 / 60) | 0;
 
@@ -84,22 +102,6 @@ async function start() {
         id: 'a',
         objects: [],
     });
-
-    let building = generateMap({
-        floorCount: 13,
-        floorWidth: 14,
-
-        liftPerFloorMin: 2,
-        liftPerFloorMax: 4,
-        liftRandomCount: 8,
-        accessibleFloorCount: 13,
-
-        aliasMax: 22,
-        aliasMin: 14,
-        aliasSafe: 3,
-        aliasSkip: 5,
-    });
-    console.log('building', building);
 
     // context2.imageSmoothingEnabled = false;
     initPointer();
@@ -129,7 +131,7 @@ async function start() {
         /* #IfDev */
         name: 'room_tiles',
         /* #EndIfDev */
-        x: i * map_w * tile_w,        // starting x,y position of the sprite
+        x: i * map.w * tile_w,        // starting x,y position of the sprite
         y: 0,
         // color: '#5f1e09',  // fill color of the sprite rectangle
         width: a_room_cache.width,     // width and height of the sprite rectangle
@@ -214,7 +216,7 @@ async function start() {
 
         // custom properties
     });
-    scene.add(room_images);
+    scene.add(room_images[1]);
     scene.add(door);
     scene.add(exitDoor);
     scene.add(liftDoor);
@@ -325,9 +327,9 @@ async function start() {
                 /* #IfDev */
                 console.log('gameIsFocused', gameIsFocused);
                 /* #EndIfDev */
-                //@ts-ignore
+                //@ts-ignore (global variable)
                 txa.disabled = gameIsFocused;
-                //@ts-ignore
+                //@ts-ignore (global variable)
                 if (!gameIsFocused) txa.focus();
                 input.tb = 0;
             }
@@ -471,17 +473,17 @@ async function start() {
 
             scene.camera.x = player.x;
 
-            const loopIndex = Math.round((player.bd.x + map_w / 2) / map_w) - 1;
-            // const a0 = Math.floor((loopIndex + 3 - 1) / 3) * 3 - 1;
-            // const a1 = Math.floor((loopIndex + 3 - 2) / 3) * 3 - 0;
-            // const a2 = Math.floor((loopIndex + 3 - 3) / 3) * 3 + 1;
-            // console.log('loopIndex', loopIndex, [a0, a1, a2]);
-            // room_images[0].x = a0 * map_w * tile_w;
-            // room_images[1].x = a1 * map_w * tile_w;
-            // room_images[2].x = a2 * map_w * tile_w;
-            for (const room_image of room_images) {
-                room_image.x = (Math.floor((loopIndex + 1 - room_image.loopIndex) / 3) * 3 + room_image.loopIndex) * map_w * tile_w;
-            }
+            // const loopIndex = Math.round((player.bd.x + map.w / 2) / map.w) - 1;
+            // // const a0 = Math.floor((loopIndex + 3 - 1) / 3) * 3 - 1;
+            // // const a1 = Math.floor((loopIndex + 3 - 2) / 3) * 3 - 0;
+            // // const a2 = Math.floor((loopIndex + 3 - 3) / 3) * 3 + 1;
+            // // console.log('loopIndex', loopIndex, [a0, a1, a2]);
+            // // room_images[0].x = a0 * map.w * tile_w;
+            // // room_images[1].x = a1 * map.w * tile_w;
+            // // room_images[2].x = a2 * map.w * tile_w;
+            // for (const room_image of room_images) {
+            //     room_image.x = (Math.floor((loopIndex + 1 - room_image.loopIndex) / 3) * 3 + room_image.loopIndex) * map.w * tile_w;
+            // }
             scene.render();
         },
 
@@ -506,12 +508,12 @@ function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
     // if (dx <= 0) {
     //     entity.x = Math.max(entity.x, 0);
     // } else {
-    //     entity.x = Math.min(map_w - entity.w, entity.x);
+    //     entity.x = Math.min(map.w - entity.w, entity.x);
     // }
 
     let probeX = (dx <= 0 ? entity.x : entity.x + entity.w);
-    while (probeX < 0) probeX += map_w;
-    probeX = probeX % map_w;
+    while (probeX < 0) probeX += map.w;
+    probeX = probeX % map.w;
 
     const tile1 = +map[~~(entity.y)][~~(probeX)];
     const tile2 = +map[~~(entity.y + 0.5 * entity.h)][~~(probeX)];
@@ -525,7 +527,7 @@ function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
     }
     // if (dx != 0) {
     //     // console.log('tryMoveX', oldX, entity.x, entity.x + entity.w);
-    //     console.log('tryMoveX', entity.x, Math.round((entity.x + map_w / 2) / map_w) - 1);
+    //     console.log('tryMoveX', entity.x, Math.round((entity.x + map.w / 2) / map.w) - 1);
     // }
 
     return entity;
@@ -536,12 +538,12 @@ function tryMoveY(/** @type {ITransform}*/ entity, dy, map, solidCallback) {
     if (dy <= 0) {
         entity.y = Math.max(entity.y, 0);
     } else {
-        entity.y = Math.min(map_h - entity.h, entity.y);
+        entity.y = Math.min(map.h - entity.h, entity.y);
     }
 
     let probeX = entity.x;
-    while (probeX < 0) probeX += map_w;
-    probeX = probeX % map_w;
+    while (probeX < 0) probeX += map.w;
+    probeX = probeX % map.w;
     const probeY = (dy <= 0 ? entity.y : entity.y + entity.h);
 
     const tile1 = +map[~~(probeY)][~~(probeX)];

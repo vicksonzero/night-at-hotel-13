@@ -18,7 +18,7 @@ const aliasSkip = 5;
 
 ;
 
-const building = generateMap({
+const building = generateMap(
     floorCount,
     floorWidth,
     liftPerFloorMax,
@@ -28,7 +28,7 @@ const building = generateMap({
     aliasMin,
     aliasSafe,
     aliasSkip,
-});
+);
 
 writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, JSON.stringify(building, null, 4));
 writeFileSync(`./_out/building.json`, JSON.stringify(building, null, 4));

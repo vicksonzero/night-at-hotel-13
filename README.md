@@ -124,14 +124,17 @@ Mapping:
 
 ## Milestone 1 (Code)
 
-- [x] building generation (cli)
-- [ ] building traversal
-  - [ ] rendering
-  - [ ] run
-  - [ ] dash
-  - [ ] ride lift
-- [ ] clue collection
-- [ ] boss chasing, circular corridor
-- [ ] hiding mechanics
-- [ ] enemies, combat
-- [ ] unlockable tools like faster shoes
+- [x] Building generation (cli)
+- [x] Building traversal
+  - [x] Rendering
+  - [x] Run
+  - [ ] Dash
+  - [ ] Ride lift
+- [ ] Clue collection
+- [ ] Boss chasing, circular corridor
+  - [x] Player wrap around
+  - [ ] Doors wrap around
+  - [ ] Enemies wrap around
+- [ ] Hiding mechanics
+- [ ] Enemies, combat
+- [ ] Unlockable tools like faster shoes

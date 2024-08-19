@@ -79,21 +79,20 @@ export function printB(floorBuffer, line0, line1, line2) {
     floorBuffer[1] += line1;
     floorBuffer[2] += line2;
 }
-export function generateMap(config) {
-    const {
-        floorCount,
-        floorWidth,
+export function generateMap(
+    floorCount,
+    floorWidth,
 
-        liftPerFloorMax,
-        liftRandomCount,
-        accessibleFloorCount,
+    liftPerFloorMin,
+    liftPerFloorMax,
+    liftRandomCount,
+    accessibleFloorCount,
 
-        aliasMax, // maximum amount of floors in the alias naming
-        aliasMin, // minimum amount of floors in the alias naming
-        aliasSafe, // floors lower than this are never superstitious
-        aliasSkip, // amount of superstitious floors that we want to skip
-    } = config;
-
+    aliasMax, // maximum amount of floors in the alias naming
+    aliasMin, // minimum amount of floors in the alias naming
+    aliasSafe, // floors lower than this are never superstitious
+    aliasSkip, // amount of superstitious floors that we want to skip
+) {
 
     const [floorAliasList, skipped] = generateFloorAlias({
         aliasMax,

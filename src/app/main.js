@@ -9,7 +9,7 @@ import { colors } from './colors.js';
 
 import { loadImages } from './images.js';
 import { ArcadeAudio } from './audio.js';
-import { generateMap } from './explore/functions.js';
+import { generateMap } from './mapGenerator.js';
 // import { CanvasRenderingContext2D } from 'canvas';
 
 
@@ -43,12 +43,18 @@ const g1 = 0.016;    // jumping gravity in tiles/frame²
 const g2 = 0.021;    // falling gravity in tiles/frame²
 const tile_w = 32;  // tiles width in px
 const tile_h = 32;  // tiles height in px
-const player_speed1 = 0.1;    // player move speed (walking) in tiles/frame²
-const player_speed2 = 0.2;    // player move speed (running) in tiles/frame²
+const player_speed1 = 0.2;    // player move speed (walking) in tiles/frame²
+const player_speed2 = 0.4;    // player move speed (running) in tiles/frame²
 
 const map_room_w = 7;
 
 async function start() {
+    const a_room_cache = document.createElement("canvas");
+    // loading
+    const images = await loadImages();
+
+    const audio = new ArcadeAudio();
+    // audio.volume = 0; // TODO: make mute button
 
     let building = generateMap(
         /* floorCount */ 13,
@@ -76,27 +82,39 @@ async function start() {
 
 
     /** @type {string[] & {w:number, h:number}} */
-    // @ts-ignore
-    let map = Array(7).fill('');
+    let map;
 
-    for (const room of building.floors[floorId].rooms) {
+    function buildMap() {
+        /* #IfDev */
+        console.log('buildMap');
+        /* #EndIfDev */
+        /** @type {string[] & {w:number, h:number}} */
         // @ts-ignore
-        // map = map.map((row, i) => i != 5
-        //     ? row + Array(map_room_w).fill('0').join('')
-        //     : row + '0000000000');
-        map = map.map((row, i) => row + Array(map_room_w).fill('0').join(''));
+        map = Array(7).fill('');
+
+        for (const room of building.floors[floorId].rooms) {
+            // @ts-ignore
+            // map = map.map((row, i) => i != 5
+            //     ? row + Array(map_room_w).fill('0').join('')
+            //     : row + '0000000000');
+            map = map.map((row, i) => row + Array(map_room_w).fill(0).join(''));
+        }
+
+        map.w = map[0].length;  // map width in tiles
+        map.h = map.length;     // map height in tiles
+
+        map[0] = Array(map.w).fill(1).join('')
+        map[6] = Array(map.w).fill(1).join('')
+
+        /* #IfDev */
+        console.log('map.length: ', map.map(x => x.length));
+        /* #EndIfDev */
+
+
+        cache_map(a_room_cache, map);
     }
 
-    map.w = map[0].length;  // map width in tiles
-    map.h = map.length;     // map height in tiles
-
-    map[0] = Array(map.w).fill('1').join('')
-    map[6] = Array(map.w).fill('1').join('')
-
-    /* #IfDev */
-    console.log('map.length: ', map.map(x => x.length));
-    /* #EndIfDev */
-
+    buildMap();
     // TODO: build plants
 
 
@@ -115,6 +133,13 @@ async function start() {
         /* #IfDev */
         console.log('moveFloor to: ', floorId);
         /* #EndIfDev */
+
+
+        buildMap();
+        updateDoors();
+
+        // player.x = canvas.width / 2;
+        // player.y = canvas.height / 2 + 50;
     }
 
 
@@ -122,12 +147,6 @@ async function start() {
 
     let fixedGameTime = 0;
 
-    const a_room_cache = document.createElement("canvas");
-    // loading
-    const images = await loadImages();
-
-    const audio = new ArcadeAudio();
-    // audio.volume = 0; // TODO: make mute button
 
 
     const _focus = () => focus();
@@ -138,6 +157,7 @@ async function start() {
     let scene = Scene({
         id: 'a',
         objects: [],
+        cullObjects: false,
     });
     canvas.addEventListener('pointerenter', _focus);
     context.imageSmoothingEnabled = false;
@@ -146,11 +166,10 @@ async function start() {
     initPointer();
 
 
-    cache_map(a_room_cache, map);
 
     let room_images = [-1, 0, 1].map((i) => Sprite({
         /* #IfDev */
-        name: 'room_tiles',
+        name: 'room_tilemap',
         /* #EndIfDev */
         x: i * map.w * tile_w,        // starting x,y position of the sprite
         y: 0,
@@ -164,19 +183,19 @@ async function start() {
         anchor: { x: 0, y: 0 },
 
         /* #IfDev */
-        opacity: [0.8, 1, 0.9][i],
+        opacity: [0.9, 1, 0.95][i],
         /* #EndIfDev */
 
 
-        loopIndex: i,
+        loopIndex: i, // TODO: rename to li
     }));
 
     let player = Sprite({
         /* #IfDev */
         name: 'player',
         /* #EndIfDev */
-        x: canvas.width / 2,        // starting x,y position of the sprite
-        y: canvas.height / 2 + 50,
+        x: 0,        // starting x,y position of the sprite
+        y: -10,
         // color: 'red',  // fill color of the sprite rectangle
         // width: .8 * tile_w,     // width and height of the sprite rectangle
         // height: 1.5 * tile_h,
@@ -186,25 +205,19 @@ async function start() {
         scaleY: 2,
 
         // custom properties
-        dimension: 0, // 0=physical, 1=spectral
         /** @type {IEntity} - player body */
-        bd: { x: 15, y: 2, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
+        bd: { x: 15, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
         sprint: false, // aka isSprinting
     });
 
     let doors = [];
 
     for (const room of building.floors[floorId].rooms) {
-        const type = room.escapeDoor
-            ? 'ex'
-            : room.liftDoor
-                ? 'lf'
-                : room.shaft ? 'sh' : 'dr';
         const door = Sprite({
             /* #IfDev */
-            name: 'door',
+            name: `door-${room.roomId}`,
             /* #EndIfDev */
-            x: room.roomId * map_room_w * tile_w,        // starting x,y position of the sprite
+            x: room.roomId * map_room_w * tile_w + tile_w,        // starting x,y position of the sprite
             y: 6 * tile_h,
             // color: 'red',  // fill color of the sprite rectangle
             // width: .6 * tile_w,     // width and height of the sprite rectangle
@@ -212,89 +225,79 @@ async function start() {
             scaleX: 8,
             scaleY: 8,
             anchor: { x: 0, y: 1 },
-            image: {
-                ex: images.ed2,
-                lf: images.ld2,
-                // sf: undefined,
-                dr: images.d
-            }[type],
+            image: images.d,
 
-            // custom properties
-            type,
             room,
-            floorId: floorId,
-            roomId: room.roomId,
         });
         door.addChild(Text({
-            text: {
-                // ex: undefined,
-                lf: building.lifts[room.liftDoor?.liftId]?.floorIds.map(x => building.floors[x].floorAlias).reverse().join('\n'),
-                // sf: undefined,
-                dr: building.alias.floors.at(-door.roomId),
-            }[type],
-            x: room.liftDoor ? door.width + 2 : door.width / 2 + 1,
+            text: '',
+            x: 0,
             y: -10,
             font: '3px Arial',
             color: 'white',
             anchor: { x: 0.5, y: 0.5 },
             textAlign: 'center'
         }));
+        door.addChild(Text({
+            text: '',
+            x: -1,
+            y: -10,
+            font: '4px Arial',
+            color: 'white',
+            anchor: { x: 1, y: 0.5 },
+            textAlign: 'right'
+        }));
         doors.push(door);
     }
 
     scene.add(room_images, doors, player);
 
-    // function lerpRadians(a, b, lerpFactor)// Lerps from angle a to b (both between 0.f and 2*Math.PI), taking the shortest path
-    // {
-    //     let result;
-    //     let diff = b - a;
-    //     if (diff < -Math.PI) {
-    //         // lerp upwards past 2*Math.PI
-    //         b += 2 * Math.PI;
-    //         result = lerp(a, b, lerpFactor);
-    //         if (result >= 2 * Math.PI) {
-    //             result -= 2 * Math.PI;
-    //         }
-    //     }
-    //     else if (diff > Math.PI) {
-    //         // lerp downwards past 0
-    //         b -= 2 * Math.PI;
-    //         result = lerp(a, b, lerpFactor);
-    //         if (result < 0) {
-    //             result += 2 * Math.PI;
-    //         }
-    //     }
-    //     else {
-    //         // straight lerp
-    //         result = lerp(a, b, lerpFactor);
-    //     }
-
-    //     return result;
-    // }
-    // function randomUnitVector() {
-    //     const rotation = Math.random() * 2 * Math.PI;
-    //     return {
-    //         x: Math.cos(rotation),
-    //         y: Math.sin(rotation),
-    //     }
-    // }
-    // function dist(a, b) { // not using it saves more space ?!
-    //     return Math.hypot(a.x - b.x, a.y - b.y);
-    // }
-
-    // function getFreeSpace() {
-    //     for (let trial = 0; trial < 100; trial++) {
-    //         const pos = {
-    //             x: Math.random() * (canvas.width - 100) + 50,
-    //             y: Math.random() * (canvas.height - 100) + 50,
-    //         };
-    //         const spawnWidth = 64;
-
-    //         if (!entities.some(entity => entity.position.distance(pos) < (entity.size ?? entity.width) / 2 + spawnWidth / 2)) {
-    //             return pos
-    //         }
-    //     }
-    // }
+    function updateDoors() {
+        /* #IfDev */
+        console.log('updateDoors');
+        /* #EndIfDev */
+        doors.forEach(door => {
+            door.room = building.floors[floorId].rooms[door.room.roomId];
+            // custom properties
+            door.type = door.room.escapeDoor ? 'ex'
+                : door.room.liftDoor ? 'lf'
+                    : door.room.shaft ? 'sh'
+                        : door.room.empty ? 'em'
+                            : 'dr';
+            door.image = {
+                ex: images.ed2,
+                lf: images.ld2,
+                // sf: undefined,
+                em: images.d,
+                dr: images.d
+            }[door.type];
+            door.children[0].x =
+                //  door.room.escapeDoor
+                //     ? door.width / 2 + 0.5
+                //     :
+                door.room.liftDoor
+                    ? door.width + 2
+                    : door.width / 2 + 0.5;
+            door.children[0].y = door.room.escapeDoor
+                ? -16
+                : -10;
+            door.children[0].text = {
+                ex: 'EXIT',
+                lf: building.lifts[door.room.liftDoor?.liftId]?.floorIds.map(x => building.floors[x].fa).reverse().join('\n'),
+                // sf: undefined,
+                dr: building.af.at(-door.room.roomId),
+                // em: undefined,
+            }[door.type] ?? ''
+            door.children[1].text = {
+                // ex: undefined,
+                lf: building.floors[floorId].fa + '/F',
+                // sf: undefined,
+                // dr: undefined,
+                // em: undefined,
+            }[door.type] ?? ''
+        })
+    }
+    updateDoors();
 
 
     // Inputs (see https://xem.github.io/articles/jsgamesinputs.html)
@@ -376,7 +379,7 @@ async function start() {
         //     input.s = 0;
         // }
         if (input.u && 'u' == keyMap[w]) {
-            // move fontLanguageOverride: 
+            // move floor
             for (const door of doors) {
                 if (door.room.liftDoor && collides(player, door)) {
                     moveFloor(1, door.room);
@@ -525,13 +528,13 @@ async function start() {
             for (const door of doors) {
                 while (door.x - player.x > map.w / 2 * tile_w) {
                     /* #IfDev */
-                    console.log(`door[${door.roomId}] is too right`);
+                    console.log(`door[${door.room.roomId}] is too right`);
                     /* #EndIfDev */
                     door.x -= map.w * tile_w;
                 }
                 while (player.x - door.x > map.w / 2 * tile_w) {
                     /* #IfDev */
-                    console.log(`door[${door.roomId}] is too left`);
+                    console.log(`door[${door.room.roomId}] is too left`);
                     /* #EndIfDev */
                     door.x += map.w * tile_w;
                 }

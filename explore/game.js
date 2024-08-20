@@ -1,6 +1,8 @@
 //@ts-check
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { createFloorBuffer, generateMap, printB, printMap, printRoom, printRoomSeparator } from "./functions.js";
+import { generateMap } from "../src/app/mapGenerator.js";
+
+import { printMap, createFloorBuffer, printB, printRoomSeparator, printRoom } from "./functions.js";
 import { DateTime } from 'luxon';
 
 
@@ -38,8 +40,8 @@ function tryExit() {
         isGameOver = true;
         isWin = true;
     } else {
-        lastAnswer = `${building.floors.find(x => x.isExit)?.floorAlias}/F [${building.floors.find(x => x.isExit)?.floorId}]`;
-        lastSkipped = building.alias.skipped.join(', ');
+        lastAnswer = `${building.floors.find(x => x.isExit)?.fa}/F [${building.floors.find(x => x.isExit)?.floorId}]`;
+        lastSkipped = building.as.join(', ');
         building = loadOrGenerateBuilding(true);
         writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, JSON.stringify(building, null, 4));
         position = getStartingPosition(building);
@@ -97,18 +99,18 @@ function render(message) {
     let outputBuffer = createFloorBuffer();
 
     // @ts-ignore
-    const { floorId, floorAlias, rooms, isAccessible, isExit } = floors[position.floorId];
+    const { floorId, fa, rooms, acc, isExit } = floors[position.floorId];
     const floorWidth = building.floors[0].rooms.length;
     // printB(outputBuffer,
     //     `      `,
-    //     ` ${('' + (floorAlias)).padStart(2, ' ')}/F `,
+    //     ` ${('' + (fa)).padStart(2, ' ')}/F `,
     //     `      `
     // );
     console.log('position', JSON.stringify({ x: position.roomId, y: position.floorId }));
     printRoomSeparator(outputBuffer);
     for (let i = -2; i <= 2; i++) {
         const room = rooms[(position.roomId + i + floorWidth) % floorWidth];
-        printRoom(outputBuffer, room, floors, isAccessible, true);
+        printRoom(outputBuffer, room, floors, acc, true);
         printRoomSeparator(outputBuffer);
     }
 
@@ -121,7 +123,7 @@ function render(message) {
     // );
     printB(outputBuffer,
         `      `,
-        ` ${('' + (floorAlias)).padStart(2, ' ')}/F `,
+        ` ${('' + (fa)).padStart(2, ' ')}/F `,
         `      `
     );
 
@@ -138,7 +140,7 @@ function render(message) {
     const room = rooms[(position.roomId + floorWidth) % floorWidth];
     if (room.liftDoor)
         console.log(new Array(lineLength / 2).fill(' ').join('') +
-            ' Lift to ' + building.lifts[room.liftDoor.liftId].floorIds.map(x => building.floors[x].floorAlias).join(', ')
+            ' Lift to ' + building.lifts[room.liftDoor.liftId].floorIds.map(x => building.floors[x].fa).join(', ')
         );
     else if (room.escapeDoor)
         console.log(new Array(lineLength / 2).fill(' ').join('') +
@@ -175,7 +177,7 @@ function loadOrGenerateBuilding(isNew) {
 
 function getStartingPosition(building) {
 
-    const accessibleFloors = building.floors.filter(f => f.isAccessible);
+    const accessibleFloors = building.floors.filter(f => f.acc);
 
     let position = {
         floorId: accessibleFloors[Math.floor(Math.random() * accessibleFloors.length / 2)].floorId,

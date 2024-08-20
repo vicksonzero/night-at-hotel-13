@@ -130,7 +130,7 @@ Mapping:
   - [x] Run
   - [ ] Dash
   - [x] Doors
-  - [ ] Ride lift
+  - [x] Ride lift
   - [ ] Game Over screen
   - [ ] Win screen
 - [ ] Clue collection

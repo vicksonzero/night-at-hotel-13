@@ -57,6 +57,14 @@ export default {
             template: 'src/index.html',
             minify: isProduction && {
                 collapseWhitespace: true,
+                minifyJS: {
+                    mangle: {
+                        properties: {
+                            // debug: '_mangled', // uncomment to mark minified symbols with my tag
+                            regex: /^(?!_)[\w]{4,}$/,
+                        },
+                    },
+                }
             },
             inlineSource: isProduction && '\.(js|css)$'
         }),

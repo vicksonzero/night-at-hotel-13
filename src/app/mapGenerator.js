@@ -1,84 +1,25 @@
+
 //@ts-check
 function onlyUnique(value, index, array) {
     return array.indexOf(value) === index;
 }
-export function createRoom(floorId, roomId) {
-
-    return {
-        t: 'room',
-        floorId, roomId,
-        escapeDoor: false,
-        // liftDoor: createLiftDoor(liftId)
-        // shaft: liftId
-    };
-}
-
-export function createLiftDoor(liftId) {
-    return {
-        liftId,
-        // up, down
-    }
-}
-export function createLift(liftId, roomId, floorIds = []) {
-    floorIds.sort((a, b) => a - b);
-    return {
-        liftId,
-        roomId,
-        floorIds,
-    }
-}
-export function printRoom(floorBuffer, room, floors, isAccessible, isPlayMode = false) {
-    if (room.liftDoor) {
-
-        const upStr = room.liftDoor.up != null ? ('' + floors[room.liftDoor.up].floorAlias).padStart(2, ' ') : '--';
-        const downStr = room.liftDoor.down != null ? ('' + floors[room.liftDoor.down].floorAlias).padStart(2, ' ') : '--';
-        floorBuffer[0] += `  ${upStr}  `;
-        if (room.liftDoor.up == null && room.liftDoor.down == null)
-            floorBuffer[1] += ` |${('' + room.liftDoor.liftId).padStart(2, ' ')}| `;
-        else
-            floorBuffer[1] += ` |^v| `;
-        floorBuffer[2] += `  ${downStr}  `;
-    } else if (room.escapeDoor) {
-        floorBuffer[0] += ` >ESC `;
-        floorBuffer[1] += ` [  ] `;
-        floorBuffer[2] += ` [  ] `;
-    } else if (!isPlayMode && room.shaft != null) {
-        floorBuffer[0] += `  ||  `;
-        floorBuffer[1] += `  ||  `;
-        floorBuffer[2] += `  ||  `;
-    } else if (!isAccessible) {
-        floorBuffer[0] += `XXXXXX`;
-        floorBuffer[1] += `XXXXXX`;
-        floorBuffer[2] += `XXXXXX`;
-    } else if (room.hint) {
-        floorBuffer[0] += `      `;
-        floorBuffer[1] += ` (00) `;
-        floorBuffer[2] += `      `;
-    } else {
-        floorBuffer[0] += `      `;
-        floorBuffer[1] += `      `;
-        floorBuffer[2] += `      `;
-    }
-}
-
-
-export function createFloorBuffer() {
-    return [
-        "",
-        "",
-        ""
-    ];
-}
-export function printRoomSeparator(floorBuffer) {
-    floorBuffer[0] += `.`;
-    floorBuffer[1] += `.`;
-    floorBuffer[2] += `.`;
-}
-export function printB(floorBuffer, line0, line1, line2) {
-    floorBuffer[0] += line0;
-    floorBuffer[1] += line1;
-    floorBuffer[2] += line2;
-}
+// export function createRoom(floorId, roomId) {
+//     return ;
+// }
+// export function createLiftDoor(liftId) {
+//     return {
+//         liftId,
+//         // up, down
+//     }
+// }
+// export function createLift(liftId, roomId, floorIds = []) {
+//     floorIds.sort((a, b) => a - b);
+//     return {
+//         liftId,
+//         roomId,
+//         floorIds,
+//     }
+// }
 export function generateMap(
     floorCount,
     floorWidth,
@@ -108,15 +49,21 @@ export function generateMap(
     const building = {
         /** @type {Array<any>} */
         lifts: [],
-        alias: { floors: floorAliasList, skipped },
-        floors: new Array(floorCount).fill(0).map((_, floorId) => ({
+        af: floorAliasList,
+        as: skipped,
+        floors: Array(floorCount).fill(0).map((_, floorId) => ({
             floorId,
-            isAccessible: false,
+            acc: false, // isAccessible
             isExit: false,
-            floorAlias: floorId + 1,
-            rooms: new Array(floorWidth).fill(0).map((_, roomId) => (
-                createRoom(floorId, roomId)
-            ))
+            fa: 0, // floor alias
+            rooms: Array(floorWidth).fill(0).map((_, roomId) => ({
+                // t: 'room',
+                floorId, roomId,
+                escapeDoor: roomId == 0,
+                // liftDoor: createLiftDoor(liftId)
+                // shaft: liftId
+                empty: Math.random() < 0.3,
+            }))
         }))
     }
 
@@ -128,13 +75,9 @@ export function generateMap(
     /* #EndIfDev */
     let accessible = [];
     accessible.push(exitFloor);
-    floors[exitFloor].isAccessible = true;
+    floors[exitFloor].acc = true;
     floors[exitFloor].isExit = true;
 
-
-    for (const floor of floors) {
-        floor.rooms[0].escapeDoor = true;
-    }
 
     for (let i = 0; i < liftRandomCount; i++) {
 
@@ -185,7 +128,7 @@ export function generateMap(
 
     let i = 0;
     for (let floorIndex = floors.length - 1; floorIndex >= 0; floorIndex--) {
-        floors[floorIndex].floorAlias = building.alias.floors[i];
+        floors[floorIndex].fa = building.af[i];
         i++;
     }
 
@@ -231,7 +174,7 @@ export function generateLiftRandomly(building, accessible, liftPerFloorMax, isEx
 
     generateLiftDraft(building, floorId, randomRoomId.roomId, toFloorId);
 
-    floors[toFloorId].isAccessible = true;
+    floors[toFloorId].acc = true;
     accessible.push(toFloorId);
 }
 
@@ -245,7 +188,12 @@ export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
 
     const direction = Math.sign(toFloorId - fromFloorId);
 
-    const newLift = createLift(lifts.length, roomId, [fromFloorId, toFloorId]);
+    const newLift = {
+        liftId: lifts.length,
+        roomId,
+        floorIds: [fromFloorId, toFloorId],
+    };
+    newLift.floorIds.sort((a, b) => a - b);
     /* #IfDev */
     console.log(`Create lift #${newLift.liftId} (${fromFloorId}->${toFloorId}) on room '${roomId}', dir=${direction}`);
     /* #EndIfDev */
@@ -260,8 +208,8 @@ export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
         /* #EndIfDev */
         floor.rooms[roomId].shaft = newLift.liftId;
     }
-    floors[fromFloorId].rooms[roomId].liftDoor = createLiftDoor(newLift.liftId);
-    floors[toFloorId].rooms[roomId].liftDoor = createLiftDoor(newLift.liftId);
+    floors[fromFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
+    floors[toFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
 }
 
 export function mergeLiftsInBuilding(building) {
@@ -387,57 +335,15 @@ export function generateFloorAlias(
     for (let i = 0; i < aliasSkip - 1; i++) {
         let skippingFloor;
 
-        const safeFloors = new Array(aliasSafe).fill(0).map((_, i) => i);
         do {
             skippingFloor = Math.floor(Math.random() * result.length);
-        } while (!(!safeFloors.includes(result[skippingFloor])));
+        } while (!(result[skippingFloor] > aliasSafe));
         skippedAliasList.push(...result.splice(skippingFloor, 1));
     }
 
-    skippedAliasList.sort((a, b) => -(a - b));
+    skippedAliasList.sort((a, b) => b - a);
     return [result, skippedAliasList];
 }
-
-export function printMap(building) {
-    const { floors, lifts } = building;
-    /* #IfDev */
-    console.log('');
-    /* #EndIfDev */
-
-    let outputBuffer = createFloorBuffer();
-    for (let floorIndex = floors.length - 1; floorIndex >= 0; floorIndex--) {
-        outputBuffer = createFloorBuffer();
-
-        const { floorId, floorAlias, rooms, isAccessible } = floors[floorIndex];
-        printB(outputBuffer,
-            `      `,
-            ` ${('' + (floorAlias)).padStart(2, ' ')}/F `,
-            `      `
-        );
-        printRoomSeparator(outputBuffer);
-        for (const room of rooms) {
-            printRoom(outputBuffer, room, floors, isAccessible);
-            printRoomSeparator(outputBuffer);
-        }
-
-        printB(outputBuffer,
-            `      `,
-            ` [${('' + (floorId)).padStart(2, ' ')}] `,
-            `      `
-        );
-
-        /* #IfDev */
-        console.log(new Array(outputBuffer[0].length).fill('-').join(''));
-        console.log(outputBuffer[0]);
-        console.log(outputBuffer[1]);
-        console.log(outputBuffer[2]);
-        /* #EndIfDev */
-    }
-    /* #IfDev */
-    console.log(new Array(outputBuffer[0].length).fill('-').join(''));
-    /* #EndIfDev */
-}
-
 
 function sortBy(array, predicate) {
     const copy = [...array];

@@ -10,7 +10,8 @@
     "build": "webpack --mode production",
     "//bulid": "typo mitigation",
     "bulid": "npm run build",
-    "postbuild": "node postbuild.js"
+    "postbuild": "node postbuild.js",
+    "serve": "npx http-server ./dist"
   },
   "repository": {
     "type": "git",

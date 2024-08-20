@@ -37,6 +37,7 @@ import { generateMap } from './mapGenerator.js';
  * @property {number} [vy]       - velocity y, used for gravity
  */
 
+//#region Global var
 
 // World
 const g1 = 0.016;    // jumping gravity in tiles/frame²
@@ -47,6 +48,8 @@ const player_speed1 = 0.2;    // player move speed (walking) in tiles/frame²
 const player_speed2 = 0.4;    // player move speed (running) in tiles/frame²
 
 const map_room_w = 7;
+
+//#endregion
 
 async function start() {
     const a_room_cache = document.createElement("canvas");
@@ -147,7 +150,7 @@ async function start() {
 
     let fixedGameTime = 0;
 
-
+    //#region Init
 
     const _focus = () => focus();
     // const canvas2 = document.querySelector('#b');
@@ -165,7 +168,9 @@ async function start() {
     // context2.imageSmoothingEnabled = false;
     initPointer();
 
+    //#endregion
 
+    //#region Sprites
 
     let room_images = [-1, 0, 1].map((i) => Sprite({
         /* #IfDev */
@@ -252,6 +257,7 @@ async function start() {
 
     scene.add(room_images, doors, player);
 
+
     function updateDoors() {
         /* #IfDev */
         console.log('updateDoors');
@@ -299,6 +305,9 @@ async function start() {
     }
     updateDoors();
 
+    //#endregion
+
+    //#region Input
 
     // Inputs (see https://xem.github.io/articles/jsgamesinputs.html)
     const input = {
@@ -423,7 +432,11 @@ async function start() {
     window.addEventListener('keydown', keyHandler);
     window.addEventListener('keyup', keyHandler);
 
+    //#endregion
+
+
     let loop = GameLoop({  // create the main game loop
+        //#region update()
         update() { // update the game state
             // if (gameIsOver) return;
             // if (gameIsPaused) return;
@@ -506,6 +519,8 @@ async function start() {
                 }
             }
         },
+        //#endregion
+        //#region render()
         render() { // render the game state
             // context2.clearRect(0, 0, canvas2.width, canvas2.height);
             // context.save();
@@ -542,7 +557,7 @@ async function start() {
 
             scene.render();
         },
-
+        //#endregion
     });
 
     loop.start();    // start the game
@@ -558,7 +573,7 @@ async function start() {
         start();
     }
 }
-
+//#region  tryMoveX()
 function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
     entity.x += dx;
     // if (dx <= 0) {
@@ -588,7 +603,8 @@ function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
 
     return entity;
 }
-
+//#endregion
+//#region tryMoveY()
 function tryMoveY(/** @type {ITransform}*/ entity, dy, map, solidCallback) {
     entity.y += dy;
     if (dy <= 0) {
@@ -612,7 +628,7 @@ function tryMoveY(/** @type {ITransform}*/ entity, dy, map, solidCallback) {
 
     return entity;
 }
-
+//#endregion
 function cache_map(cache, _map) {
     const cache_c = cache.getContext('2d');
     // -10 bytes zipped compared to nested for-loops

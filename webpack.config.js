@@ -55,9 +55,14 @@ export default {
     plugins: [
         new HtmlWebpackPlugin({
             template: 'src/index.html',
+            // minify: false,
             minify: isProduction && {
                 collapseWhitespace: true,
                 minifyJS: {
+                    compress: {
+                        module: true,
+                        // unsafe: true,
+                    },
                     mangle: {
                         properties: {
                             // debug: '_mangled', // uncomment to mark minified symbols with my tag

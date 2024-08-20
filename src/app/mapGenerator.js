@@ -183,7 +183,10 @@ export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
     // if can't, then connect to existing lift
     const { floors, lifts } = building;
 
+
+    /* #IfDev */
     if (fromFloorId == toFloorId) throw new Error(`Cannot create lift on the same level '${fromFloorId}'`);
+    /* #EndIfDev */
 
 
     const direction = Math.sign(toFloorId - fromFloorId);

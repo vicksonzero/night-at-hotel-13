@@ -131,8 +131,8 @@ Mapping:
   - [ ] Dash
   - [x] Doors
   - [x] Ride lift
-  - [ ] Game Over screen
-  - [ ] Win screen
+  - [x] Game Over screen
+  - [x] Win screen
 - [ ] Clue collection
   - [ ] Click clue
   - [ ] Render clue

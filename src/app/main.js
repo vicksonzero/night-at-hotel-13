@@ -49,9 +49,26 @@ const player_speed2 = 0.4;    // player move speed (running) in tiles/frame²
 
 const map_room_w = 7;
 
+// transitions:
+// 0 = none, 
+// 1 = swipe up, 
+// 2 = swipe down, 
+// 3 = falling out of level, aka Game Over, entering next loop
+// 4 = level start (black fade out)
+// 5 = win
+const transition_length_1 = 2000;
+const transition_length_2 = transition_length_1;
+const transition_length_3 = 5000;
+const transition_length_4 = 2000;
+const transition_length_5 = 7000;
+
+let loopCount = -1;
+
+
 //#endregion
 
 async function start() {
+    loopCount++;
     const a_room_cache = document.createElement("canvas");
     // loading
     const images = await loadImages();
@@ -59,6 +76,12 @@ async function start() {
     const audio = new ArcadeAudio();
     // audio.volume = 0; // TODO: make mute button
 
+    let gameIsOver = false;
+    let transitionType = 4;
+    // transitions use real world time, while game time is paused
+    let transitioningUntil = Date.now() + transition_length_4;
+
+    let distFromExit = 0;
     let building = generateMap(
         /* floorCount */ 13,
         /* floorWidth */ 14,
@@ -80,8 +103,14 @@ async function start() {
     //#region Build level
 
 
-    let floorId = 5;
+    let floorId;
     // let roomId = 3;
+    do {
+        floorId = Math.floor(Math.random() * building.floors.length);
+    } while (building.floors[floorId].isExit || !building.floors[floorId].acc);
+    /* #IfDev */
+    console.log('floorId', floorId);
+    /* #EndIfDev */
 
 
     /** @type {string[] & {w:number, h:number}} */
@@ -98,16 +127,16 @@ async function start() {
         for (const room of building.floors[floorId].rooms) {
             // @ts-ignore
             // map = map.map((row, i) => i != 5
-            //     ? row + Array(map_room_w).fill('0').join('')
+            //     ? row + "0".repeat(map_room_w)
             //     : row + '0000000000');
-            map = map.map((row, i) => row + Array(map_room_w).fill(0).join(''));
+            map = map.map((row, i) => row + "0".repeat(map_room_w));
         }
 
         map.w = map[0].length;  // map width in tiles
         map.h = map.length;     // map height in tiles
 
-        map[0] = Array(map.w).fill(1).join('')
-        map[6] = Array(map.w).fill(1).join('')
+        map[0] = "1".repeat(map.w);
+        map[6] = "1".repeat(map.w);
 
         /* #IfDev */
         console.log('map.length: ', map.map(x => x.length));
@@ -123,10 +152,35 @@ async function start() {
 
     //#endregion
 
+    function tryEscape() {
+        if (building.floors[floorId].isExit) {
+            // win
+            console.log('win');
+            gameIsOver = true;
+            transitionType = 5;
+            transitioningUntil = Date.now() + transition_length_5;
+        } else {
+            setTimeout(() => {
+                restart();
+            }, transition_length_3);
+
+            /* #IfDev */
+            console.log('building.exitFloorId: ', floorId, building.exitFloorId);
+            /* #EndIfDev */
+
+            // player.x = canvas.width / 2;
+            // player.y = canvas.height / 2 + 50;
+            distFromExit = Math.abs(floorId - building.exitFloorId);
+            transitionType = 3;
+            transitioningUntil = Date.now() + transition_length_3;
+        }
+    }
+
     function moveFloor(floorDir, room) {
         /* #IfDev */
         console.log('moveFloor:', floorDir, room);
         /* #EndIfDev */
+
         if (!room.liftDoor) return;
         if (floorDir > 0 && room.liftDoor.up == null) return;
         if (floorDir < 0 && room.liftDoor.down == null) return;
@@ -138,11 +192,15 @@ async function start() {
         /* #EndIfDev */
 
 
-        buildMap();
-        updateDoors();
+        setTimeout(() => {
+            buildMap();
+            updateDoors();
+        }, transition_length_1 / 2);
 
         // player.x = canvas.width / 2;
         // player.y = canvas.height / 2 + 50;
+        transitionType = floorDir > 0 ? 1 : 2;
+        transitioningUntil = Date.now() + transition_length_1;
     }
 
 
@@ -232,7 +290,9 @@ async function start() {
             anchor: { x: 0, y: 1 },
             image: images.d,
 
+            // custom properties
             room,
+            playerInContact: 0,
         });
         door.addChild(Text({
             text: '',
@@ -263,6 +323,15 @@ async function start() {
         console.log('updateDoors');
         /* #EndIfDev */
         doors.forEach(door => {
+            if (collides(player, door)) {
+                door.playerInContactTime += fixedDeltaTime;
+
+                /* #IfDev */
+                // if (door.room.liftDoor) console.log('liftDoor.playerInContactTime', door.playerInContactTime);
+                /* #EndIfDev */
+            } else {
+                door.playerInContactTime = Math.max(0,);
+            }
             door.room = building.floors[floorId].rooms[door.room.roomId];
             // custom properties
             door.type = door.room.escapeDoor ? 'ex'
@@ -272,7 +341,7 @@ async function start() {
                             : 'dr';
             door.image = {
                 ex: images.ed2,
-                lf: images.ld2,
+                lf: [images.ld1, images.ld2, images.ld3][Math.ceil(Math.min(1, door.playerInContactTime / 700) * 2)],
                 // sf: undefined,
                 em: images.d,
                 dr: images.d
@@ -303,12 +372,12 @@ async function start() {
             }[door.type] ?? ''
         })
     }
-    updateDoors();
 
     //#endregion
 
     //#region Input
 
+    let gameIsFocused = true;
     // Inputs (see https://xem.github.io/articles/jsgamesinputs.html)
     const input = {
         // u: 0,
@@ -320,7 +389,6 @@ async function start() {
         // c2: 0, /* cheats */
     };
 
-    let gameIsFocused = true;
     const keyHandler = (e) => {
         const w = e.keyCode;
 
@@ -387,16 +455,19 @@ async function start() {
         //     audio.play('test');
         //     input.s = 0;
         // }
-        if (input.u && 'u' == keyMap[w]) {
+        if (input.u && 'u' == keyMap[w] && transitioningUntil <= Date.now() && !gameIsOver) {
             // move floor
             for (const door of doors) {
                 if (door.room.liftDoor && collides(player, door)) {
                     moveFloor(1, door.room);
                 }
+                if (door.room.escapeDoor && collides(player, door)) {
+                    tryEscape();
+                }
             }
             input.u = 0;
         }
-        if (input.d && 'd' == keyMap[w]) {
+        if (input.d && 'd' == keyMap[w] && transitioningUntil <= Date.now() && !gameIsOver) {
             // move floor
             for (const door of doors) {
                 if (door.room.liftDoor && collides(player, door)) {
@@ -438,6 +509,7 @@ async function start() {
     let loop = GameLoop({  // create the main game loop
         //#region update()
         update() { // update the game state
+            if (transitioningUntil > Date.now()) return;
             // if (gameIsOver) return;
             // if (gameIsPaused) return;
             // if (tutIsShown) return;
@@ -518,6 +590,8 @@ async function start() {
                     player.bd.gv = g2;
                 }
             }
+
+            updateDoors();
         },
         //#endregion
         //#region render()
@@ -526,12 +600,13 @@ async function start() {
             // context.save();
             // background
             // context.fillStyle = BACKGROUND_COLOR;
+            context.globalAlpha = 1;
             context.fillStyle = '#000000';
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             player.x = player.bd.x * tile_w + player.bd.w * .5 * tile_w;
             player.y = player.bd.y * tile_h + player.bd.h * tile_h;
-            player.scaleX = 2 * player.bd.fc;
+            player.scaleX = transitionType == 3 ? 0 : 2 * player.bd.fc;
 
             scene.camera.x = player.x;
 
@@ -556,6 +631,66 @@ async function start() {
             }
 
             scene.render();
+
+            if (transitioningUntil > Date.now() || transitionType == 5) {
+                switch (transitionType) {
+                    case 1:  // up
+                    case 2: // down
+                        const height = a_room_cache.height + a_room_cache.height + 0;
+                        // const speed = height / transition_length_1;
+                        const yy = (1 - (transitioningUntil - Date.now()) / transition_length_1) * (height + a_room_cache.height);
+                        /* #IfDev */
+                        // console.log('fillRect', 1 - ((transitioningUntil - Date.now()) / transition_length_1), yy, a_room_cache.height);
+                        /* #EndIfDev */
+
+                        context.fillStyle = '#000000';
+                        context.fillRect(0, transitionType == 1 ? (-yy + a_room_cache.height) : (yy - height), canvas.width, height);
+                        break;
+                    case 3: // fall into the next loop
+                        context.fillStyle = '#000000';
+                        const radius = Math.pow(1 - (transitioningUntil - Date.now()) / transition_length_3, 2) * canvas.width * 2;
+                        // const scale = Math.min(2, (transitioningUntil - Date.now()) / transition_length_3 * 2.5);
+                        const scale = (1 - Math.pow(1 - ((transitioningUntil - Date.now()) / transition_length_3), 2)) * 4;
+                        /* #IfDev */
+                        // console.log('radius', radius, scale);
+                        /* #EndIfDev */
+                        context.beginPath();
+                        context.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
+                        context.fill();
+                        context.drawImage(images.pf, canvas.width / 2 - 16 * scale / 2, canvas.height / 2 + 10 - 16 * 0.8 * scale, 16 * scale, 16 * scale);
+
+                        if (transitioningUntil - Date.now() < 2000) {
+                            context.fillStyle = 'white';
+                            context.font = "32px Arial";
+                            context.textAlign = "center";
+                            context.fillText("No escape!", canvas.width / 2, canvas.height / 2 - 40);
+                            context.font = "18px Arial";
+                            context.fillText("You were " + distFromExit + " floors from the true 13/F", canvas.width / 2, canvas.height / 2 + 40);
+                            context.fillText("Randomizing the hotel...", canvas.width / 2, canvas.height / 2 + 40 + 18);
+                        }
+                        break;
+                    case 4: // start level
+                        context.fillStyle = '#000000';
+                        context.globalAlpha = Math.pow((transitioningUntil - Date.now()) / transition_length_4, 2);
+                        context.fillRect(0, 0, canvas.width, canvas.height);
+                        break;
+                    case 5: // win
+                        context.fillStyle = 'white';
+                        context.globalAlpha = Math.pow((1 - (transitioningUntil - Date.now()) / transition_length_5) * 2, 2);
+                        context.fillRect(0, 0, canvas.width, canvas.height);
+
+                        if (transitioningUntil - Date.now() < 1000) {
+                            context.fillStyle = '#000000';
+                            context.font = "32px Arial";
+                            context.textAlign = "center";
+                            context.fillText("You win!", canvas.width / 2, canvas.height / 2 - 40);
+                            context.font = "18px Arial";
+                            context.fillText("You win after " + loopCount + " fail attempts", canvas.width / 2, canvas.height / 2 + 40);
+                            context.fillText("Refresh the page to play again", canvas.width / 2, canvas.height / 2 + 40 + 18);
+                        }
+                        break;
+                }
+            }
         },
         //#endregion
     });

@@ -34,7 +34,7 @@ export function generateMap(
     aliasSafe, // floors lower than this are never superstitious
     aliasSkip, // amount of superstitious floors that we want to skip
 ) {
-
+    console.log('generateMap');
     const [floorAliasList, skipped] = generateFloorAlias(
         aliasMax,
         aliasMin,
@@ -51,6 +51,7 @@ export function generateMap(
         lifts: [],
         af: floorAliasList,
         as: skipped,
+        exitFloorId: 13 - (floorAliasList.length - floorCount + 1),
         floors: Array(floorCount).fill(0).map((_, floorId) => ({
             floorId,
             acc: false, // isAccessible
@@ -69,14 +70,13 @@ export function generateMap(
 
     const { floors } = building;
 
-    const exitFloor = 13 - (floorAliasList.length - floorCount + 1);
     /* #IfDev */
-    console.log('exitFloor', exitFloor);
+    console.log('exitFloor', building.exitFloorId);
     /* #EndIfDev */
     let accessible = [];
-    accessible.push(exitFloor);
-    floors[exitFloor].acc = true;
-    floors[exitFloor].isExit = true;
+    accessible.push(building.exitFloorId);
+    floors[building.exitFloorId].acc = true;
+    floors[building.exitFloorId].isExit = true;
 
 
     for (let i = 0; i < liftRandomCount; i++) {

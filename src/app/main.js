@@ -59,7 +59,7 @@ const map_room_w = 7;
 const transition_length_1 = 2000;
 const transition_length_2 = transition_length_1;
 const transition_length_3 = 5000;
-const transition_length_4 = 2000;
+const transition_length_4 = 4000;
 const transition_length_5 = 7000;
 
 let loopCount = -1;
@@ -269,7 +269,7 @@ async function start() {
 
         // custom properties
         /** @type {IEntity} - player body */
-        bd: { x: 15, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
+        bd: { x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
         sprint: false, // aka isSprinting
     });
 
@@ -292,7 +292,7 @@ async function start() {
 
             // custom properties
             room,
-            playerInContact: 0,
+            playerInContactTime: 0,
         });
         door.addChild(Text({
             text: '',
@@ -320,7 +320,7 @@ async function start() {
 
     function updateDoors() {
         /* #IfDev */
-        console.log('updateDoors');
+        // console.log('updateDoors');
         /* #EndIfDev */
         doors.forEach(door => {
             if (collides(player, door)) {
@@ -330,7 +330,7 @@ async function start() {
                 // if (door.room.liftDoor) console.log('liftDoor.playerInContactTime', door.playerInContactTime);
                 /* #EndIfDev */
             } else {
-                door.playerInContactTime = Math.max(0,);
+                door.playerInContactTime = Math.max(0, door.playerInContactTime - fixedDeltaTime);
             }
             door.room = building.floors[floorId].rooms[door.room.roomId];
             // custom properties
@@ -341,7 +341,7 @@ async function start() {
                             : 'dr';
             door.image = {
                 ex: images.ed2,
-                lf: [images.ld1, images.ld2, images.ld3][Math.ceil(Math.min(1, door.playerInContactTime / 700) * 2)],
+                lf: [images.ld1, images.ld2, images.ld3][Math.ceil(Math.min(1, door.playerInContactTime / 500) * 2)],
                 // sf: undefined,
                 em: images.d,
                 dr: images.d
@@ -358,7 +358,7 @@ async function start() {
                 : -10;
             door.children[0].text = {
                 ex: 'EXIT',
-                lf: building.lifts[door.room.liftDoor?.liftId]?.floorIds.map(x => building.floors[x].fa).reverse().join('\n'),
+                lf: door.playerInContactTime <= 0 ? '' : building.lifts[door.room.liftDoor?.liftId]?.floorIds.map(x => building.floors[x].fa).reverse().join('\n'),
                 // sf: undefined,
                 dr: building.af.at(-door.room.roomId),
                 // em: undefined,
@@ -374,6 +374,8 @@ async function start() {
     }
 
     //#endregion
+
+    updateDoors();
 
     //#region Input
 
@@ -636,7 +638,8 @@ async function start() {
                 switch (transitionType) {
                     case 1:  // up
                     case 2: // down
-                        const height = a_room_cache.height + a_room_cache.height + 0;
+                        // draw a very long rectangle moving upwards at constant speed
+                        const height = a_room_cache.height + a_room_cache.height + 1000;
                         // const speed = height / transition_length_1;
                         const yy = (1 - (transitioningUntil - Date.now()) / transition_length_1) * (height + a_room_cache.height);
                         /* #IfDev */
@@ -645,6 +648,11 @@ async function start() {
 
                         context.fillStyle = '#000000';
                         context.fillRect(0, transitionType == 1 ? (-yy + a_room_cache.height) : (yy - height), canvas.width, height);
+
+                        context.fillStyle = 'white';
+                        context.font = "18px Arial";
+                        context.textAlign = "center";
+                        context.fillText("Riding lift...", canvas.width / 2, canvas.height / 2);
                         break;
                     case 3: // fall into the next loop
                         context.fillStyle = '#000000';
@@ -657,7 +665,7 @@ async function start() {
                         context.beginPath();
                         context.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
                         context.fill();
-                        context.drawImage(images.pf, canvas.width / 2 - 16 * scale / 2, canvas.height / 2 + 10 - 16 * 0.8 * scale, 16 * scale, 16 * scale);
+                        context.drawImage(images.pf, canvas.width / 2 - 16 * scale / 2, canvas.height / 2 + 20 - 16 * 0.8 * scale, 16 * scale, 16 * scale);
 
                         if (transitioningUntil - Date.now() < 2000) {
                             context.fillStyle = 'white';
@@ -671,8 +679,17 @@ async function start() {
                         break;
                     case 4: // start level
                         context.fillStyle = '#000000';
-                        context.globalAlpha = Math.pow((transitioningUntil - Date.now()) / transition_length_4, 2);
+                        context.globalAlpha = 1 - Math.pow(1 - (transitioningUntil - Date.now()) / transition_length_4, 2);
                         context.fillRect(0, 0, canvas.width, canvas.height);
+
+                        if (transitioningUntil - Date.now()) {
+                            context.globalAlpha = 1;
+                            context.fillStyle = 'white';
+                            context.font = "18px Arial";
+                            context.textAlign = "center";
+                            context.fillText("Exit from the true 13/F", canvas.width / 2, canvas.height / 2);
+                            // context.fillText("but they skipped some superstitious numbers...", canvas.width / 2, canvas.height / 2 + 18);
+                        }
                         break;
                     case 5: // win
                         context.fillStyle = 'white';

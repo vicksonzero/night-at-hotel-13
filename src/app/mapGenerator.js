@@ -85,12 +85,11 @@ export const generateMap = (
             console.log(`(${i}) Adding more floors to ensure accessibleFloorCount becomes '${accessibleFloorCount}'`);
         /* #EndIfDev */
 
-        generateLiftRandomly(floors, lifts, accessible, liftPerFloorMax, true);
+        generateLiftRandomly(floors, lifts, accessible, liftPerFloorMax, i >= liftRandomCount);
 
         accessible = accessible.filter(onlyUnique);
-        accessible.sort((a, b) => a - b);
         /* #IfDev */
-        console.log(`accessible`, accessible);
+        console.log(`accessible`, sortBy(accessible, (a, b) => a - b));
         console.log(``);
         console.log(``);
         /* #EndIfDev */
@@ -99,10 +98,14 @@ export const generateMap = (
     /* #IfDev */
     console.log(`merging lifts`, sortBy(lifts, (a, b) => a.roomId - b.roomId));
     /* #EndIfDev */
+
     mergeLiftsInBuilding(floors, lifts);
+
     /* #IfDev */
     console.log(`merged lifts`, sortBy(lifts, (a, b) => a.roomId - b.roomId));
     /* #EndIfDev */
+
+
     for (const lift of lifts) {
         lift.floorIds = lift.floorIds.filter(onlyUnique);
         lift.floorIds.sort((a, b) => a - b);
@@ -129,32 +132,19 @@ export const generateMap = (
 };
 
 export const generateLiftRandomly = (floors, lifts, accessible, liftPerFloorMax, isExpanding) => {
-    // const floorId = (() => {
-    //     let result;
-    //     let liftCount;
-    //     do {
-    //         result = accessible[Math.floor(Math.random() * accessible.length)];
-
-    //         const floor = floors[result];
-    //         liftCount = floor.rooms.filter(r => r.liftDoor).length;
-
-    //         console.log(`Random floor: ${result} (${liftCount} lifts)`);
-    //     } while (!(liftCount < liftPerFloorMax));
-    //     return result;
-    // })();
-    const floorId = accessible[Math.floor(Math.random() * accessible.length)];
+    const floorId = accessible[(Math.random() * accessible.length | 0)];
 
     const { rooms } = floors[floorId];;
     const liftDoorRooms = rooms.filter(r => r.liftDoor);
     const availableRooms = liftDoorRooms.length >= liftPerFloorMax
         ? liftDoorRooms
         : rooms.filter(r => !r.escapeDoor && !r.liftDoor);
-    const randomRoom = availableRooms[Math.floor(Math.random() * availableRooms.length)];
+    const randomRoom = availableRooms[Math.random() * availableRooms.length | 0];
 
 
     let toFloorId;
     do {
-        toFloorId = Math.floor(Math.random() * floors.length)
+        toFloorId = (Math.random() * floors.length | 0)
         /* #IfDev */
         if (!isExpanding) console.log(`round2 random: `, toFloorId, accessible.includes(toFloorId));
         /* #EndIfDev */
@@ -300,7 +290,7 @@ export const generateFloorAlias = (aliasMax, aliasMin, aliasSafe, aliasSkip) => 
     const result = [];
     const skippedAliasList = [];
 
-    const countFloors = Math.floor(Math.random() * (aliasMax - aliasMin)) + aliasMin + aliasSkip;
+    const countFloors = (Math.random() * (aliasMax - aliasMin) | 0) + aliasMin + aliasSkip;
     for (let i = countFloors; i > 0; i--) {
         result.push(i);
     }
@@ -317,7 +307,7 @@ export const generateFloorAlias = (aliasMax, aliasMin, aliasSafe, aliasSkip) => 
         let skippingFloor;
 
         do {
-            skippingFloor = Math.floor(Math.random() * result.length);
+            skippingFloor = (Math.random() * result.length | 0);
         } while (!(result[skippingFloor] > aliasSafe));
         skippedAliasList.push(...result.splice(skippingFloor, 1));
     }

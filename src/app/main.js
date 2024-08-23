@@ -109,7 +109,7 @@ const start = async () => {
     let floorId;
     // let roomId = 3;
     do {
-        floorId = Math.floor(Math.random() * building.floors.length);
+        floorId = (Math.random() * building.floors.length | 0);
     } while (building.floors[floorId].isExit || !building.floors[floorId].acc);
     /* #IfDev */
     console.log('floorId', floorId);
@@ -618,7 +618,7 @@ const start = async () => {
 
             const loopIndex = Math.round((player.bd.x + map.w / 2) / map.w) - 1;
             for (let room_image of room_images) {
-                room_image.x = (Math.floor((loopIndex + 1 - room_image.loopIndex) / 3) * 3 + room_image.loopIndex) * map.w * tile_w;
+                room_image.x = (((loopIndex + 1 - room_image.loopIndex) / 3 | 0) * 3 + room_image.loopIndex) * map.w * tile_w;
             }
 
             for (let door of doors) {

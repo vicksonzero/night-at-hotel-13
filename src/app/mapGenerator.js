@@ -49,37 +49,34 @@ export const generateMap = (
     console.log('skipped', skipped);
     /* #EndIfDev */
 
-    const building = {
-        /** @type {Array<any>} */
-        lifts: [],
-        af: floorAliasList,
-        as: skipped,
-        exitFloorId: 13 - (floorAliasList.length - floorCount + 1),
-        floors: Array(floorCount).fill(0).map((_, floorId) => ({
-            floorId,
-            acc: false, // isAccessible
-            isExit: false,
-            fa: 0, // floor alias
-            rooms: Array(floorWidth).fill(0).map((_, roomId) => ({
-                // t: 'room',
-                floorId, roomId,
-                escapeDoor: roomId == 0,
-                // liftDoor: createLiftDoor(liftId)
-                // shaft: liftId
-                empty: Math.random() < 0.3,
-            }))
+    /** @type {Array<any>} */
+    const lifts = [];
+    const af = floorAliasList;
+    const as = skipped;
+    const exitFloorId = 13 - (floorAliasList.length - floorCount + 1);
+    const floors = Array(floorCount).fill(0).map((_, floorId) => ({
+        floorId,
+        acc: false, // isAccessible
+        isExit: false,
+        fa: 0, // floor alias
+        rooms: Array(floorWidth).fill(0).map((_, roomId) => ({
+            // t: 'room',
+            floorId, roomId,
+            escapeDoor: roomId == 0,
+            // liftDoor: createLiftDoor(liftId)
+            // shaft: liftId
+            empty: Math.random() < 0.3,
         }))
-    }
+    }));
 
-    const { floors } = building;
 
     /* #IfDev */
-    console.log('exitFloor', building.exitFloorId);
+    console.log('exitFloor', exitFloorId);
     /* #EndIfDev */
     let accessible = [];
-    accessible.push(building.exitFloorId);
-    floors[building.exitFloorId].acc = true;
-    floors[building.exitFloorId].isExit = true;
+    accessible.push(exitFloorId);
+    floors[exitFloorId].acc = true;
+    floors[exitFloorId].isExit = true;
 
 
     for (let i = 0; i < liftRandomCount || accessible.length < accessibleFloorCount; i++) {
@@ -88,7 +85,7 @@ export const generateMap = (
             console.log(`(${i}) Adding more floors to ensure accessibleFloorCount becomes '${accessibleFloorCount}'`);
         /* #EndIfDev */
 
-        generateLiftRandomly(building, accessible, liftPerFloorMax, true);
+        generateLiftRandomly(floors, lifts, accessible, liftPerFloorMax, true);
 
         accessible = accessible.filter(onlyUnique);
         accessible.sort((a, b) => a - b);
@@ -100,33 +97,38 @@ export const generateMap = (
     }
 
     /* #IfDev */
-    console.log(`merging lifts`, sortBy(building.lifts, (a, b) => a.roomId - b.roomId));
+    console.log(`merging lifts`, sortBy(lifts, (a, b) => a.roomId - b.roomId));
     /* #EndIfDev */
-    mergeLiftsInBuilding(building);
+    mergeLiftsInBuilding(floors, lifts);
     /* #IfDev */
-    console.log(`merged lifts`, sortBy(building.lifts, (a, b) => a.roomId - b.roomId));
+    console.log(`merged lifts`, sortBy(lifts, (a, b) => a.roomId - b.roomId));
     /* #EndIfDev */
-    for (const lift of building.lifts) {
+    for (const lift of lifts) {
         lift.floorIds = lift.floorIds.filter(onlyUnique);
         lift.floorIds.sort((a, b) => a - b);
     }
     /* #IfDev */
-    console.log(`unique lifts`, sortBy(building.lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
+    console.log(`unique lifts`, sortBy(lifts.filter((lift, i) => lift.liftId == i), (a, b) => a.roomId - b.roomId));
     /* #EndIfDev */
 
-    populateLiftDoors(building);
+    populateLiftDoors(floors, lifts);
 
     let i = 0;
     for (let floorIndex = floors.length - 1; floorIndex >= 0; floorIndex--) {
-        floors[floorIndex].fa = building.af[i];
+        floors[floorIndex].fa = af[i];
         i++;
     }
 
-    return building;
+    return {
+        lifts,
+        af,
+        as,
+        exitFloorId,
+        floors,
+    };
 };
 
-export const generateLiftRandomly = (building, accessible, liftPerFloorMax, isExpanding) => {
-    const { floors, lifts } = building;
+export const generateLiftRandomly = (floors, lifts, accessible, liftPerFloorMax, isExpanding) => {
     // const floorId = (() => {
     //     let result;
     //     let liftCount;
@@ -142,36 +144,31 @@ export const generateLiftRandomly = (building, accessible, liftPerFloorMax, isEx
     // })();
     const floorId = accessible[Math.floor(Math.random() * accessible.length)];
 
-    const floor = floors[floorId];
-    const { rooms } = floor;
-    let liftDoorRooms = rooms.filter(r => r.liftDoor);
-    let availableRooms = rooms.filter(r => !r.escapeDoor && !r.liftDoor);
-    if (liftDoorRooms.length >= liftPerFloorMax) {
-        availableRooms = liftDoorRooms;
-    }
-    const randomRoomId = availableRooms[Math.floor(Math.random() * availableRooms.length)];
+    const { rooms } = floors[floorId];;
+    const liftDoorRooms = rooms.filter(r => r.liftDoor);
+    const availableRooms = liftDoorRooms.length >= liftPerFloorMax
+        ? liftDoorRooms
+        : rooms.filter(r => !r.escapeDoor && !r.liftDoor);
+    const randomRoom = availableRooms[Math.floor(Math.random() * availableRooms.length)];
 
-    const toFloorId = ((fromFloorId) => {
-        let result;
-        do {
-            result = Math.floor(Math.random() * floors.length)
-            /* #IfDev */
-            if (!isExpanding) console.log(`round2 random: `, result, accessible.includes(result));
-            /* #EndIfDev */
-        } while (!(result != fromFloorId && (isExpanding || !accessible.includes(result))));
-        return result;
-    })(floorId);
 
-    generateLiftDraft(building, floorId, randomRoomId.roomId, toFloorId);
+    let toFloorId;
+    do {
+        toFloorId = Math.floor(Math.random() * floors.length)
+        /* #IfDev */
+        if (!isExpanding) console.log(`round2 random: `, toFloorId, accessible.includes(toFloorId));
+        /* #EndIfDev */
+    } while (!(toFloorId != floorId && (isExpanding || !accessible.includes(toFloorId))));
+
+    generateLiftDraft(floors, lifts, floorId, randomRoom.roomId, toFloorId);
 
     floors[toFloorId].acc = true;
     accessible.push(toFloorId);
 };
 
-export const generateLiftDraft = (building, fromFloorId, roomId, toFloorId) => {
+export const generateLiftDraft = (floors, lifts, fromFloorId, roomId, toFloorId) => {
     // try to build a lift on the same roomId, from floorId to tooFloorId
     // if can't, then connect to existing lift
-    const { floors, lifts } = building;
 
 
     /* #IfDev */
@@ -205,8 +202,7 @@ export const generateLiftDraft = (building, fromFloorId, roomId, toFloorId) => {
     floors[toFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
 };
 
-export const mergeLiftsInBuilding = building => {
-    const { floors, lifts } = building;
+export const mergeLiftsInBuilding = (floors, lifts) => {
 
     for (let roomId = 0; roomId < floors[0].rooms.length; roomId++) {
         const liftsByRoomId = lifts.filter(lift => lift.roomId == roomId);
@@ -236,13 +232,13 @@ export const mergeLiftsInBuilding = building => {
                 // [ 1:  o----o-----o-----o  ]
 
                 if (room.liftDoor && room.liftDoor.liftId != lift.liftId) {
-                    mergeLifts(building,
+                    mergeLifts(floors, lifts,
                         Math.min(lift.liftId, room.liftDoor.liftId),
                         Math.max(lift.liftId, room.liftDoor.liftId)
                     );
                     break;
                 } else if (room.shaft && room.shaft != lift.liftId) {
-                    mergeLifts(building,
+                    mergeLifts(floors, lifts,
                         Math.min(lift.liftId, room.shaft),
                         Math.max(lift.liftId, room.shaft)
                     );
@@ -257,11 +253,9 @@ export const mergeLiftsInBuilding = building => {
 };
 
 
-export const mergeLifts = (building, toLiftId, fromLiftId) => {
+export const mergeLifts = (floors, lifts, toLiftId, fromLiftId) => {
     /* #IfDev */
     console.log(`Merge lift-${fromLiftId} into lift-${toLiftId}`);
-    /* #EndIfDev */
-    const { floors, lifts } = building;
 
     lifts[fromLiftId].liftId = toLiftId; // point to parent
 
@@ -280,8 +274,7 @@ export const mergeLifts = (building, toLiftId, fromLiftId) => {
     }
 };
 
-export const populateLiftDoors = building => {
-    const { floors, lifts } = building;
+export const populateLiftDoors = (floors, lifts) => {
 
     lifts.forEach((lift, i) => {
         if (lift.liftId != i) {

@@ -1,8 +1,9 @@
 
 //@ts-check
-function onlyUnique(value, index, array) {
+const onlyUnique = (value, index, array) => {
     return array.indexOf(value) === index;
-}
+};
+
 // export function createRoom(floorId, roomId) {
 //     return ;
 // }
@@ -20,20 +21,22 @@ function onlyUnique(value, index, array) {
 //         floorIds,
 //     }
 // }
-export function generateMap(
+export const generateMap = (
     floorCount,
     floorWidth,
-
     liftPerFloorMin,
     liftPerFloorMax,
     liftRandomCount,
     accessibleFloorCount,
-
-    aliasMax, // maximum amount of floors in the alias naming
-    aliasMin, // minimum amount of floors in the alias naming
-    aliasSafe, // floors lower than this are never superstitious
-    aliasSkip, // amount of superstitious floors that we want to skip
-) {
+    // maximum amount of floors in the alias naming
+    aliasMax,
+    // minimum amount of floors in the alias naming
+    aliasMin,
+    // floors lower than this are never superstitious
+    aliasSafe,
+    // amount of superstitious floors that we want to skip
+    aliasSkip
+) => {
     console.log('generateMap');
     const [floorAliasList, skipped] = generateFloorAlias(
         aliasMax,
@@ -79,26 +82,13 @@ export function generateMap(
     floors[building.exitFloorId].isExit = true;
 
 
-    for (let i = 0; i < liftRandomCount; i++) {
+    for (let i = 0; i < liftRandomCount || accessible.length < accessibleFloorCount; i++) {
+        /* #IfDev */
+        if (i >= liftRandomCount)
+            console.log(`(${i}) Adding more floors to ensure accessibleFloorCount becomes '${accessibleFloorCount}'`);
+        /* #EndIfDev */
 
         generateLiftRandomly(building, accessible, liftPerFloorMax, true);
-
-        accessible = accessible.filter(onlyUnique);
-        accessible.sort((a, b) => a - b);
-        /* #IfDev */
-        console.log(`accessible`, accessible);
-        console.log(``);
-        console.log(``);
-        /* #EndIfDev */
-    }
-
-    for (let i = 0; i < floors.length; i++) {
-        if (accessible.length >= accessibleFloorCount) break;
-        /* #IfDev */
-        console.log(`(${i}) Adding more floors to ensure accessibleFloorCount becomes '${accessibleFloorCount}'`);
-        /* #EndIfDev */
-
-        generateLiftRandomly(building, accessible, liftPerFloorMax, false);
 
         accessible = accessible.filter(onlyUnique);
         accessible.sort((a, b) => a - b);
@@ -133,9 +123,9 @@ export function generateMap(
     }
 
     return building;
-}
+};
 
-export function generateLiftRandomly(building, accessible, liftPerFloorMax, isExpanding) {
+export const generateLiftRandomly = (building, accessible, liftPerFloorMax, isExpanding) => {
     const { floors, lifts } = building;
     // const floorId = (() => {
     //     let result;
@@ -176,9 +166,9 @@ export function generateLiftRandomly(building, accessible, liftPerFloorMax, isEx
 
     floors[toFloorId].acc = true;
     accessible.push(toFloorId);
-}
+};
 
-export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
+export const generateLiftDraft = (building, fromFloorId, roomId, toFloorId) => {
     // try to build a lift on the same roomId, from floorId to tooFloorId
     // if can't, then connect to existing lift
     const { floors, lifts } = building;
@@ -213,9 +203,9 @@ export function generateLiftDraft(building, fromFloorId, roomId, toFloorId) {
     }
     floors[fromFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
     floors[toFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
-}
+};
 
-export function mergeLiftsInBuilding(building) {
+export const mergeLiftsInBuilding = building => {
     const { floors, lifts } = building;
 
     for (let roomId = 0; roomId < floors[0].rooms.length; roomId++) {
@@ -264,10 +254,10 @@ export function mergeLiftsInBuilding(building) {
         console.log('');
         /* #EndIfDev */
     }
-}
+};
 
 
-export function mergeLifts(building, toLiftId, fromLiftId) {
+export const mergeLifts = (building, toLiftId, fromLiftId) => {
     /* #IfDev */
     console.log(`Merge lift-${fromLiftId} into lift-${toLiftId}`);
     /* #EndIfDev */
@@ -288,9 +278,9 @@ export function mergeLifts(building, toLiftId, fromLiftId) {
         }
         if (room.shaft != null) room.shaft = toLiftId;
     }
-}
+};
 
-export function populateLiftDoors(building) {
+export const populateLiftDoors = building => {
     const { floors, lifts } = building;
 
     lifts.forEach((lift, i) => {
@@ -310,14 +300,9 @@ export function populateLiftDoors(building) {
         }
     }
 
-}
+};
 
-export function generateFloorAlias(
-    aliasMax,
-    aliasMin,
-    aliasSafe,
-    aliasSkip,
-) {
+export const generateFloorAlias = (aliasMax, aliasMin, aliasSafe, aliasSkip) => {
 
     const result = [];
     const skippedAliasList = [];
@@ -346,10 +331,10 @@ export function generateFloorAlias(
 
     skippedAliasList.sort((a, b) => b - a);
     return [result, skippedAliasList];
-}
+};
 
-function sortBy(array, predicate) {
+const sortBy = (array, predicate) => {
     const copy = [...array];
     copy.sort(predicate);
     return copy;
-}
+};

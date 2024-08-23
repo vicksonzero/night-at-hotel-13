@@ -67,7 +67,7 @@ let loopCount = -1;
 
 //#endregion
 
-async function start() {
+const start = async () => {
     loopCount++;
     const a_room_cache = document.createElement("canvas");
     // loading
@@ -102,6 +102,9 @@ async function start() {
 
     //#region Build level
 
+    /** @type {string[] & {w:number, h:number}} */
+    let map;
+
 
     let floorId;
     // let roomId = 3;
@@ -113,10 +116,7 @@ async function start() {
     /* #EndIfDev */
 
 
-    /** @type {string[] & {w:number, h:number}} */
-    let map;
-
-    function buildMap() {
+    const buildMap = () => {
         /* #IfDev */
         console.log('buildMap');
         /* #EndIfDev */
@@ -124,7 +124,7 @@ async function start() {
         // @ts-ignore
         map = Array(7).fill('');
 
-        for (const room of building.floors[floorId].rooms) {
+        for (let room of building.floors[floorId].rooms) {
             // @ts-ignore
             // map = map.map((row, i) => i != 5
             //     ? row + "0".repeat(map_room_w)
@@ -144,15 +144,16 @@ async function start() {
 
 
         cache_map(a_room_cache, map);
-    }
+    };
 
     buildMap();
+
     // TODO: build plants
 
 
     //#endregion
 
-    function tryEscape() {
+    const tryEscape = () => {
         if (building.floors[floorId].isExit) {
             // win
             console.log('win');
@@ -174,9 +175,9 @@ async function start() {
             transitionType = 3;
             transitioningUntil = Date.now() + transition_length_3;
         }
-    }
+    };
 
-    function moveFloor(floorDir, room) {
+    const moveFloor = (floorDir, room) => {
         /* #IfDev */
         console.log('moveFloor:', floorDir, room);
         /* #EndIfDev */
@@ -201,18 +202,21 @@ async function start() {
         // player.y = canvas.height / 2 + 50;
         transitionType = floorDir > 0 ? 1 : 2;
         transitioningUntil = Date.now() + transition_length_1;
-    }
+    };
 
 
-    const fixedDeltaTime = (1000 / 60) | 0;
-
-    let fixedGameTime = 0;
 
     //#region Init
 
     const _focus = () => focus();
     // const canvas2 = document.querySelector('#b');
     // const context2 = canvas2.getContext('2d');
+
+
+    const fixedDeltaTime = (1000 / 60) | 0;
+    let fixedGameTime = 0;
+
+
     // init
     let { canvas, context } = init('a');
     let scene = Scene({
@@ -275,7 +279,7 @@ async function start() {
 
     let doors = [];
 
-    for (const room of building.floors[floorId].rooms) {
+    for (let room of building.floors[floorId].rooms) {
         const door = Sprite({
             /* #IfDev */
             name: `door-${room.roomId}`,
@@ -318,7 +322,7 @@ async function start() {
     scene.add(room_images, doors, player);
 
 
-    function updateDoors() {
+    const updateDoors = () => {
         /* #IfDev */
         // console.log('updateDoors');
         /* #EndIfDev */
@@ -371,7 +375,7 @@ async function start() {
                 // em: undefined,
             }[door.type] ?? ''
         })
-    }
+    };
 
     //#endregion
 
@@ -459,7 +463,7 @@ async function start() {
         // }
         if (input.u && 'u' == keyMap[w] && transitioningUntil <= Date.now() && !gameIsOver) {
             // move floor
-            for (const door of doors) {
+            for (let door of doors) {
                 if (door.room.liftDoor && collides(player, door)) {
                     moveFloor(1, door.room);
                 }
@@ -471,7 +475,7 @@ async function start() {
         }
         if (input.d && 'd' == keyMap[w] && transitioningUntil <= Date.now() && !gameIsOver) {
             // move floor
-            for (const door of doors) {
+            for (let door of doors) {
                 if (door.room.liftDoor && collides(player, door)) {
                     moveFloor(-1, door.room);
                 }
@@ -613,11 +617,11 @@ async function start() {
             scene.camera.x = player.x;
 
             const loopIndex = Math.round((player.bd.x + map.w / 2) / map.w) - 1;
-            for (const room_image of room_images) {
+            for (let room_image of room_images) {
                 room_image.x = (Math.floor((loopIndex + 1 - room_image.loopIndex) / 3) * 3 + room_image.loopIndex) * map.w * tile_w;
             }
 
-            for (const door of doors) {
+            for (let door of doors) {
                 while (door.x - player.x > map.w / 2 * tile_w) {
                     /* #IfDev */
                     console.log(`door[${door.room.roomId}] is too right`);
@@ -713,7 +717,8 @@ async function start() {
     });
 
     loop.start();    // start the game
-    function restart() {
+
+    const restart = () => {
         // cleanup
         loop.stop();
 
@@ -723,10 +728,11 @@ async function start() {
 
         // restart
         start();
-    }
-}
+    };
+};
+
 //#region  tryMoveX()
-function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
+const tryMoveX = (/** @type {ITransform}*/ entity, dx, map, solidCallback) => {
     entity.x += dx;
     // if (dx <= 0) {
     //     entity.x = Math.max(entity.x, 0);
@@ -754,10 +760,11 @@ function tryMoveX(/** @type {ITransform}*/ entity, dx, map, solidCallback) {
     // }
 
     return entity;
-}
+};
+
 //#endregion
 //#region tryMoveY()
-function tryMoveY(/** @type {ITransform}*/ entity, dy, map, solidCallback) {
+const tryMoveY = (/** @type {ITransform}*/ entity, dy, map, solidCallback) => {
     entity.y += dy;
     if (dy <= 0) {
         entity.y = Math.max(entity.y, 0);
@@ -779,9 +786,10 @@ function tryMoveY(/** @type {ITransform}*/ entity, dy, map, solidCallback) {
     }
 
     return entity;
-}
+};
+
 //#endregion
-function cache_map(cache, _map) {
+const cache_map = (cache, _map) => {
     const cache_c = cache.getContext('2d');
     // -10 bytes zipped compared to nested for-loops
     cache.width = _map[0].length * tile_w;
@@ -815,6 +823,6 @@ function cache_map(cache, _map) {
             cache_c.fillRect(x * tile_w, y * tile_h + 6, tile_w, tile_h - 6);
         }
     }));
-}
+};
 
 window.onload = start;

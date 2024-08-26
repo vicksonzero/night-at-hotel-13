@@ -21,6 +21,39 @@ const onlyUnique = (value, index, array) => {
 //         floorIds,
 //     }
 // }
+
+
+const generateFloorAlias = (aliasMax, aliasMin, aliasSafe, aliasSkip) => {
+
+    const result = [];
+    const skippedAliasList = [];
+
+    const countFloors = (Math.random() * (aliasMax - aliasMin) | 0) + aliasMin + aliasSkip;
+    for (let i = countFloors; i > 0; i--) {
+        result.push(i);
+    }
+
+    /* #IfDev */
+    console.log('Building height: ', countFloors);
+    console.log('Building alias: ', result.join(', '));
+    /* #EndIfDev */
+    // skip 13
+    skippedAliasList.push(...result.splice(result.indexOf(13), 1));
+
+    // skip the rest
+    for (let i = 0; i < aliasSkip - 1; i++) {
+        let skippingFloor;
+
+        do {
+            skippingFloor = (Math.random() * result.length | 0);
+        } while (!(result[skippingFloor] > aliasSafe));
+        skippedAliasList.push(...result.splice(skippingFloor, 1));
+    }
+
+    skippedAliasList.sort((a, b) => b - a);
+    return [result, skippedAliasList];
+};
+
 export const generateMap = (
     floorCount,
     floorWidth,
@@ -38,6 +71,12 @@ export const generateMap = (
     aliasSkip
 ) => {
     console.log('generateMap');
+
+    //#region generateFloorAlias
+
+    //#endregion
+
+
     const [floorAliasList, skipped] = generateFloorAlias(
         aliasMax,
         aliasMin,
@@ -283,37 +322,6 @@ export const populateLiftDoors = (floors, lifts) => {
         }
     }
 
-};
-
-export const generateFloorAlias = (aliasMax, aliasMin, aliasSafe, aliasSkip) => {
-
-    const result = [];
-    const skippedAliasList = [];
-
-    const countFloors = (Math.random() * (aliasMax - aliasMin) | 0) + aliasMin + aliasSkip;
-    for (let i = countFloors; i > 0; i--) {
-        result.push(i);
-    }
-
-    /* #IfDev */
-    console.log('Building height: ', countFloors);
-    console.log('Building alias: ', result.join(', '));
-    /* #EndIfDev */
-    // skip 13
-    skippedAliasList.push(...result.splice(result.indexOf(13), 1));
-
-    // skip the rest
-    for (let i = 0; i < aliasSkip - 1; i++) {
-        let skippingFloor;
-
-        do {
-            skippingFloor = (Math.random() * result.length | 0);
-        } while (!(result[skippingFloor] > aliasSafe));
-        skippedAliasList.push(...result.splice(skippingFloor, 1));
-    }
-
-    skippedAliasList.sort((a, b) => b - a);
-    return [result, skippedAliasList];
 };
 
 const sortBy = (array, predicate) => {

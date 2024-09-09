@@ -3,6 +3,7 @@ import {
     /* system */ init, Sprite, Text, GameLoop, Pool, Scene,
     /* mouse  */ initPointer, track, getPointer, pointerPressed,
     /* maths  */ angleToTarget, clamp, movePoint, lerp, collides,
+    untrack,
     /* Vector is imported through Sprite, GameObject, Updatable */
 } from 'kontra';
 import { colors } from './colors.js';
@@ -196,6 +197,7 @@ const start = async () => {
         setTimeout(() => {
             buildMap();
             updateDoors();
+            updateLiftFloors();
         }, transition_length_1 / 2);
 
         // player.x = canvas.width / 2;
@@ -300,12 +302,26 @@ const start = async () => {
         });
         door.addChild(Text({
             text: '',
-            x: 0,
+            x: door.width / 2 + 0.5,
             y: -10,
             font: '3px Arial',
             color: 'white',
+            strokeColor: null,
+            lineWidth: 1,
             anchor: { x: 0.5, y: 0.5 },
-            textAlign: 'center'
+            textAlign: 'center',
+
+            onOver() {
+                // handle on over events on the sprite
+                this.strokeColor = 'red';
+            },
+            onOut() {
+                // handle on out events on the sprite
+                this.strokeColor = null;
+            },
+            onDown() {
+                console.log('onDown', room.roomId);
+            },
         }));
         door.addChild(Text({
             text: '',
@@ -316,11 +332,56 @@ const start = async () => {
             anchor: { x: 1, y: 0.5 },
             textAlign: 'right'
         }));
+        door.addChild(Sprite({
+            x: door.width + 2,
+            y: -8,
+            children: [],
+        }));
+
+        track(door.children[0]);
+        track(door.children[2].children);
         doors.push(door);
     }
 
     scene.add(room_images, doors, player);
 
+    const updateLiftFloors = () => {
+        doors.forEach(door => {
+            const floorIds = building.lifts[door.room.liftDoor?.liftId]?.floorIds || [];
+            console.log('floorIds', door.room.roomId, floorIds);
+
+            untrack(door.children[2].children);
+
+            // door.children[2].y = 0;
+            door.children[2].children = floorIds
+                .map(x => building.floors[x].fa)
+                .reverse()
+                .map((fa, i) => Text({
+                    text: fa,
+                    x: 0,
+                    y: -floorIds.length / 2 * 3 + i * 3,
+                    font: '3px Arial',
+                    color: 'white',
+                    strokeColor: undefined,
+                    lineWidth: 1,
+                    anchor: { x: 0.5, y: 0.5 },
+                    textAlign: 'center',
+
+                    onOver() {
+                        // handle on over events on the sprite
+                        this.strokeColor = 'red';
+                    },
+                    onOut() {
+                        // handle on out events on the sprite
+                        this.strokeColor = undefined;
+                    },
+                    onDown() {
+                        console.log('onDown', fa);
+                    },
+                }))
+            track(door.children[2].children);
+        });
+    }
 
     const updateDoors = () => {
         /* #IfDev */
@@ -350,19 +411,19 @@ const start = async () => {
                 em: images.d,
                 dr: images.d
             }[door.type];
-            door.children[0].x =
-                //  door.room.escapeDoor
-                //     ? door.width / 2 + 0.5
-                //     :
-                door.room.liftDoor
-                    ? door.width + 2
-                    : door.width / 2 + 0.5;
+            // door.children[0].x =
+            //     //  door.room.escapeDoor
+            //     //     ? door.width / 2 + 0.5
+            //     //     :
+            //     door.room.liftDoor
+            //         ? 
+            //         : ;
             door.children[0].y = door.room.escapeDoor
                 ? -16
                 : -10;
             door.children[0].text = {
                 ex: 'EXIT',
-                lf: door.playerInContactTime <= 0 ? '' : building.lifts[door.room.liftDoor?.liftId]?.floorIds.map(x => building.floors[x].fa).reverse().join('\n'),
+                // lf: door.playerInContactTime <= 0 ? '' : building.lifts[door.room.liftDoor?.liftId]?.floorIds.map(x => building.floors[x].fa).reverse().join('\n'),
                 // sf: undefined,
                 dr: building.af.at(-door.room.roomId),
                 // em: undefined,
@@ -380,6 +441,7 @@ const start = async () => {
     //#endregion
 
     updateDoors();
+    updateLiftFloors();
 
     //#region Input
 

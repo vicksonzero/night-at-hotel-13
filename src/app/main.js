@@ -41,8 +41,8 @@ import { generateMap } from './mapGenerator.js';
 //#region Global var
 
 // World
-const g1 = 0.016;    // jumping gravity in tiles/frame²
-const g2 = 0.021;    // falling gravity in tiles/frame²
+// const g1 = 0.016;    // jumping gravity in tiles/frame²
+// const g2 = 0.021;    // falling gravity in tiles/frame²
 const tile_w = 32;  // tiles width in px
 const tile_h = 32;  // tiles height in px
 const player_speed1 = 0.2;    // player move speed (walking) in tiles/frame²
@@ -277,7 +277,9 @@ const start = async () => {
 
         // custom properties
         /** @type {IEntity} - player body */
-        bd: { x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, vy: 0, gd: 1, gv: g1, cj: 1 },
+        bd: { x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, 
+            // vy: 0, gd: 1, gv: g1, cj: 1 
+        },
         sprint: false, // aka isSprinting
     });
 
@@ -706,29 +708,29 @@ const start = async () => {
             // coyote: don't Reset grounded state
 
             // Apply gravity to Y speed, Y acceleration to Y speed and Y speed to Y position
-            player.bd.vy += player.bd.gv;
-            if (player.bd.vy > 0) player.bd.gv = g2;
-            if (player.bd.vy > 0.2) player.bd.vy = 0.2;
+            // player.bd.vy += player.bd.gv;
+            // if (player.bd.vy > 0) player.bd.gv = g2;
+            // if (player.bd.vy > 0.2) player.bd.vy = 0.2;
             player.bd.vx -= (Math.sign(player.bd.vx) * Math.min(Math.abs(player.bd.vx), .02));
 
 
-            tryMoveY(
-                player.bd,
-                player.bd.vy,
-                map,
-                () => {
-                    if (player.bd.vy > 0) {
-                        player.bd.gd = fixedGameTime + 5 * fixedDeltaTime; // 5 frames of coyote time
-                        player.bd.vy = 0;
-                        player.bd.gv = g1;
-                    }
-                    // If moving up
-                    if (player.bd.vy < 0) {
-                        // If this tile is solid, put the player on the bottom side of it and let it fall
-                        player.bd.vy = 0;
-                    }
-                }
-            );
+            // tryMoveY(
+            //     player.bd,
+            //     player.bd.vy,
+            //     map,
+            //     () => {
+            //         if (player.bd.vy > 0) {
+            //             player.bd.gd = fixedGameTime + 5 * fixedDeltaTime; // 5 frames of coyote time
+            //             player.bd.vy = 0;
+            //             player.bd.gv = g1;
+            //         }
+            //         // If moving up
+            //         if (player.bd.vy < 0) {
+            //             // If this tile is solid, put the player on the bottom side of it and let it fall
+            //             player.bd.vy = 0;
+            //         }
+            //     }
+            // );
 
             const mv = input.l ? -1 : input.r ? 1 : 0;
             if (!mv) player.sprint = false;
@@ -747,20 +749,20 @@ const start = async () => {
             player.image = !mv ? images.pi : (Math.ceil(fixedGameTime / (fixedDeltaTime * 10)) % 2 == 0 ? images.pr1 : images.pr2);
 
 
-            // If up key is pressed and the hero is grounded, jump
-            if (input.s && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
-                // console.log('jump', player.bd.gd, fixedGameTime, player.bd.gd - fixedGameTime);
-                player.bd.vy = -.315;
-                player.bd.gv = g1;
-                player.bd.cj = 0;
-            }
-            if (!input.s) {
-                player.bd.cj = 1;
-                if (player.bd.vy < 0) {
-                    if (player.bd.vy < -0.15) player.bd.vy = -0.15;
-                    player.bd.gv = g2;
-                }
-            }
+            // // If up key is pressed and the hero is grounded, jump
+            // if (input.s && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
+            //     // console.log('jump', player.bd.gd, fixedGameTime, player.bd.gd - fixedGameTime);
+            //     player.bd.vy = -.315;
+            //     player.bd.gv = g1;
+            //     player.bd.cj = 0;
+            // }
+            // if (!input.s) {
+            //     player.bd.cj = 1;
+            //     if (player.bd.vy < 0) {
+            //         if (player.bd.vy < -0.15) player.bd.vy = -0.15;
+            //         player.bd.gv = g2;
+            //     }
+            // }
 
             updateDoors();
             // knownFloorsGroup.children.map(x => x.update());
@@ -932,29 +934,29 @@ const tryMoveX = (/** @type {ITransform}*/ entity, dx, map, solidCallback) => {
 
 //#endregion
 //#region tryMoveY()
-const tryMoveY = (/** @type {ITransform}*/ entity, dy, map, solidCallback) => {
-    entity.y += dy;
-    if (dy <= 0) {
-        entity.y = Math.max(entity.y, 0);
-    } else {
-        entity.y = Math.min(map.h - entity.h, entity.y);
-    }
+// const tryMoveY = (/** @type {ITransform}*/ entity, dy, map, solidCallback) => {
+//     entity.y += dy;
+//     if (dy <= 0) {
+//         entity.y = Math.max(entity.y, 0);
+//     } else {
+//         entity.y = Math.min(map.h - entity.h, entity.y);
+//     }
 
-    let probeX = entity.x;
-    while (probeX < 0) probeX += map.w;
-    probeX = probeX % map.w;
-    const probeY = (dy <= 0 ? entity.y : entity.y + entity.h);
+//     let probeX = entity.x;
+//     while (probeX < 0) probeX += map.w;
+//     probeX = probeX % map.w;
+//     const probeY = (dy <= 0 ? entity.y : entity.y + entity.h);
 
-    const tile1 = +map[~~(probeY)][~~(probeX)];
-    const tile2 = +map[~~(probeY)][~~(probeX + entity.w - .1)];
+//     const tile1 = +map[~~(probeY)][~~(probeX)];
+//     const tile2 = +map[~~(probeY)][~~(probeX + entity.w - .1)];
 
-    if (tile1 == 1 || tile2 == 1) {
-        entity.y = (dy <= 0 ? Math.ceil(entity.y) : ~~(entity.y + entity.h) - entity.h);
-        if (solidCallback) solidCallback();
-    }
+//     if (tile1 == 1 || tile2 == 1) {
+//         entity.y = (dy <= 0 ? Math.ceil(entity.y) : ~~(entity.y + entity.h) - entity.h);
+//         if (solidCallback) solidCallback();
+//     }
 
-    return entity;
-};
+//     return entity;
+// };
 
 //#endregion
 const cache_map = (cache, _map) => {

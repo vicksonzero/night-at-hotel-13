@@ -1,6 +1,6 @@
 
 //@ts-check
-const onlyUnique = (value, index, array) => {
+export const onlyUnique = (value, index, array) => {
     return array.indexOf(value) === index;
 };
 
@@ -285,6 +285,7 @@ export const mergeLiftsInBuilding = (floors, lifts) => {
 export const mergeLifts = (floors, lifts, toLiftId, fromLiftId) => {
     /* #IfDev */
     console.log(`Merge lift-${fromLiftId} into lift-${toLiftId}`);
+    /* #EndIfDev */
 
     lifts[fromLiftId].liftId = toLiftId; // point to parent
 

@@ -280,6 +280,11 @@ const start = async () => {
     });
 
     let doors = [];
+    let knownFloorsGroup = Sprite({
+        x: 10,
+        y: 240,
+        // children: [],
+    });
 
     for (let room of building.floors[floorId].rooms) {
         const door = Sprite({
@@ -306,7 +311,7 @@ const start = async () => {
             y: -10,
             font: '3px Arial',
             color: 'white',
-            strokeColor: null,
+            strokeColor: undefined,
             lineWidth: 1,
             anchor: { x: 0.5, y: 0.5 },
             textAlign: 'center',
@@ -317,10 +322,11 @@ const start = async () => {
             },
             onOut() {
                 // handle on out events on the sprite
-                this.strokeColor = null;
+                this.strokeColor = undefined;
             },
             onDown() {
-                console.log('onDown', room.roomId);
+                // console.log('onDown', room.roomId);
+                addKnownFloorAliases(building.af.at(-door.room.roomId));
             },
         }));
         door.addChild(Text({
@@ -335,7 +341,7 @@ const start = async () => {
         door.addChild(Sprite({
             x: door.width + 2,
             y: -8,
-            children: [],
+            // children: [],
         }));
 
         track(door.children[0]);
@@ -345,10 +351,102 @@ const start = async () => {
 
     scene.add(room_images, doors, player);
 
+    const addKnownFloorAliases = (floorAlias, type, index) => {
+        // console.log('addKnownFloorAliases', floorAlias, type, index);
+        if (type || !knownFloorsGroup.children.find(child => child.fa == floorAlias)) {
+            let txtGap;
+            let txt = Text({
+                text: type || floorAlias,
+                x: 0,
+                y: 0,
+                xx: 0,
+                yy: 0,
+                font: '20px Arial',
+                color: 'white',
+                // strokeColor: undefined,
+                lineWidth: 8,
+                anchor: { x: 0.5, y: 0 },
+                textAlign: 'center',
+                fa: floorAlias,
+                s: 0, // style id
+                update() {
+                    this.x = lerp(this.x, this.xx, 0.2);
+                    this.y = lerp(this.y, this.yy, 0.2);
+                },
+                onOver() {
+                    // handle on over events on the sprite
+                    this.strokeColor = '#555';
+                },
+                onOut() {
+                    // handle on out events on the sprite
+                    this.strokeColor = undefined;
+                },
+                onDown() {
+                    if (type) {
+                        knownFloorsGroup.removeChild(txt);
+                        rearrange();
+                    } else {
+                        this.color = ['white', 'red', 'yellow', 'lime', 'magenta'][++this.s % 5];
+                    }
+                },
+                children: [
+                    txtGap = Text({
+                        text: ' ',
+                        x: -23,
+                        y: -2,
+                        font: '24px Arial',
+                        color: '#aaa',
+                        // strokeColor: undefined,
+                        // anchor: { x: 0, y: 0 },
+                        textAlign: 'left',
+                        onOver() {
+                            // handle on over events on the sprite
+                            this.text = '+';
+                        },
+                        onOut() {
+                            // handle on out events on the sprite
+                            this.text = ' ';
+                        },
+                        onDown() {
+                            addKnownFloorAliases(floorAlias, '?', knownFloorsGroup.children.indexOf(txt));
+                        },
+                    }),
+                ]
+            });
+            if (!type) {
+                index = knownFloorsGroup.children.findIndex(child => child.fa > floorAlias);
+
+            }
+            // console.log('addKnownFloorAliases insert at', index);
+            knownFloorsGroup.children.splice((index < 0) ? knownFloorsGroup.children.length : index, 0, txt);
+            txt.parent = knownFloorsGroup;
+            txt._pc = txt._pc ?? (() => { });
+            txt._pc();
+            track(txtGap);
+            track(txt);
+            // knownFloorsGroup.children.sort((a, b) => (a.fa == b.fa ? (b.text != '?' ? -1 : 0) : a.fa - b.fa));
+            const rearrange = (fa) => knownFloorsGroup.children.map((x, i) => {
+                x.xx = i % 13 * 36 + 18; // 24 + 12
+                x.yy = (i / 13 | 0) * 24;
+                if (x.fa == fa) {
+                    x.x = x.xx;
+                    x.y = -30;
+                }
+            });
+            rearrange(floorAlias);
+
+            /* #IfDev */
+            console.log('addKnownFloorAliases', floorAlias, knownFloorsGroup.children.map(x => x.fa));
+            /* #EndIfDev */
+        }
+    };
+
     const updateLiftFloors = () => {
         doors.forEach(door => {
             const floorIds = building.lifts[door.room.liftDoor?.liftId]?.floorIds || [];
+            /* #IfDev */
             console.log('floorIds', door.room.roomId, floorIds);
+            /* #EndIfDev */
 
             untrack(door.children[2].children);
 
@@ -376,7 +474,10 @@ const start = async () => {
                         this.strokeColor = undefined;
                     },
                     onDown() {
+                        /* #IfDev */
                         console.log('onDown', fa);
+                        /* #EndIfDev */
+                        addKnownFloorAliases(fa);
                     },
                 }))
             track(door.children[2].children);
@@ -389,7 +490,7 @@ const start = async () => {
         /* #EndIfDev */
         doors.forEach(door => {
             if (collides(player, door)) {
-                door.playerInContactTime += fixedDeltaTime;
+                door.playerInContactTime = Math.min(500, door.playerInContactTime + fixedDeltaTime);
 
                 /* #IfDev */
                 // if (door.room.liftDoor) console.log('liftDoor.playerInContactTime', door.playerInContactTime);
@@ -491,25 +592,25 @@ const start = async () => {
 
         if (!keyMap[w]) return;
 
-        if ('tb' == keyMap[w]) {
-            if (+(e.type[3] < 'u')) {
-                gameIsFocused = !gameIsFocused;
-                /* #IfDev */
-                console.log('gameIsFocused', gameIsFocused);
-                /* #EndIfDev */
-                //@ts-ignore (global variable)
-                txa.disabled = gameIsFocused;
-                //@ts-ignore (global variable)
-                if (!gameIsFocused) txa.focus();
-                input.tb = 0;
-            }
+        // if ('tb' == keyMap[w]) {
+        //     if (+(e.type[3] < 'u')) {
+        //         gameIsFocused = !gameIsFocused;
+        //         /* #IfDev */
+        //         console.log('gameIsFocused', gameIsFocused);
+        //         /* #EndIfDev */
+        //         //@ts-ignore (global variable)
+        //         txa.disabled = gameIsFocused;
+        //         //@ts-ignore (global variable)
+        //         if (!gameIsFocused) txa.focus();
+        //         input.tb = 0;
+        //     }
 
-            /* #IfDev */
-            // console.log('preventDefault');
-            /* #EndIfDev */
-            e.preventDefault();
-            e.stopPropagation();
-        }
+        //     /* #IfDev */
+        //     // console.log('preventDefault');
+        //     /* #EndIfDev */
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        // }
 
         input[keyMap[w]] = gameIsFocused ? +(e.type[3] < 'u') : 0;
 
@@ -660,6 +761,8 @@ const start = async () => {
             }
 
             updateDoors();
+            // knownFloorsGroup.children.map(x => x.update());
+            knownFloorsGroup.update();
         },
         //#endregion
         //#region render()
@@ -699,6 +802,7 @@ const start = async () => {
             }
 
             scene.render();
+            knownFloorsGroup.render();
 
             if (transitioningUntil > Date.now() || transitionType == 5) {
                 switch (transitionType) {

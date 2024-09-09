@@ -12,35 +12,36 @@ body {
 }
 
 .container {
-  max-width: 960px;
-  width: 100%;
+  /* max-width: 960px; */
+  width: 480px;
   margin: 0 auto;
   padding: 1em;
-  box-sizing: border-box;
+  box-sizing: content-box;
   margin-bottom: 64px;
-  display: flex;
+  /* display: flex; */
 }
-@media (max-width: 640px) {
+/* @media (max-width: 640px) {
   .container {
     flex-direction: column;
   }
-}
-.container > div {
+} */
+/* .container > div {
   width: 100%;
-}
-.container textarea {
+} */
+/* .container textarea {
   width: 100%;
   height: 100%;
   min-height: 100px;
-}
+} */
 
+/* for multi layer canvas
 #game {
   width: 480px;
   height: 320px;
   position: relative;
-}
+} */
 #a {
-  position: absolute;
+  /* position: absolute; */
   width: 480px;
   height: 320px;
   background: #f5f5f5;

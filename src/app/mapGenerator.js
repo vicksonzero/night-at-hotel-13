@@ -70,7 +70,10 @@ export const generateMap = (
     // amount of superstitious floors that we want to skip
     aliasSkip
 ) => {
+    
+    /* #IfDev */
     console.log('generateMap');
+    /* #EndIfDev */
 
     //#region generateFloorAlias
 

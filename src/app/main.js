@@ -157,7 +157,9 @@ const start = async () => {
     const tryEscape = () => {
         if (building.floors[floorId].isExit) {
             // win
+            /* #IfDev */
             console.log('win');
+            /* #EndIfDev */
             gameIsOver = true;
             transitionType = 5;
             transitioningUntil = Date.now() + transition_length_5;

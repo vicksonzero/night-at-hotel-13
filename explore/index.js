@@ -22,9 +22,12 @@ const aliasSkip = 5;
 const building = generateMap(
     floorCount,
     floorWidth,
+
+    liftPerFloorMin,
     liftPerFloorMax,
     liftRandomCount,
     accessibleFloorCount,
+
     aliasMax,
     aliasMin,
     aliasSafe,

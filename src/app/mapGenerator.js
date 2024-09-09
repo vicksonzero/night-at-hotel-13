@@ -107,7 +107,7 @@ export const generateMap = (
             escapeDoor: roomId == 0,
             // liftDoor: createLiftDoor(liftId)
             // shaft: liftId
-            empty: Math.random() < 0.3,
+            empty: Math.random() < 0.05,
         }))
     }));
 

@@ -174,7 +174,7 @@ const start = async () => {
 
             // player.x = canvas.width / 2;
             // player.y = canvas.height / 2 + 50;
-            lastCorrectExit = building.exitFloorId;
+            lastCorrectExit = building.floors[building.exitFloorId].fa;
             transitionType = 3;
             transitioningUntil = Date.now() + transition_length_3;
         }
@@ -277,7 +277,8 @@ const start = async () => {
 
         // custom properties
         /** @type {IEntity} - player body */
-        bd: { x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0, 
+        bd: {
+            x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0,
             // vy: 0, gd: 1, gv: g1, cj: 1 
         },
         sprint: false, // aka isSprinting
@@ -329,8 +330,11 @@ const start = async () => {
                 this.strokeColor = undefined;
             },
             onDown() {
-                // console.log('onDown', room.roomId);
-                addKnownFloorAliases(building.af.at(-door.room.roomId));
+                /* #IfDev */
+                console.log('onDown', room.roomId, door.type);
+                /* #EndIfDev */
+                if (door.type == 'dr')
+                    addKnownFloorAliases(building.af.at(-door.room.roomId));
             },
         }));
         door.addChild(Text({
@@ -340,7 +344,20 @@ const start = async () => {
             font: '4px Arial',
             color: 'white',
             anchor: { x: 1, y: 0.5 },
-            textAlign: 'right'
+            textAlign: 'right',
+
+            onOver() {
+                // handle on over events on the sprite
+                this.strokeColor = 'red';
+            },
+            onOut() {
+                // handle on out events on the sprite
+                this.strokeColor = undefined;
+            },
+            onDown() {
+                // console.log('onDown', room.roomId);
+                addKnownFloorAliases(building.floors[floorId].fa);
+            },
         }));
         door.addChild(Sprite({
             x: door.width + 2,
@@ -349,6 +366,7 @@ const start = async () => {
         }));
 
         track(door.children[0]);
+        track(door.children[1]);
         track(door.children[2].children);
         doors.push(door);
     }
@@ -463,7 +481,7 @@ const start = async () => {
                     x: 0,
                     y: -floorIds.length / 2 * 3 + i * 3,
                     font: '3px Arial',
-                    color: 'white',
+                    color: fa == building.floors[floorId].fa ? '#555' : 'white',
                     strokeColor: undefined,
                     lineWidth: 1,
                     anchor: { x: 0.5, y: 0.5 },

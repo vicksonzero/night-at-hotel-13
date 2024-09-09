@@ -1,5 +1,6 @@
+//@ts-check
 import * as jsfxrJS from '../lib/jsfxr.js';
-const { jsfxr }=jsfxrJS;
+const { jsfxr } = jsfxrJS;
 // thanks https://codepen.io/jackrugile/post/arcade-audio-for-js13k-games
 export class ArcadeAudio {
     constructor() {
@@ -73,26 +74,26 @@ export class ArcadeAudio {
 
     add(key, allowAtSameTime, settings) {
         this.sounds[key] = [];
-        settings.forEach((elem, index) => {
+        settings.forEach((elem, variantIndex) => {
             this.sounds[key].push({
                 tick: 0,
-                count: allowAtSameTime,
+                // count: allowAtSameTime,
                 pool: []
             });
-            for (var i = 0; i < allowAtSameTime; i++) {
-                var audio = new Audio();
+            for (let i = 0; i < allowAtSameTime; i++) {
+                let audio = new Audio();
                 audio.src = jsfxr(elem);
-                this.sounds[key][index].pool.push(audio);
+                this.sounds[key][variantIndex].pool.push(audio);
             }
         });
     }
 
     play(key, volume = this.volume) {
-        var sound = this.sounds[key];
-        var soundData = sound.length > 1 ? sound[(Math.random() * sound.length) | 0] : sound[0];
-        soundData.pool[soundData.tick].volume = volume;
-        soundData.pool[soundData.tick].play().catch(e => {/* do nothing */ });
+        let sound = this.sounds[key];
+        let soundVariant = sound.length > 1 ? sound[(Math.random() * sound.length) | 0] : sound[0];
+        soundVariant.pool[soundVariant.tick].volume = volume;
+        soundVariant.pool[soundVariant.tick].play().catch(e => {/* do nothing */ });
         // soundData.tick < soundData.count - 1 ? soundData.tick++ : soundData.tick = 0;
-        soundData.tick = (soundData.tick + 1) % soundData.count;
+        soundVariant.tick = (soundVariant.tick + 1) % soundVariant.pool.length;
     }
 }

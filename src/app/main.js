@@ -82,7 +82,7 @@ const start = async () => {
     // transitions use real world time, while game time is paused
     let transitioningUntil = Date.now() + transition_length_4;
 
-    let distFromExit = 0;
+    let lastCorrectExit = 0;
     let building = generateMap(
         /* floorCount */ 13,
         /* floorWidth */ 14,
@@ -174,7 +174,7 @@ const start = async () => {
 
             // player.x = canvas.width / 2;
             // player.y = canvas.height / 2 + 50;
-            distFromExit = Math.abs(floorId - building.exitFloorId);
+            lastCorrectExit = building.exitFloorId;
             transitionType = 3;
             transitioningUntil = Date.now() + transition_length_3;
         }
@@ -845,7 +845,7 @@ const start = async () => {
                             context.textAlign = "center";
                             context.fillText("No escape!", canvas.width / 2, canvas.height / 2 - 40);
                             context.font = "18px Arial";
-                            context.fillText("You were " + distFromExit + " floors from the true 13/F", canvas.width / 2, canvas.height / 2 + 40);
+                            context.fillText("The true 13/F was marked " + lastCorrectExit + "/F", canvas.width / 2, canvas.height / 2 + 40);
                             context.fillText("Randomizing the hotel...", canvas.width / 2, canvas.height / 2 + 40 + 18);
                         }
                         break;

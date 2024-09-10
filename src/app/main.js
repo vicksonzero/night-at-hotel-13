@@ -25,7 +25,6 @@ import { generateMap } from './mapGenerator.js';
 
 /**
  * @typedef IEntity
- * @property {string} type       - 
  * @property {number} x          - 
  * @property {number} y          - 
  * @property {number} w          - 
@@ -152,7 +151,7 @@ const start = async () => {
     //#endregion
 
     const tryEscape = () => {
-        if (building.floors[floorId].isExit) {
+        if (building.floors[floorId].isExit && !collides(player, ghost)) {
             // win
             /* #IfDev */
             console.log('win');
@@ -278,7 +277,7 @@ const start = async () => {
         // custom properties
         /** @type {IEntity} - player body */
         bd: {
-            x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, type: 'player', vx: 0,
+            x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, vx: 0,
             // vy: 0, gd: 1, gv: g1, cj: 1 
         },
         sprint: false, // aka isSprinting
@@ -371,7 +370,24 @@ const start = async () => {
         doors.push(door);
     }
 
-    scene.add(room_images, doors, player);
+    let ghost = Sprite({
+        /* #IfDev */
+        name: 'ghost',
+        /* #EndIfDev */
+        x: 18 * tile_w,        // starting x,y position of the sprite
+        y: 6 * tile_h,
+        // color: 'red',  // fill color of the sprite rectangle
+        // width: .8 * tile_w,     // width and height of the sprite rectangle
+        // height: 1.5 * tile_h,
+        anchor: { x: 0.5, y: 1 },
+        image: images.pdi,
+        // scaleX: 2, // is set in render()
+        scaleY: 2,
+
+        next: 0,
+    });
+
+    scene.add(room_images, doors, player, ghost);
 
     const addKnownFloorAliases = (floorAlias, type, index) => {
         // console.log('addKnownFloorAliases', floorAlias, type, index);
@@ -731,6 +747,24 @@ const start = async () => {
             // if (player.bd.vy > 0.2) player.bd.vy = 0.2;
             player.bd.vx -= (Math.sign(player.bd.vx) * Math.min(Math.abs(player.bd.vx), .02));
 
+            if (ghost.next <= fixedGameTime) {
+                ghost.xx = player.x;
+                ghost.next = fixedGameTime + (Math.random() * 2000 | 0) + 1000;
+            }
+            const speed = 2;
+            const dx = ghost.x - ghost.xx;
+            let mv = dx < -speed ? 1
+                : dx > speed ? -1
+                    : 0;
+            ghost.fc = mv || ghost.fc;
+            ghost.x += mv * speed;
+            ghost.scaleX = 2 * ghost.fc;
+            ghost.image = !mv ? images.pdi : (Math.ceil(fixedGameTime / (fixedDeltaTime * 10)) % 2 == 0 ? images.pdr1 : images.pdr2);
+
+
+            if (collides(player, ghost)) {
+                tryEscape();
+            }
 
             // tryMoveY(
             //     player.bd,
@@ -750,7 +784,7 @@ const start = async () => {
             //     }
             // );
 
-            const mv = input.l ? -1 : input.r ? 1 : 0;
+            mv = input.l ? -1 : input.r ? 1 : 0;
             if (!mv) player.sprint = false;
 
             player.bd.x += mv * (player.sprint ? player_speed2 : player_speed1) + player.bd.vx;
@@ -810,16 +844,16 @@ const start = async () => {
                 room_image.x = ((Math.floor((loopIndex + 1 - room_image.loopIndex) / 3)) * 3 + room_image.loopIndex) * map.w * tile_w;
             }
 
-            for (let door of doors) {
+            for (let door of [...doors, ghost]) {
                 while (door.x - player.x > map.w / 2 * tile_w) {
                     /* #IfDev */
-                    console.log(`door[${door.room.roomId}] is too right`);
+                    console.log(`door[${door?.room?.roomId ?? 'ghost'}] is too right`);
                     /* #EndIfDev */
                     door.x -= map.w * tile_w;
                 }
                 while (player.x - door.x > map.w / 2 * tile_w) {
                     /* #IfDev */
-                    console.log(`door[${door.room.roomId}] is too left`);
+                    console.log(`door[${door?.room?.roomId ?? 'ghost'}] is too left`);
                     /* #EndIfDev */
                     door.x += map.w * tile_w;
                 }

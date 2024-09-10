@@ -88,11 +88,14 @@ const createImageAsync = async src => {
 
 const convertToDarkImageAsync = (img) => {
     const canvas = document.createElement('canvas');
+    /* #IfDev */
+    if (!canvas) return canvas;
+    /* #EndIfDev */
     canvas.width = 32;
     canvas.height = 32;
     const ctx = canvas.getContext('2d');
     /* #IfDev */
-    if (!ctx) return;
+    if (!ctx) return canvas;
     /* #EndIfDev */
 
     ctx.drawImage(img, 0, 0);

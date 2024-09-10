@@ -374,7 +374,7 @@ const start = async () => {
         /* #IfDev */
         name: 'ghost',
         /* #EndIfDev */
-        x: 18 * tile_w,        // starting x,y position of the sprite
+        x: 30 * tile_w,        // starting x,y position of the sprite
         y: 6 * tile_h,
         // color: 'red',  // fill color of the sprite rectangle
         // width: .8 * tile_w,     // width and height of the sprite rectangle
@@ -764,11 +764,12 @@ const start = async () => {
 
             if (ghost.next < fixedGameTime) {
                 ghost.xx = player.x;
-                ghost.next = fixedGameTime + (Math.random() * 2000 | 0) + 1000;
+                ghost.next = fixedGameTime + (Math.random() * 2000) + 1000;
             }
             const speed = 2;
             const distanceGhostPlayer2 = player.x - ghost.x;
             const distanceGhostPlayer = ghost.xx - ghost.x;
+            const shouldSpawnScreenParticle = Math.abs(distanceGhostPlayer2) / (map.w / 2 * tile_w);
             let mv = distanceGhostPlayer < -speed ? -1
                 : distanceGhostPlayer > speed ? 1
                     : 0;
@@ -805,11 +806,10 @@ const start = async () => {
                 }));
 
 
-                ghost.nextParticle += (Math.random() * 50 | 0) + 20;
+                ghost.nextParticle += (Math.random() * 50) + 20;
             }
-            const shouldSpawnScreenParticle = Math.abs(distanceGhostPlayer) / (map.w / 2 * tile_w);
-            console.log('screenParticles', shouldSpawnScreenParticle);
-            if ((distanceGhostPlayer2 > 100 || distanceGhostPlayer2 < -100) && Math.random() > shouldSpawnScreenParticle) {
+            // console.log('screenParticles', shouldSpawnScreenParticle);
+            if (shouldSpawnScreenParticle > 0.2 && Math.random() > shouldSpawnScreenParticle) {
                 /* #IfDev */
                 /* #EndIfDev */
                 screenParticles.addChild(Sprite({
@@ -829,7 +829,6 @@ const start = async () => {
                         if (this.dx == null) return;
                         if (this.opacity == null) return;
                         /* #EndIfDev */
-                        // this.y -= 0.5;
                         this.x += this.dx;
                         this.opacity -= this.fadeRate;
 

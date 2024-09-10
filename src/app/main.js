@@ -169,8 +169,8 @@ const start = async () => {
             console.log('building.exitFloorId: ', floorId, building.exitFloorId);
             /* #EndIfDev */
 
-            // player.x = canvas.width / 2;
-            // player.y = canvas.height / 2 + 50;
+            // player.x = canvas_width_2;
+            // player.y = canvas_height_2 + 50;
             lastCorrectExit = building.floors[building.exitFloorId].fa;
             transitionType = 3;
             transitioningUntil = Date.now() + transition_length_3;
@@ -199,8 +199,8 @@ const start = async () => {
             updateLiftFloors();
         }, transition_length_1 / 2);
 
-        // player.x = canvas.width / 2;
-        // player.y = canvas.height / 2 + 50;
+        // player.x = canvas_width_2;
+        // player.y = canvas_height_2 + 50;
         transitionType = floorDir > 0 ? 1 : 2;
         transitioningUntil = Date.now() + transition_length_1;
     };
@@ -213,7 +213,10 @@ const start = async () => {
     // const canvas2 = document.querySelector('#b');
     // const context2 = canvas2.getContext('2d');
 
-
+    const canvas_width = 480;
+    const canvas_height = 320;
+    const canvas_width_2 = canvas_width / 2;
+    const canvas_height_2 = canvas_height / 2;
     const fixedDeltaTime = (1000 / 60) | 0;
     let fixedGameTime = 0;
 
@@ -794,7 +797,7 @@ const start = async () => {
             // context.fillStyle = BACKGROUND_COLOR;
             context.globalAlpha = 1;
             context.fillStyle = '#000000';
-            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillRect(0, 0, canvas_width, canvas_height);
 
             player.x = player.bd.x * tile_w + player.bd.w * .5 * tile_w;
             player.y = player.bd.y * tile_h + player.bd.h * tile_h;
@@ -838,63 +841,63 @@ const start = async () => {
                         /* #EndIfDev */
 
                         context.fillStyle = '#000000';
-                        context.fillRect(0, transitionType == 1 ? (-yy + a_room_cache.height) : (yy - height), canvas.width, height);
+                        context.fillRect(0, transitionType == 1 ? (-yy + a_room_cache.height) : (yy - height), canvas_width, height);
 
                         context.fillStyle = 'white';
                         context.font = "18px Arial";
                         context.textAlign = "center";
-                        context.fillText("Riding lift...", canvas.width / 2, canvas.height / 2);
+                        context.fillText("Riding lift...", canvas_width_2, canvas_height_2);
                         break;
                     case 3: // fall into the next loop
                         context.fillStyle = '#000000';
-                        const radius = Math.pow(1 - (transitioningUntil - Date.now()) / transition_length_3, 2) * canvas.width * 2;
+                        const radius = Math.pow(1 - (transitioningUntil - Date.now()) / transition_length_3, 2) * canvas_width * 2;
                         // const scale = Math.min(2, (transitioningUntil - Date.now()) / transition_length_3 * 2.5);
                         const scale = (1 - Math.pow(1 - ((transitioningUntil - Date.now()) / transition_length_3), 2)) * 4;
                         /* #IfDev */
                         // console.log('radius', radius, scale);
                         /* #EndIfDev */
                         context.beginPath();
-                        context.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
+                        context.arc(canvas_width_2, canvas_height_2, radius, 0, 2 * Math.PI);
                         context.fill();
-                        context.drawImage(images.pf, canvas.width / 2 - 16 * scale / 2, canvas.height / 2 + 20 - 16 * 0.8 * scale, 16 * scale, 16 * scale);
+                        context.drawImage(images.pf, canvas_width_2 - 16 * scale / 2, canvas_height_2 + 20 - 16 * 0.8 * scale, 16 * scale, 16 * scale);
 
                         if (transitioningUntil - Date.now() < 2000) {
                             context.fillStyle = 'white';
                             context.font = "32px Arial";
                             context.textAlign = "center";
-                            context.fillText("No escape!", canvas.width / 2, canvas.height / 2 - 40);
+                            context.fillText("No escape!", canvas_width_2, canvas_height_2 - 40);
                             context.font = "18px Arial";
-                            context.fillText("The true 13/F was marked " + lastCorrectExit + "/F", canvas.width / 2, canvas.height / 2 + 40);
-                            context.fillText("Randomizing the hotel...", canvas.width / 2, canvas.height / 2 + 40 + 18);
+                            context.fillText("The true 13/F was marked " + lastCorrectExit + "/F", canvas_width_2, canvas_height_2 + 40);
+                            context.fillText("Randomizing the hotel...", canvas_width_2, canvas_height_2 + 40 + 18);
                         }
                         break;
                     case 4: // start level
                         context.fillStyle = '#000000';
                         context.globalAlpha = 1 - Math.pow(1 - (transitioningUntil - Date.now()) / transition_length_4, 2);
-                        context.fillRect(0, 0, canvas.width, canvas.height);
+                        context.fillRect(0, 0, canvas_width, canvas_height);
 
                         if (transitioningUntil - Date.now()) {
                             context.globalAlpha = 1;
                             context.fillStyle = 'white';
                             context.font = "18px Arial";
                             context.textAlign = "center";
-                            context.fillText("Exit from the true 13/F", canvas.width / 2, canvas.height / 2);
-                            // context.fillText("but they skipped some superstitious numbers...", canvas.width / 2, canvas.height / 2 + 18);
+                            context.fillText("Exit from the true 13/F", canvas_width_2, canvas_height_2);
+                            // context.fillText("but they skipped some superstitious numbers...", canvas_width_2, canvas_height_2 + 18);
                         }
                         break;
                     case 5: // win
                         context.fillStyle = 'white';
                         context.globalAlpha = Math.pow((1 - (transitioningUntil - Date.now()) / transition_length_5) * 2, 2);
-                        context.fillRect(0, 0, canvas.width, canvas.height);
+                        context.fillRect(0, 0, canvas_width, canvas_height);
 
                         if (transitioningUntil - Date.now() < 1000) {
                             context.fillStyle = '#000000';
                             context.font = "32px Arial";
                             context.textAlign = "center";
-                            context.fillText("You win!", canvas.width / 2, canvas.height / 2 - 40);
+                            context.fillText("You win!", canvas_width_2, canvas_height_2 - 40);
                             context.font = "18px Arial";
-                            context.fillText("You win after " + loopCount + " fail attempts", canvas.width / 2, canvas.height / 2 + 40);
-                            context.fillText("Refresh the page to play again", canvas.width / 2, canvas.height / 2 + 40 + 18);
+                            context.fillText("You win after " + loopCount + " fail attempts", canvas_width_2, canvas_height_2 + 40);
+                            context.fillText("Refresh the page to play again", canvas_width_2, canvas_height_2 + 40 + 18);
                         }
                         break;
                 }

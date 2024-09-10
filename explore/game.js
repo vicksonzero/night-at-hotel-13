@@ -159,18 +159,18 @@ function loadOrGenerateBuilding(isNew) {
 
     }
     return generateMap(
-        /* floorCount */ 13,
-        /* floorWidth */ 14,
+        // /* floorCount */ 13,
+        // /* floorWidth */ 14,
 
-        /* liftPerFloorMin */ 2,
-        /* liftPerFloorMax */ 4,
-        /* liftRandomCount */ 8,
-        /* accessibleFloorCount */ 13,
+        // /* liftPerFloorMin */ 2,
+        // /* liftPerFloorMax */ 4,
+        // /* liftRandomCount */ 8,
+        // /* accessibleFloorCount */ 13,
 
-        /* aliasMax */ 22,
-        /* aliasMin */ 14,
-        /* aliasSafe */ 3,
-        /* aliasSkip */ 5,
+        // /* aliasMax */ 22,
+        // /* aliasMin */ 14,
+        // /* aliasSafe */ 3,
+        // /* aliasSkip */ 5,
     );
 
 }

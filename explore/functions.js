@@ -11,6 +11,14 @@ export function printRoom(floorBuffer, room, floors, acc, af, isPlayMode = false
         else
             floorBuffer[1] += ` |^v| `;
         floorBuffer[2] += `  ${downStr}  `;
+    } else if (!isPlayMode && room.shaft != null) {
+        floorBuffer[0] += `  ||  `;
+        floorBuffer[1] += `  ||  `;
+        floorBuffer[2] += `  ||  `;
+    } else if (!acc) {
+        floorBuffer[0] += `......`;
+        floorBuffer[1] += `......`;
+        floorBuffer[2] += `......`;
     } else if (room.escapeDoor) {
         floorBuffer[0] += ` >ESC `;
         floorBuffer[1] += ` [  ] `;
@@ -19,14 +27,6 @@ export function printRoom(floorBuffer, room, floors, acc, af, isPlayMode = false
         floorBuffer[0] += `      `;
         floorBuffer[1] += `      `;
         floorBuffer[2] += ` [  ] `;
-    } else if (!isPlayMode && room.shaft != null) {
-        floorBuffer[0] += `  ||  `;
-        floorBuffer[1] += `  ||  `;
-        floorBuffer[2] += `  ||  `;
-    } else if (!acc) {
-        floorBuffer[0] += `XXXXXX`;
-        floorBuffer[1] += `XXXXXX`;
-        floorBuffer[2] += `XXXXXX`;
     } else if (room.hint) {
         floorBuffer[0] += `      `;
         floorBuffer[1] += ` (00) `;
@@ -58,6 +58,8 @@ export function printMap(building) {
     /* #IfDev */
     console.log('');
     /* #EndIfDev */
+
+    console.log('      .' + floors[0].rooms.map(room => ` [${('' + room.roomId).padStart(2, ' ')}] `).join('.'));
     let outputBuffer = createFloorBuffer();
     for (let floorIndex = floors.length - 1; floorIndex >= 0; floorIndex--) {
         outputBuffer = createFloorBuffer();
@@ -90,5 +92,7 @@ export function printMap(building) {
     /* #IfDev */
     console.log(new Array(outputBuffer[0].length).fill('-').join(''));
     /* #EndIfDev */
+    console.log('      .' + floors[0].rooms.map(room => ` [${('' + room.roomId).padStart(2, ' ')}] `).join('.'));
+    console.log('');
 }
 

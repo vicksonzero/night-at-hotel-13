@@ -55,22 +55,22 @@ const generateFloorAlias = (aliasMax, aliasMin, aliasSafe, aliasSkip) => {
 };
 
 export const generateMap = (
-    floorCount,
-    floorWidth,
-    liftPerFloorMin,
-    liftPerFloorMax,
-    liftRandomCount,
-    accessibleFloorCount,
+    floorCount = 13,
+    floorWidth = 14,
+    liftPerFloorMin = 2,
+    liftPerFloorMax = 4,
+    liftRandomCount = 8,
+    accessibleFloorCount = 11,
     // maximum amount of floors in the alias naming
-    aliasMax,
+    aliasMax = 22,
     // minimum amount of floors in the alias naming
-    aliasMin,
+    aliasMin = 14,
     // floors lower than this are never superstitious
-    aliasSafe,
+    aliasSafe = 3,
     // amount of superstitious floors that we want to skip
-    aliasSkip
+    aliasSkip = 5,
 ) => {
-    
+
     /* #IfDev */
     console.log('generateMap');
     /* #EndIfDev */
@@ -107,7 +107,7 @@ export const generateMap = (
             escapeDoor: roomId == 0,
             // liftDoor: createLiftDoor(liftId)
             // shaft: liftId
-            empty: Math.random() < 0.05,
+            empty: Math.random() < 0.5,
         }))
     }));
 
@@ -208,6 +208,7 @@ export const generateLiftDraft = (floors, lifts, fromFloorId, roomId, toFloorId)
     /* #EndIfDev */
 
 
+    // TODO: we don't need direction. direction will be done in a later stage
     const direction = Math.sign(toFloorId - fromFloorId);
 
     const newLift = {
@@ -246,7 +247,7 @@ export const mergeLiftsInBuilding = (floors, lifts) => {
 
         for (const lift of liftsByRoomId) {
             const sortedFloorIds = sortBy(lift.floorIds, (a, b) => a - b);
-            const lastFloorId = sortedFloorIds[sortedFloorIds.length - 1];
+            const lastFloorId = sortedFloorIds.at(-1);
             for (let floorId = sortedFloorIds[0]; floorId <= lastFloorId; floorId++) {
 
                 const room = floors[floorId].rooms[roomId];
@@ -295,7 +296,7 @@ export const mergeLifts = (floors, lifts, toLiftId, fromLiftId) => {
     const { roomId, floorIds } = lifts[fromLiftId];
 
     const sortedFloorIds = sortBy(floorIds, (a, b) => a - b);
-    const lastFloorId = sortedFloorIds[sortedFloorIds.length - 1];
+    const lastFloorId = sortedFloorIds.at(-1);
     for (let floorId = sortedFloorIds[0]; floorId <= lastFloorId; floorId++) {
         const room = floors[floorId].rooms[roomId];
 

@@ -13,7 +13,7 @@ import Door from '../assets/Door.png'
 import ExitDoor1 from '../assets/ExitDoor1.png'
 import ExitDoor2 from '../assets/ExitDoor2.png'
 
-export async function loadImages() {
+export const loadImages = async () => {
     return {
         // basicEnemyPhysical: decompress(imageList.tile028, colors.darkGray),
         // basicEnemySpectral: decompress(imageList.tile028, colors.gray),
@@ -38,6 +38,11 @@ export async function loadImages() {
         ed1: await createImageAsync(ExitDoor1),
         ed2: await createImageAsync(ExitDoor2),
 
+        pdi: convertToDarkImageAsync(await createImageAsync(Player_idle)),
+        pdf: convertToDarkImageAsync(await createImageAsync(Player_fall)),
+        pdr1: convertToDarkImageAsync(await createImageAsync(Player_run1)),
+        pdr2: convertToDarkImageAsync(await createImageAsync(Player_run2)),
+
         // boxWhite: decompress(imageList.tile121, colors.white),
         // boxDarkGray: decompress(imageList.tile121, colors.lightGray),
 
@@ -45,10 +50,10 @@ export async function loadImages() {
 
         // floorTile2: decompress(imageList.tile002, colors.lightGray),
     };
-}
+};
 
 
-function decompress(bitArray2D, color = '#fff') {
+const decompress = (bitArray2D, color = '#fff') => {
     const [width, ...compressed] = bitArray2D;
 
     const canvas = document.createElement('canvas');
@@ -69,9 +74,9 @@ function decompress(bitArray2D, color = '#fff') {
 
     // return canvas.toDataURL('image/png');
     return canvas;
-}
+};
 
-async function createImageAsync(src) {
+const createImageAsync = async src => {
     const image = new Image();
     await new Promise(resolve => {
         image.src = src;
@@ -79,4 +84,21 @@ async function createImageAsync(src) {
     });
 
     return image;
-}
+};
+
+const convertToDarkImageAsync = (img) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+    /* #IfDev */
+    if (!ctx) return;
+    /* #EndIfDev */
+
+    ctx.drawImage(img, 0, 0);
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, 32, 32);
+
+    return canvas;
+};

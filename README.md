@@ -19,12 +19,10 @@ Now, get trapped in an infinite dream until you find out where the true 13/F is!
 # Controls
 
 - Use WASD, ZQSD, or Arrow keys to move.
-- Space to jump
-- Shift to dash
-- E to interact
-  - Ride lift
-  - Hold E to hide behind things
-- Click hints to jot notes; drag note items to reorder.
+- Press Up or Down to ride lift.
+- Click numbers to jot notes
+- Click notes to change color, click between note items to insert blanks.
+- Click blank notes to delete them.
 
 
 # Credits
@@ -33,7 +31,7 @@ Now, get trapped in an infinite dream until you find out where the true 13/F is!
 - [Kontra.js](https://github.com/straker/kontra) by straker
 - Webpack
 - mvasilkov for telling me about 1-bit sprite compression
-- 
+
 
 # How to compress images
 
@@ -133,10 +131,10 @@ Mapping:
   - [x] Ride lift
   - [x] Game Over screen
   - [x] Win screen
-- [ ] Clue collection
-  - [ ] Click clue
-  - [ ] Render clue
-  - [ ] Arrange clues
+- [x] Clue collection
+  - [x] Click clue
+  - [x] Render clue
+  - [x] Arrange clues
 - [ ] Boss chasing, circular corridor
   - [x] Player wrap around
   - [x] Doors wrap around

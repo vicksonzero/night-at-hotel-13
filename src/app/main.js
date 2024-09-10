@@ -83,23 +83,20 @@ const start = async () => {
     let transitioningUntil = Date.now() + transition_length_4;
 
     let lastCorrectExit = 0;
-    let building = generateMap(
-        /* floorCount */ 13,
-        /* floorWidth */ 14,
-
-        /* liftPerFloorMin */ 2,
-        /* liftPerFloorMax */ 4,
-        /* liftRandomCount */ 8,
-        /* accessibleFloorCount */ 13,
-
-        /* aliasMax */ 22,
-        /* aliasMin */ 14,
-        /* aliasSafe */ 3,
-        /* aliasSkip */ 5,
-    );
     /* #IfDev */
-    console.log('building', building);
+    let buildingGenCount = 0;
     /* #EndIfDev */
+    let building;
+    do {
+        /* #IfDev */
+        buildingGenCount++;
+        /* #EndIfDev */
+        building = generateMap();
+        /* #IfDev */
+        console.log(`generateMap ${buildingGenCount}`, building);
+        /* #EndIfDev */
+    }
+    while (building.lifts.some(lift => lift?.floorIds.length > 6));
 
     //#region Build level
 
@@ -130,7 +127,7 @@ const start = async () => {
             // map = map.map((row, i) => i != 5
             //     ? row + "0".repeat(map_room_w)
             //     : row + '0000000000');
-            map = map.map((row, i) => row + "0".repeat(map_room_w));
+            map = map.map((row, i) => row + "0000000");
         }
 
         map.w = map[0].length;  // map width in tiles
@@ -752,16 +749,18 @@ const start = async () => {
 
             const mv = input.l ? -1 : input.r ? 1 : 0;
             if (!mv) player.sprint = false;
-            tryMoveX(
-                player.bd,
-                mv * (player.sprint ? player_speed2 : player_speed1) + player.bd.vx,
-                map,
-                () => {
-                    // if (can_do_climb) {
-                    //     hero.vy = -.07;
-                    // }
-                }
-            );
+
+            player.bd.x += mv * (player.sprint ? player_speed2 : player_speed1) + player.bd.vx;
+            // tryMoveX(
+            //     player.bd,
+            //     mv * (player.sprint ? player_speed2 : player_speed1) + player.bd.vx,
+            //     map,
+            //     () => {
+            //         // if (can_do_climb) {
+            //         //     hero.vy = -.07;
+            //         // }
+            //     }
+            // );
             player.bd.fc = mv || player.bd.fc;
             // console.log('player.image', fixedGameTime, fixedGameTime * fixedDeltaTime, Math.ceil(fixedGameTime * fixedDeltaTime * 10) % 2);
             player.image = !mv ? images.pi : (Math.ceil(fixedGameTime / (fixedDeltaTime * 10)) % 2 == 0 ? images.pr1 : images.pr2);
@@ -805,7 +804,7 @@ const start = async () => {
 
             const loopIndex = Math.round((player.bd.x + map.w / 2) / map.w) - 1;
             for (let room_image of room_images) {
-                room_image.x = (((loopIndex + 1 - room_image.loopIndex) / 3 | 0) * 3 + room_image.loopIndex) * map.w * tile_w;
+                room_image.x = ((Math.floor((loopIndex + 1 - room_image.loopIndex) / 3)) * 3 + room_image.loopIndex) * map.w * tile_w;
             }
 
             for (let door of doors) {
@@ -920,35 +919,35 @@ const start = async () => {
 };
 
 //#region  tryMoveX()
-const tryMoveX = (/** @type {ITransform}*/ entity, dx, map, solidCallback) => {
-    entity.x += dx;
-    // if (dx <= 0) {
-    //     entity.x = Math.max(entity.x, 0);
-    // } else {
-    //     entity.x = Math.min(map.w - entity.w, entity.x);
-    // }
+// const tryMoveX = (/** @type {ITransform}*/ entity, dx, map, solidCallback) => {
+//     entity.x += dx;
+//     // if (dx <= 0) {
+//     //     entity.x = Math.max(entity.x, 0);
+//     // } else {
+//     //     entity.x = Math.min(map.w - entity.w, entity.x);
+//     // }
 
-    let probeX = (dx <= 0 ? entity.x : entity.x + entity.w);
-    while (probeX < 0) probeX += map.w;
-    probeX = probeX % map.w;
+//     let probeX = (dx <= 0 ? entity.x : entity.x + entity.w);
+//     while (probeX < 0) probeX += map.w;
+//     probeX = probeX % map.w;
 
-    const tile1 = +map[~~(entity.y)][~~(probeX)];
-    const tile2 = +map[~~(entity.y + 0.5 * entity.h)][~~(probeX)];
-    const tile3 = +map[~~(entity.y + entity.h - .1)][~~(probeX)];
+//     const tile1 = +map[~~(entity.y)][~~(probeX)];
+//     const tile2 = +map[~~(entity.y + 0.5 * entity.h)][~~(probeX)];
+//     const tile3 = +map[~~(entity.y + entity.h - .1)][~~(probeX)];
 
-    // const oldX = entity.x;
-    if (tile1 == 1 || tile2 == 1 || tile3 == 1) {
-        // @ts-ignore (using && to do if-else)
-        entity.x = (dx <= 0 ? Math.ceil(entity.x) : ~~(entity.x + (entity.x > 0 && entity.w)) - entity.w);
-        if (solidCallback) solidCallback();
-    }
-    // if (dx != 0) {
-    //     // console.log('tryMoveX', oldX, entity.x, entity.x + entity.w);
-    //     console.log('tryMoveX', entity.x, Math.round((entity.x + map.w / 2) / map.w) - 1);
-    // }
+//     // const oldX = entity.x;
+//     if (tile1 == 1 || tile2 == 1 || tile3 == 1) {
+//         // @ts-ignore (using && to do if-else)
+//         entity.x = (dx <= 0 ? Math.ceil(entity.x) : ~~(entity.x + (entity.x > 0 && entity.w)) - entity.w);
+//         if (solidCallback) solidCallback();
+//     }
+//     // if (dx != 0) {
+//     //     // console.log('tryMoveX', oldX, entity.x, entity.x + entity.w);
+//     //     console.log('tryMoveX', entity.x, Math.round((entity.x + map.w / 2) / map.w) - 1);
+//     // }
 
-    return entity;
-};
+//     return entity;
+// };
 
 //#endregion
 //#region tryMoveY()
@@ -1006,10 +1005,10 @@ const cache_map = (cache, _map) => {
                 cache_c.fillRect(x * tile_w, y * tile_h - 10, tile_w, 10);
             }
         }
-        if (tile == 'w' || (tile != 'w' && row[x - 1] == 'w' && row[x + 1] == 'w')) {
-            cache_c.fillStyle = "#0B0";
-            cache_c.fillRect(x * tile_w, y * tile_h + 6, tile_w, tile_h - 6);
-        }
+        // if (tile == 'w' || (tile != 'w' && row[x - 1] == 'w' && row[x + 1] == 'w')) {
+        //     cache_c.fillStyle = "#0B0";
+        //     cache_c.fillRect(x * tile_w, y * tile_h + 6, tile_w, tile_h - 6);
+        // }
     }));
 };
 

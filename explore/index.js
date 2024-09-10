@@ -20,18 +20,18 @@ const aliasSkip = 5;
 
 
 const building = generateMap(
-    floorCount,
-    floorWidth,
+    // floorCount,
+    // floorWidth,
 
-    liftPerFloorMin,
-    liftPerFloorMax,
-    liftRandomCount,
-    accessibleFloorCount,
+    // liftPerFloorMin,
+    // liftPerFloorMax,
+    // liftRandomCount,
+    // accessibleFloorCount,
 
-    aliasMax,
-    aliasMin,
-    aliasSafe,
-    aliasSkip,
+    // aliasMax,
+    // aliasMin,
+    // aliasSafe,
+    // aliasSkip,
 );
 
 writeFileSync(`./_out/${DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss')}.json`, JSON.stringify(building, null, 4));

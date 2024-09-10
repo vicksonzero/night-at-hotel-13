@@ -385,9 +385,24 @@ const start = async () => {
         scaleY: 2,
 
         next: 0,
+        nextParticle: 0,
     });
 
-    scene.add(room_images, doors, player, ghost);
+    let ghostParticles = Sprite({
+        /* #IfDev */
+        name: 'ghostParticles',
+        /* #EndIfDev */
+    });
+
+    let screenParticles = Sprite({
+        /* #IfDev */
+        name: 'screenParticles',
+        /* #EndIfDev */
+        width: canvas_width,
+        height: canvas_height,
+    });
+
+    scene.add(room_images, doors, player, ghost, ghostParticles, screenParticles);
 
     const addKnownFloorAliases = (floorAlias, type, index) => {
         // console.log('addKnownFloorAliases', floorAlias, type, index);
@@ -747,20 +762,85 @@ const start = async () => {
             // if (player.bd.vy > 0.2) player.bd.vy = 0.2;
             player.bd.vx -= (Math.sign(player.bd.vx) * Math.min(Math.abs(player.bd.vx), .02));
 
-            if (ghost.next <= fixedGameTime) {
+            if (ghost.next < fixedGameTime) {
                 ghost.xx = player.x;
                 ghost.next = fixedGameTime + (Math.random() * 2000 | 0) + 1000;
             }
             const speed = 2;
-            const dx = ghost.x - ghost.xx;
-            let mv = dx < -speed ? 1
-                : dx > speed ? -1
+            const distanceGhostPlayer2 = player.x - ghost.x;
+            const distanceGhostPlayer = ghost.xx - ghost.x;
+            let mv = distanceGhostPlayer < -speed ? -1
+                : distanceGhostPlayer > speed ? 1
                     : 0;
             ghost.fc = mv || ghost.fc;
             ghost.x += mv * speed;
             ghost.scaleX = 2 * ghost.fc;
             ghost.image = !mv ? images.pdi : (Math.ceil(fixedGameTime / (fixedDeltaTime * 10)) % 2 == 0 ? images.pdr1 : images.pdr2);
 
+            if (ghost.nextParticle < fixedGameTime) {
+                /* #IfDev */
+                // console.log(`ghostParticles`);
+                /* #EndIfDev */
+                ghostParticles.addChild(Sprite({
+                    x: ghost.x + Math.random() * ghost.width - ghost.width / 2,
+                    y: ghost.y + Math.random() * ghost.height * -2,
+                    color: 'black',
+                    radius: Math.random() * 3 + 1,
+                    fadeRate: Math.random() * 0.05,
+                    dx: Math.random() - 0.5,
+
+                    update() {
+                        /* #IfDev */
+                        if (this.x == null) return;
+                        if (this.y == null) return;
+                        if (this.dx == null) return;
+                        if (this.opacity == null) return;
+                        /* #EndIfDev */
+                        this.y -= 0.5;
+                        this.x += this.dx;
+                        this.opacity -= this.fadeRate;
+
+                        if (this.opacity < 0) ghostParticles.removeChild(this);
+                    },
+                }));
+
+
+                ghost.nextParticle += (Math.random() * 50 | 0) + 20;
+            }
+            const shouldSpawnScreenParticle = Math.abs(distanceGhostPlayer) / (map.w / 2 * tile_w);
+            console.log('screenParticles', shouldSpawnScreenParticle);
+            if ((distanceGhostPlayer2 > 100 || distanceGhostPlayer2 < -100) && Math.random() > shouldSpawnScreenParticle) {
+                /* #IfDev */
+                /* #EndIfDev */
+                screenParticles.addChild(Sprite({
+                    x: distanceGhostPlayer2 > 0 ? 0 : canvas_width,
+                    y: Math.random() * 200,
+                    color: 'black',
+                    radius: Math.random() * 6 + 3,
+                    fadeRate: Math.random() * 0.08,
+                    dx: (Math.random() + 1) * mv,
+                    opacity: 0.7,
+
+                    update() {
+                        /* #IfDev */
+                        // console.log('update', this.dx);
+                        if (this.x == null) return;
+                        if (this.y == null) return;
+                        if (this.dx == null) return;
+                        if (this.opacity == null) return;
+                        /* #EndIfDev */
+                        // this.y -= 0.5;
+                        this.x += this.dx;
+                        this.opacity -= this.fadeRate;
+
+                        if (this.opacity < 0) ghostParticles.removeChild(this);
+                    },
+                }));
+            }
+            screenParticles.update();
+            screenParticles.x = scene.camera.x - canvas_width_2;
+            // console.log('camera', scene.camera.x, scene.camera.y);
+            ghostParticles.update();
 
             if (collides(player, ghost)) {
                 tryEscape();

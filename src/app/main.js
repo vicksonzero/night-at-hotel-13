@@ -841,7 +841,10 @@ const start = async () => {
             // console.log('camera', scene.camera.x, scene.camera.y);
             ghostParticles.update();
 
-            if (collides(player, ghost)) {
+            if (
+                collides(player, ghost)
+                // Math.abs(player.x - ghost.x) < 10 // TODO: May want to use detailed collision detection
+            ) {
                 tryEscape();
             }
 

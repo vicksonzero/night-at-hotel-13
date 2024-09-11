@@ -930,7 +930,7 @@ const start = async () => {
                     /* #EndIfDev */
                     door.x -= map.w * tile_w;
                 }
-                while (player.x - door.x > map.w / 2 * tile_w) {
+                while (door.x - player.x < -map.w / 2 * tile_w) {
                     /* #IfDev */
                     console.log(`door[${door?.room?.roomId ?? 'ghost'}] is too left`);
                     /* #EndIfDev */

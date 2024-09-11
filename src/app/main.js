@@ -23,19 +23,7 @@ import { generateMap } from './mapGenerator.js';
  * @property {number} h          - 
  */
 
-/**
- * @typedef IEntity
- * @property {number} x          - 
- * @property {number} y          - 
- * @property {number} w          - 
- * @property {number} h          - 
- * @property {number} fc         - facing direction. -1 means left, 1 means right
- * @property {number} [gd]       - grounded
- * @property {number} [gv]       - gravity
- * @property {number} [cj]       - can jump
- * @property {number} [vx]       - velocity x, used for knock back or others
- * @property {number} [vy]       - velocity y, used for gravity
- */
+
 
 //#region Global var
 
@@ -44,8 +32,8 @@ import { generateMap } from './mapGenerator.js';
 // const g2 = 0.021;    // falling gravity in tiles/frame²
 const tile_w = 32;  // tiles width in px
 const tile_h = 32;  // tiles height in px
-const player_speed1 = 0.2;    // player move speed (walking) in tiles/frame²
-const player_speed2 = 0.4;    // player move speed (running) in tiles/frame²
+const player_speed1 = 0.2 * 32;    // player move speed (walking) in tiles/frame²
+const player_speed2 = 0.4 * 32;    // player move speed (running) in tiles/frame²
 
 const map_room_w = 7;
 
@@ -264,8 +252,8 @@ const start = async () => {
         /* #IfDev */
         name: 'player',
         /* #EndIfDev */
-        x: 0,        // starting x,y position of the sprite
-        y: -10,
+        x: 8 * 32,        // starting x,y position of the sprite
+        y: 4.5 * 32,
         // color: 'red',  // fill color of the sprite rectangle
         // width: .8 * tile_w,     // width and height of the sprite rectangle
         // height: 1.5 * tile_h,
@@ -273,13 +261,9 @@ const start = async () => {
         image: images.pi,
         // scaleX: 2, // is set in render()
         scaleY: 2,
-
+        fc: 1, // facing direction
         // custom properties
-        /** @type {IEntity} - player body */
-        bd: {
-            x: 8, y: 4.5, w: .8, h: 1.5, fc: 1, vx: 0,
-            // vy: 0, gd: 1, gv: g1, cj: 1 
-        },
+
         sprint: false, // aka isSprinting
     });
 
@@ -739,29 +723,6 @@ const start = async () => {
             // console.log('fixedGameTime', fixedGameTime);
 
 
-
-
-            // Compute hero position:
-            // The hero's bounding rectangle's corners have the following coordinates:
-            //
-            //           [hero_x, hero_y]      [hero_x + hero_w, hero_y]
-            //                           ______
-            //                          |     |  
-            //                          |     |  
-            //                          |     |  
-            //                          |     |  
-            //                          |_____|
-            //
-            // [hero_x, hero_y + hero_h]      [hero_x + hero_w, hero_y + hero_h]
-
-            // coyote: don't Reset grounded state
-
-            // Apply gravity to Y speed, Y acceleration to Y speed and Y speed to Y position
-            // player.bd.vy += player.bd.gv;
-            // if (player.bd.vy > 0) player.bd.gv = g2;
-            // if (player.bd.vy > 0.2) player.bd.vy = 0.2;
-            player.bd.vx -= (Math.sign(player.bd.vx) * Math.min(Math.abs(player.bd.vx), .02));
-
             if (ghost.next < fixedGameTime) {
                 ghost.xx = player.x;
                 ghost.next = fixedGameTime + (Math.random() * 2000) + 1000;
@@ -848,57 +809,15 @@ const start = async () => {
                 tryEscape();
             }
 
-            // tryMoveY(
-            //     player.bd,
-            //     player.bd.vy,
-            //     map,
-            //     () => {
-            //         if (player.bd.vy > 0) {
-            //             player.bd.gd = fixedGameTime + 5 * fixedDeltaTime; // 5 frames of coyote time
-            //             player.bd.vy = 0;
-            //             player.bd.gv = g1;
-            //         }
-            //         // If moving up
-            //         if (player.bd.vy < 0) {
-            //             // If this tile is solid, put the player on the bottom side of it and let it fall
-            //             player.bd.vy = 0;
-            //         }
-            //     }
-            // );
-
             mv = input.l ? -1 : input.r ? 1 : 0;
             if (!mv) player.sprint = false;
 
-            player.bd.x += mv * (player.sprint ? player_speed2 : player_speed1) + player.bd.vx;
-            // tryMoveX(
-            //     player.bd,
-            //     mv * (player.sprint ? player_speed2 : player_speed1) + player.bd.vx,
-            //     map,
-            //     () => {
-            //         // if (can_do_climb) {
-            //         //     hero.vy = -.07;
-            //         // }
-            //     }
-            // );
-            player.bd.fc = mv || player.bd.fc;
+            player.x += mv * (player.sprint ? player_speed2 : player_speed1);
+
+            player.fc = mv || player.fc;
             // console.log('player.image', fixedGameTime, fixedGameTime * fixedDeltaTime, Math.ceil(fixedGameTime * fixedDeltaTime * 10) % 2);
             player.image = !mv ? images.pi : (Math.ceil(fixedGameTime / (fixedDeltaTime * 10)) % 2 == 0 ? images.pr1 : images.pr2);
 
-
-            // // If up key is pressed and the hero is grounded, jump
-            // if (input.s && player.bd.vy >= 0 && player.bd.gd >= fixedGameTime && player.bd.cj) {
-            //     // console.log('jump', player.bd.gd, fixedGameTime, player.bd.gd - fixedGameTime);
-            //     player.bd.vy = -.315;
-            //     player.bd.gv = g1;
-            //     player.bd.cj = 0;
-            // }
-            // if (!input.s) {
-            //     player.bd.cj = 1;
-            //     if (player.bd.vy < 0) {
-            //         if (player.bd.vy < -0.15) player.bd.vy = -0.15;
-            //         player.bd.gv = g2;
-            //     }
-            // }
 
             updateDoors();
             // knownFloorsGroup.children.map(x => x.update());
@@ -915,25 +834,23 @@ const start = async () => {
             context.fillStyle = '#000000';
             context.fillRect(0, 0, canvas_width, canvas_height);
 
-            player.x = player.bd.x * tile_w + player.bd.w * .5 * tile_w;
-            player.y = player.bd.y * tile_h + player.bd.h * tile_h;
-            player.scaleX = transitionType == 3 ? 0 : 2 * player.bd.fc;
+            player.scaleX = transitionType == 3 ? 0 : 2 * player.fc;
 
             scene.camera.x = player.x;
 
-            const loopIndex = Math.round((player.bd.x + map.w / 2) / map.w) - 1;
+            const loopIndex = Math.round((player.x + map.w * tile_w / 2) / map.w * tile_w) - 1;
             for (let room_image of room_images) {
                 room_image.x = ((Math.floor((loopIndex + 1 - room_image.loopIndex) / 3)) * 3 + room_image.loopIndex) * map.w * tile_w;
             }
 
             for (let door of [...doors, ghost]) {
-                while (door.x - player.x > map.w / 2 * tile_w) {
+                while (door.x - player.x > map.w * tile_w / 2) {
                     /* #IfDev */
                     console.log(`door[${door?.room?.roomId ?? 'ghost'}] is too right`);
                     /* #EndIfDev */
                     door.x -= map.w * tile_w;
                 }
-                while (door.x - player.x < -map.w / 2 * tile_w) {
+                while (door.x - player.x < -map.w * tile_w / 2) {
                     /* #IfDev */
                     console.log(`door[${door?.room?.roomId ?? 'ghost'}] is too left`);
                     /* #EndIfDev */

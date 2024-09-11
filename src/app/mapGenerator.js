@@ -192,37 +192,32 @@ export const generateLiftRandomly = (floors, lifts, accessible, liftPerFloorMax,
         /* #EndIfDev */
     } while (!(toFloorId != floorId && (isExpanding || !accessible.includes(toFloorId))));
 
-    generateLiftDraft(floors, lifts, floorId, randomRoom.roomId, toFloorId);
+    generateLiftDraft(floors, lifts, Math.min(floorId, toFloorId), randomRoom.roomId, Math.max(floorId, toFloorId));
 
     floors[toFloorId].acc = true;
     accessible.push(toFloorId);
 };
 
-export const generateLiftDraft = (floors, lifts, fromFloorId, roomId, toFloorId) => {
-    // try to build a lift on the same roomId, from floorId to tooFloorId
+export const generateLiftDraft = (floors, lifts, minFloorId, roomId, maxFloorId) => {
+    // try to build a lift on the same roomId, from floorId to toFloorId
     // if can't, then connect to existing lift
 
-
     /* #IfDev */
-    if (fromFloorId == toFloorId) throw new Error(`Cannot create lift on the same level '${fromFloorId}'`);
+    if (minFloorId == maxFloorId) throw new Error(`Cannot create lift on the same level '${minFloorId}'`);
+    if (minFloorId > maxFloorId) throw new Error(`Cannot create lift when minFloorId > maxFloorId '${minFloorId}', '${maxFloorId}'`);
     /* #EndIfDev */
-
-
-    // TODO: we don't need direction. direction will be done in a later stage
-    const direction = Math.sign(toFloorId - fromFloorId);
 
     const newLift = {
         liftId: lifts.length,
         roomId,
-        floorIds: [fromFloorId, toFloorId],
+        floorIds: [minFloorId, maxFloorId],
     };
-    newLift.floorIds.sort((a, b) => a - b);
     /* #IfDev */
-    console.log(`Create lift #${newLift.liftId} (${fromFloorId}->${toFloorId}) on room '${roomId}', dir=${direction}`);
+    console.log(`Create lift #${newLift.liftId} (${minFloorId}->${maxFloorId}) on room '${roomId}'`);
     /* #EndIfDev */
 
     lifts.push(newLift);
-    for (let i = fromFloorId + direction; Math.sign(toFloorId - i) == direction; i += direction) {
+    for (let i = minFloorId; i < maxFloorId; i++) {
         // this for-loop may or may not cover the lift doors, but i don't care.
         // the rest of the code can handle null room.shaft just fine
         const floor = floors[i];
@@ -231,8 +226,8 @@ export const generateLiftDraft = (floors, lifts, fromFloorId, roomId, toFloorId)
         /* #EndIfDev */
         floor.rooms[roomId].shaft = newLift.liftId;
     }
-    floors[fromFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
-    floors[toFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
+    floors[minFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
+    floors[maxFloorId].rooms[roomId].liftDoor = { liftId: newLift.liftId };
 };
 
 export const mergeLiftsInBuilding = (floors, lifts) => {
@@ -246,9 +241,8 @@ export const mergeLiftsInBuilding = (floors, lifts) => {
         liftsByRoomId.sort((a, b) => a.liftId - b.liftId);
 
         for (const lift of liftsByRoomId) {
-            const sortedFloorIds = sortBy(lift.floorIds, (a, b) => a - b);
-            const lastFloorId = sortedFloorIds.at(-1);
-            for (let floorId = sortedFloorIds[0]; floorId <= lastFloorId; floorId++) {
+            lift.floorIds.sort((a, b) => a - b);
+            for (let floorId = lift.floorIds[0]; floorId <= lift.floorIds.at(-1); floorId++) {
 
                 const room = floors[floorId].rooms[roomId];
                 /* #IfDev */
@@ -295,9 +289,8 @@ export const mergeLifts = (floors, lifts, toLiftId, fromLiftId) => {
 
     const { roomId, floorIds } = lifts[fromLiftId];
 
-    const sortedFloorIds = sortBy(floorIds, (a, b) => a - b);
-    const lastFloorId = sortedFloorIds.at(-1);
-    for (let floorId = sortedFloorIds[0]; floorId <= lastFloorId; floorId++) {
+    floorIds.sort((a, b) => a - b);
+    for (let floorId = floorIds[0]; floorId <= floorIds.at(-1); floorId++) {
         const room = floors[floorId].rooms[roomId];
 
         if (room.liftDoor && room.liftDoor.liftId == fromLiftId) {
@@ -309,24 +302,20 @@ export const mergeLifts = (floors, lifts, toLiftId, fromLiftId) => {
 };
 
 export const populateLiftDoors = (floors, lifts) => {
-
-    lifts.forEach((lift, i) => {
-        if (lift.liftId != i) {
-            lifts[i] = null;
+    lifts.map((lift, ii) => {
+        if (lift.liftId != ii) {
+            return lifts[ii] = null;
         }
-    });
-    for (const lift of lifts) {
-        if (!lift) continue;
-        for (let i = 0; i < lift.floorIds.length; i++) {
-            floors[lift.floorIds[i]].rooms[lift.roomId].liftDoor.up = i < lift.floorIds.length - 1
+
+        lift.floorIds.map((floorId, i) => {
+            floors[floorId].rooms[lift.roomId].liftDoor.up = i < lift.floorIds.length - 1
                 ? lift.floorIds[i + 1]
                 : null;
-            floors[lift.floorIds[i]].rooms[lift.roomId].liftDoor.down = i > 0
+            floors[floorId].rooms[lift.roomId].liftDoor.down = i > 0
                 ? lift.floorIds[i - 1]
                 : null;
-        }
-    }
-
+        });
+    });
 };
 
 const sortBy = (array, predicate) => {

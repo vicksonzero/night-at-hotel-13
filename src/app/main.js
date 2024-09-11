@@ -495,7 +495,7 @@ const start = async () => {
     };
 
     const updateLiftFloors = () => {
-        doors.forEach(door => {
+        doors.map(door => {
             const floorIds = building.lifts[door.room.liftDoor?.liftId]?.floorIds || [];
             /* #IfDev */
             console.log('floorIds', door.room.roomId, floorIds);
@@ -541,7 +541,7 @@ const start = async () => {
         /* #IfDev */
         // console.log('updateDoors');
         /* #EndIfDev */
-        doors.forEach(door => {
+        doors.map(door => {
             if (collides(player, door)) {
                 door.playerInContactTime = Math.min(500, door.playerInContactTime + fixedDeltaTime);
 
@@ -1111,7 +1111,7 @@ const cache_map = (cache, _map) => {
     cache_c.fillStyle = gradient;
     cache_c.fillRect(0, 0, cache.width, cache.height);
 
-    _map.forEach((row, y) => row.split('').forEach((tile, x) => {
+    _map.map((row, y) => row.split('').map((tile, x) => {
         if (tile == '1') {
             cache_c.fillStyle = "rgb(143, 41, 41)";
             cache_c.fillRect(x * tile_w, y * tile_h, tile_w, tile_h);

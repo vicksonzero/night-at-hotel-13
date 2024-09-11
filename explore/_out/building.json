@@ -2,121 +2,90 @@
     "lifts": [
         {
             "liftId": 0,
-            "roomId": 13,
+            "roomId": 7,
             "floorIds": [
-                3,
                 7,
                 9,
-                11
+                10,
+                12
             ]
         },
         {
             "liftId": 1,
-            "roomId": 9,
+            "roomId": 10,
             "floorIds": [
-                0,
-                3,
+                1,
                 7,
-                9
+                9,
+                10
             ]
         },
         {
             "liftId": 2,
             "roomId": 12,
             "floorIds": [
-                7,
-                12
+                6,
+                7
             ]
         },
         {
             "liftId": 3,
-            "roomId": 7,
+            "roomId": 9,
             "floorIds": [
-                0,
-                3,
-                4,
-                12
+                5,
+                10
             ]
         },
         {
             "liftId": 4,
-            "roomId": 4,
+            "roomId": 13,
             "floorIds": [
-                0,
-                2,
-                8,
-                12
+                4,
+                5
             ]
         },
-        null,
         {
-            "liftId": 6,
+            "liftId": 5,
             "roomId": 3,
             "floorIds": [
-                3,
-                5,
+                0,
+                10
+            ]
+        },
+        {
+            "liftId": 6,
+            "roomId": 8,
+            "floorIds": [
                 6,
+                7,
+                8,
                 12
             ]
         },
-        {
-            "liftId": 7,
-            "roomId": 6,
-            "floorIds": [
-                3,
-                6
-            ]
-        },
-        {
-            "liftId": 8,
-            "roomId": 8,
-            "floorIds": [
-                0,
-                2
-            ]
-        },
+        null,
         null,
         null,
         {
-            "liftId": 11,
-            "roomId": 8,
+            "liftId": 10,
+            "roomId": 1,
             "floorIds": [
-                8,
-                9
+                2,
+                4
             ]
         },
-        {
-            "liftId": 12,
-            "roomId": 8,
-            "floorIds": [
-                5,
-                7
-            ]
-        },
-        {
-            "liftId": 13,
-            "roomId": 2,
-            "floorIds": [
-                6,
-                7
-            ]
-        },
-        null,
         null
     ],
     "af": [
-        23,
         21,
         20,
         19,
         17,
-        16,
         15,
         14,
         12,
         11,
         10,
-        7,
+        9,
         6,
         5,
         4,
@@ -125,19 +94,19 @@
         1
     ],
     "as": [
-        22,
         18,
+        16,
         13,
-        9,
-        8
+        8,
+        7
     ],
-    "exitFloorId": 7,
+    "exitFloorId": 9,
     "floors": [
         {
             "floorId": 0,
             "acc": true,
             "isExit": false,
-            "fa": 6,
+            "fa": 4,
             "rooms": [
                 {
                     "floorId": 0,
@@ -149,7 +118,7 @@
                     "floorId": 0,
                     "roomId": 1,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 0,
@@ -161,18 +130,19 @@
                     "floorId": 0,
                     "roomId": 3,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "shaft": 5,
+                    "liftDoor": {
+                        "liftId": 5,
+                        "up": 10,
+                        "down": null
+                    }
                 },
                 {
                     "floorId": 0,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": false,
-                    "liftDoor": {
-                        "liftId": 4,
-                        "up": 2,
-                        "down": null
-                    }
+                    "empty": true
                 },
                 {
                     "floorId": 0,
@@ -190,46 +160,31 @@
                     "floorId": 0,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 3,
-                        "up": 3,
-                        "down": null
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 0,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 8,
-                        "up": 2,
-                        "down": null
-                    }
+                    "empty": true
                 },
                 {
                     "floorId": 0,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 1,
-                        "up": 3,
-                        "down": null
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 0,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 0,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 0,
@@ -247,9 +202,9 @@
         },
         {
             "floorId": 1,
-            "acc": false,
+            "acc": true,
             "isExit": false,
-            "fa": 7,
+            "fa": 5,
             "rooms": [
                 {
                     "floorId": 1,
@@ -273,20 +228,20 @@
                     "floorId": 1,
                     "roomId": 3,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "shaft": 5
                 },
                 {
                     "floorId": 1,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
+                    "empty": true
                 },
                 {
                     "floorId": 1,
                     "roomId": 5,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 1,
@@ -298,46 +253,49 @@
                     "floorId": 1,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3
+                    "empty": false
                 },
                 {
                     "floorId": 1,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": false,
-                    "shaft": 8
+                    "empty": false
                 },
                 {
                     "floorId": 1,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 1
+                    "empty": true
                 },
                 {
                     "floorId": 1,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false,
+                    "shaft": 1,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 7,
+                        "down": null
+                    }
                 },
                 {
                     "floorId": 1,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 1,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 1,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 }
             ]
         },
@@ -345,19 +303,25 @@
             "floorId": 2,
             "acc": true,
             "isExit": false,
-            "fa": 10,
+            "fa": 6,
             "rooms": [
                 {
                     "floorId": 2,
                     "roomId": 0,
                     "escapeDoor": true,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 2,
                     "roomId": 1,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false,
+                    "shaft": 10,
+                    "liftDoor": {
+                        "liftId": 10,
+                        "up": 4,
+                        "down": null
+                    }
                 },
                 {
                     "floorId": 2,
@@ -369,25 +333,20 @@
                     "floorId": 2,
                     "roomId": 3,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false,
+                    "shaft": 5
                 },
                 {
                     "floorId": 2,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4,
-                    "liftDoor": {
-                        "liftId": 4,
-                        "up": 8,
-                        "down": 0
-                    }
+                    "empty": true
                 },
                 {
                     "floorId": 2,
                     "roomId": 5,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 2,
@@ -399,32 +358,26 @@
                     "floorId": 2,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": false,
-                    "shaft": 3
+                    "empty": false
                 },
                 {
                     "floorId": 2,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 8,
-                        "up": null,
-                        "down": 0
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 2,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 1
+                    "empty": false
                 },
                 {
                     "floorId": 2,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false,
+                    "shaft": 1
                 },
                 {
                     "floorId": 2,
@@ -442,27 +395,28 @@
                     "floorId": 2,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true
                 }
             ]
         },
         {
             "floorId": 3,
-            "acc": true,
+            "acc": false,
             "isExit": false,
-            "fa": 11,
+            "fa": 9,
             "rooms": [
                 {
                     "floorId": 3,
                     "roomId": 0,
                     "escapeDoor": true,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 3,
                     "roomId": 1,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "shaft": 10
                 },
                 {
                     "floorId": 3,
@@ -474,72 +428,51 @@
                     "floorId": 3,
                     "roomId": 3,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 6,
-                        "up": 5,
-                        "down": null
-                    }
+                    "empty": false,
+                    "shaft": 5
                 },
                 {
                     "floorId": 3,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
+                    "empty": false
                 },
                 {
                     "floorId": 3,
                     "roomId": 5,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true
                 },
                 {
                     "floorId": 3,
                     "roomId": 6,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 7,
-                        "up": 6,
-                        "down": null
-                    }
+                    "empty": true
                 },
                 {
                     "floorId": 3,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 3,
-                        "up": 4,
-                        "down": 0
-                    },
-                    "shaft": 3
+                    "empty": true
                 },
                 {
                     "floorId": 3,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 3,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 1,
-                    "liftDoor": {
-                        "liftId": 1,
-                        "up": 7,
-                        "down": 0
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 3,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true,
+                    "shaft": 1
                 },
                 {
                     "floorId": 3,
@@ -551,18 +484,13 @@
                     "floorId": 3,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 3,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": 7,
-                        "down": null
-                    }
+                    "empty": false
                 }
             ]
         },
@@ -570,7 +498,7 @@
             "floorId": 4,
             "acc": true,
             "isExit": false,
-            "fa": 12,
+            "fa": 10,
             "rooms": [
                 {
                     "floorId": 4,
@@ -582,27 +510,31 @@
                     "floorId": 4,
                     "roomId": 1,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "liftDoor": {
+                        "liftId": 10,
+                        "up": null,
+                        "down": 2
+                    }
                 },
                 {
                     "floorId": 4,
                     "roomId": 2,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 4,
                     "roomId": 3,
                     "escapeDoor": false,
                     "empty": true,
-                    "shaft": 6
+                    "shaft": 5
                 },
                 {
                     "floorId": 4,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
+                    "empty": true
                 },
                 {
                     "floorId": 4,
@@ -614,20 +546,13 @@
                     "floorId": 4,
                     "roomId": 6,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 7
+                    "empty": true
                 },
                 {
                     "floorId": 4,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3,
-                    "liftDoor": {
-                        "liftId": 3,
-                        "up": 12,
-                        "down": 3
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 4,
@@ -639,14 +564,14 @@
                     "floorId": 4,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 1
+                    "empty": true
                 },
                 {
                     "floorId": 4,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "shaft": 1
                 },
                 {
                     "floorId": 4,
@@ -658,14 +583,19 @@
                     "floorId": 4,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 4,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": false,
-                    "shaft": 0
+                    "empty": true,
+                    "shaft": 4,
+                    "liftDoor": {
+                        "liftId": 4,
+                        "up": 5,
+                        "down": null
+                    }
                 }
             ]
         },
@@ -673,13 +603,13 @@
             "floorId": 5,
             "acc": true,
             "isExit": false,
-            "fa": 14,
+            "fa": 11,
             "rooms": [
                 {
                     "floorId": 5,
                     "roomId": 0,
                     "escapeDoor": true,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 5,
@@ -691,26 +621,20 @@
                     "floorId": 5,
                     "roomId": 2,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true
                 },
                 {
                     "floorId": 5,
                     "roomId": 3,
                     "escapeDoor": false,
                     "empty": true,
-                    "liftDoor": {
-                        "liftId": 6,
-                        "up": 6,
-                        "down": 3
-                    },
-                    "shaft": 6
+                    "shaft": 5
                 },
                 {
                     "floorId": 5,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
+                    "empty": false
                 },
                 {
                     "floorId": 5,
@@ -722,58 +646,61 @@
                     "floorId": 5,
                     "roomId": 6,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 7
+                    "empty": false
                 },
                 {
                     "floorId": 5,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3
+                    "empty": true
                 },
                 {
                     "floorId": 5,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 12,
-                        "up": 7,
-                        "down": null
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 5,
                     "roomId": 9,
                     "escapeDoor": false,
                     "empty": true,
-                    "shaft": 1
+                    "shaft": 3,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": 10,
+                        "down": null
+                    }
                 },
                 {
                     "floorId": 5,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": false,
+                    "shaft": 1
                 },
                 {
                     "floorId": 5,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 5,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true
                 },
                 {
                     "floorId": 5,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 0
+                    "empty": false,
+                    "liftDoor": {
+                        "liftId": 4,
+                        "up": null,
+                        "down": 4
+                    }
                 }
             ]
         },
@@ -781,13 +708,13 @@
             "floorId": 6,
             "acc": true,
             "isExit": false,
-            "fa": 15,
+            "fa": 12,
             "rooms": [
                 {
                     "floorId": 6,
                     "roomId": 0,
                     "escapeDoor": true,
-                    "empty": false
+                    "empty": true
                 },
                 {
                     "floorId": 6,
@@ -799,102 +726,96 @@
                     "floorId": 6,
                     "roomId": 2,
                     "escapeDoor": false,
-                    "empty": true,
+                    "empty": false
+                },
+                {
+                    "floorId": 6,
+                    "roomId": 3,
+                    "escapeDoor": false,
+                    "empty": false,
+                    "shaft": 5
+                },
+                {
+                    "floorId": 6,
+                    "roomId": 4,
+                    "escapeDoor": false,
+                    "empty": true
+                },
+                {
+                    "floorId": 6,
+                    "roomId": 5,
+                    "escapeDoor": false,
+                    "empty": true
+                },
+                {
+                    "floorId": 6,
+                    "roomId": 6,
+                    "escapeDoor": false,
+                    "empty": false
+                },
+                {
+                    "floorId": 6,
+                    "roomId": 7,
+                    "escapeDoor": false,
+                    "empty": true
+                },
+                {
+                    "floorId": 6,
+                    "roomId": 8,
+                    "escapeDoor": false,
+                    "empty": false,
+                    "shaft": 6,
                     "liftDoor": {
-                        "liftId": 13,
+                        "liftId": 6,
                         "up": 7,
                         "down": null
                     }
                 },
                 {
                     "floorId": 6,
-                    "roomId": 3,
-                    "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 6,
-                    "liftDoor": {
-                        "liftId": 6,
-                        "up": 12,
-                        "down": 5
-                    }
-                },
-                {
-                    "floorId": 6,
-                    "roomId": 4,
-                    "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
-                },
-                {
-                    "floorId": 6,
-                    "roomId": 5,
-                    "escapeDoor": false,
-                    "empty": false
-                },
-                {
-                    "floorId": 6,
-                    "roomId": 6,
-                    "escapeDoor": false,
-                    "empty": false,
-                    "liftDoor": {
-                        "liftId": 7,
-                        "up": null,
-                        "down": 3
-                    }
-                },
-                {
-                    "floorId": 6,
-                    "roomId": 7,
-                    "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3
-                },
-                {
-                    "floorId": 6,
-                    "roomId": 8,
-                    "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 12
-                },
-                {
-                    "floorId": 6,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 1
+                    "empty": false,
+                    "shaft": 3
                 },
                 {
                     "floorId": 6,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false,
+                    "shaft": 1
                 },
                 {
                     "floorId": 6,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 6,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": false,
+                    "shaft": 2,
+                    "liftDoor": {
+                        "liftId": 2,
+                        "up": 7,
+                        "down": null
+                    }
                 },
                 {
                     "floorId": 6,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 0
+                    "empty": false
                 }
             ]
         },
         {
             "floorId": 7,
             "acc": true,
-            "isExit": true,
-            "fa": 16,
+            "isExit": false,
+            "fa": 14,
             "rooms": [
                 {
                     "floorId": 7,
@@ -912,26 +833,20 @@
                     "floorId": 7,
                     "roomId": 2,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 13,
-                        "up": null,
-                        "down": 6
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 7,
                     "roomId": 3,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 6
+                    "empty": false,
+                    "shaft": 5
                 },
                 {
                     "floorId": 7,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": false,
-                    "shaft": 4
+                    "empty": false
                 },
                 {
                     "floorId": 7,
@@ -949,18 +864,24 @@
                     "floorId": 7,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3
+                    "empty": false,
+                    "shaft": 0,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": 9,
+                        "down": null
+                    }
                 },
                 {
                     "floorId": 7,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true,
+                    "empty": false,
+                    "shaft": 6,
                     "liftDoor": {
-                        "liftId": 12,
-                        "up": null,
-                        "down": 5
+                        "liftId": 6,
+                        "up": 8,
+                        "down": 6
                     }
                 },
                 {
@@ -968,24 +889,25 @@
                     "roomId": 9,
                     "escapeDoor": false,
                     "empty": true,
-                    "liftDoor": {
-                        "liftId": 1,
-                        "up": 9,
-                        "down": 3
-                    },
-                    "shaft": 1
+                    "shaft": 3
                 },
                 {
                     "floorId": 7,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "shaft": 1,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 9,
+                        "down": 1
+                    }
                 },
                 {
                     "floorId": 7,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 7,
@@ -994,21 +916,15 @@
                     "empty": true,
                     "liftDoor": {
                         "liftId": 2,
-                        "up": 12,
-                        "down": null
+                        "up": null,
+                        "down": 6
                     }
                 },
                 {
                     "floorId": 7,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": 9,
-                        "down": 3
-                    },
-                    "shaft": 0
+                    "empty": true
                 }
             ]
         },
@@ -1016,7 +932,7 @@
             "floorId": 8,
             "acc": true,
             "isExit": false,
-            "fa": 17,
+            "fa": 15,
             "rooms": [
                 {
                     "floorId": 8,
@@ -1041,19 +957,13 @@
                     "roomId": 3,
                     "escapeDoor": false,
                     "empty": true,
-                    "shaft": 6
+                    "shaft": 5
                 },
                 {
                     "floorId": 8,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 4,
-                        "up": 12,
-                        "down": 2
-                    },
-                    "shaft": 4
+                    "empty": true
                 },
                 {
                     "floorId": 8,
@@ -1072,65 +982,65 @@
                     "roomId": 7,
                     "escapeDoor": false,
                     "empty": true,
-                    "shaft": 3
+                    "shaft": 0
                 },
                 {
                     "floorId": 8,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true,
+                    "empty": false,
+                    "shaft": 6,
                     "liftDoor": {
-                        "liftId": 11,
-                        "up": 9,
-                        "down": null
+                        "liftId": 6,
+                        "up": 12,
+                        "down": 7
                     }
                 },
                 {
                     "floorId": 8,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": false,
-                    "shaft": 1
+                    "empty": true,
+                    "shaft": 3
                 },
                 {
                     "floorId": 8,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "shaft": 1
                 },
                 {
                     "floorId": 8,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true
                 },
                 {
                     "floorId": 8,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 2
+                    "empty": false
                 },
                 {
                     "floorId": 8,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 0
+                    "empty": true
                 }
             ]
         },
         {
             "floorId": 9,
             "acc": true,
-            "isExit": false,
-            "fa": 19,
+            "isExit": true,
+            "fa": 17,
             "rooms": [
                 {
                     "floorId": 9,
                     "roomId": 0,
                     "escapeDoor": true,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 9,
@@ -1142,107 +1052,102 @@
                     "floorId": 9,
                     "roomId": 2,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 9,
                     "roomId": 3,
                     "escapeDoor": false,
                     "empty": true,
-                    "shaft": 6
+                    "shaft": 5
                 },
                 {
                     "floorId": 9,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
+                    "empty": false
                 },
                 {
                     "floorId": 9,
                     "roomId": 5,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 9,
                     "roomId": 6,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 9,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3
+                    "empty": false,
+                    "shaft": 0,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": 10,
+                        "down": 7
+                    }
                 },
                 {
                     "floorId": 9,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 11,
-                        "up": null,
-                        "down": 8
-                    }
+                    "empty": false,
+                    "shaft": 6
                 },
                 {
                     "floorId": 9,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 1,
-                        "up": null,
-                        "down": 7
-                    }
+                    "empty": false,
+                    "shaft": 3
                 },
                 {
                     "floorId": 9,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false,
+                    "shaft": 1,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": 10,
+                        "down": 7
+                    }
                 },
                 {
                     "floorId": 9,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 9,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 2
+                    "empty": true
                 },
                 {
                     "floorId": 9,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": 11,
-                        "down": 7
-                    },
-                    "shaft": 0
+                    "empty": true
                 }
             ]
         },
         {
             "floorId": 10,
-            "acc": false,
+            "acc": true,
             "isExit": false,
-            "fa": 20,
+            "fa": 19,
             "rooms": [
                 {
                     "floorId": 10,
                     "roomId": 0,
                     "escapeDoor": true,
-                    "empty": false
+                    "empty": true
                 },
                 {
                     "floorId": 10,
@@ -1254,21 +1159,24 @@
                     "floorId": 10,
                     "roomId": 2,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 10,
                     "roomId": 3,
                     "escapeDoor": false,
                     "empty": true,
-                    "shaft": 6
+                    "liftDoor": {
+                        "liftId": 5,
+                        "up": null,
+                        "down": 0
+                    }
                 },
                 {
                     "floorId": 10,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
+                    "empty": true
                 },
                 {
                     "floorId": 10,
@@ -1286,26 +1194,42 @@
                     "floorId": 10,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3
+                    "empty": false,
+                    "liftDoor": {
+                        "liftId": 0,
+                        "up": 12,
+                        "down": 9
+                    },
+                    "shaft": 0
                 },
                 {
                     "floorId": 10,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "shaft": 6
                 },
                 {
                     "floorId": 10,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "liftDoor": {
+                        "liftId": 3,
+                        "up": null,
+                        "down": 5
+                    }
                 },
                 {
                     "floorId": 10,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true,
+                    "liftDoor": {
+                        "liftId": 1,
+                        "up": null,
+                        "down": 9
+                    }
                 },
                 {
                     "floorId": 10,
@@ -1317,23 +1241,21 @@
                     "floorId": 10,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 2
+                    "empty": true
                 },
                 {
                     "floorId": 10,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 0
+                    "empty": false
                 }
             ]
         },
         {
             "floorId": 11,
-            "acc": true,
+            "acc": false,
             "isExit": false,
-            "fa": 21,
+            "fa": 20,
             "rooms": [
                 {
                     "floorId": 11,
@@ -1357,76 +1279,69 @@
                     "floorId": 11,
                     "roomId": 3,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 6
+                    "empty": true
                 },
                 {
                     "floorId": 11,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 4
+                    "empty": false
                 },
                 {
                     "floorId": 11,
                     "roomId": 5,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 11,
                     "roomId": 6,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 11,
                     "roomId": 7,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 3
+                    "empty": false,
+                    "shaft": 0
                 },
                 {
                     "floorId": 11,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false,
+                    "shaft": 6
                 },
                 {
                     "floorId": 11,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 11,
                     "roomId": 10,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 11,
                     "roomId": 11,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 11,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": true,
-                    "shaft": 2
+                    "empty": true
                 },
                 {
                     "floorId": 11,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 0,
-                        "up": null,
-                        "down": 9
-                    }
+                    "empty": true
                 }
             ]
         },
@@ -1434,7 +1349,7 @@
             "floorId": 12,
             "acc": true,
             "isExit": false,
-            "fa": 23,
+            "fa": 21,
             "rooms": [
                 {
                     "floorId": 12,
@@ -1446,35 +1361,25 @@
                     "floorId": 12,
                     "roomId": 1,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 12,
                     "roomId": 2,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 },
                 {
                     "floorId": 12,
                     "roomId": 3,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 6,
-                        "up": null,
-                        "down": 6
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 12,
                     "roomId": 4,
                     "escapeDoor": false,
-                    "empty": true,
-                    "liftDoor": {
-                        "liftId": 4,
-                        "up": null,
-                        "down": 8
-                    }
+                    "empty": true
                 },
                 {
                     "floorId": 12,
@@ -1494,22 +1399,27 @@
                     "escapeDoor": false,
                     "empty": false,
                     "liftDoor": {
-                        "liftId": 3,
+                        "liftId": 0,
                         "up": null,
-                        "down": 4
+                        "down": 10
                     }
                 },
                 {
                     "floorId": 12,
                     "roomId": 8,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": true,
+                    "liftDoor": {
+                        "liftId": 6,
+                        "up": null,
+                        "down": 8
+                    }
                 },
                 {
                     "floorId": 12,
                     "roomId": 9,
                     "escapeDoor": false,
-                    "empty": false
+                    "empty": true
                 },
                 {
                     "floorId": 12,
@@ -1527,18 +1437,13 @@
                     "floorId": 12,
                     "roomId": 12,
                     "escapeDoor": false,
-                    "empty": false,
-                    "liftDoor": {
-                        "liftId": 2,
-                        "up": null,
-                        "down": 7
-                    }
+                    "empty": false
                 },
                 {
                     "floorId": 12,
                     "roomId": 13,
                     "escapeDoor": false,
-                    "empty": true
+                    "empty": false
                 }
             ]
         }

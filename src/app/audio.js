@@ -74,7 +74,7 @@ export class ArcadeAudio {
 
     add(key, allowAtSameTime, settings) {
         this.sounds[key] = [];
-        settings.forEach((elem, variantIndex) => {
+        settings.map((elem, variantIndex) => {
             this.sounds[key].push({
                 tick: 0,
                 // count: allowAtSameTime,

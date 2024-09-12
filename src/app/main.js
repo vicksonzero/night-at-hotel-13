@@ -123,7 +123,7 @@ const start = async (transitionType = 0) => {
             transitionType = 5;
             transitioningUntil = Date.now() + transition_length_5;
         } else {
-            setTimeout(_ => {
+            setTimeout(() => {
                 restart();
             }, transition_length_3);
 
@@ -748,11 +748,11 @@ const start = async (transitionType = 0) => {
                 ghost.next = fixedGameTime + (Math.random() * 2000) + 1000;
             }
             const speed = 2;
-            const distanceGhostPlayer2 = player.x - ghost.x;
-            const distanceGhostPlayer = ghost.xx - ghost.x;
-            const shouldSpawnScreenParticle = Math.abs(distanceGhostPlayer2) / a_room_cache.width * 2;
-            let mv = distanceGhostPlayer < -speed ? -1
-                : distanceGhostPlayer > speed ? 1
+            const distanceGhostPlayer = player.x - ghost.x;
+            const distanceGhostTarget = ghost.xx - ghost.x;
+            const shouldSpawnScreenParticle = Math.abs(distanceGhostPlayer) / a_room_cache.width * 2;
+            let mv = distanceGhostTarget < -speed ? -1
+                : distanceGhostTarget > speed ? 1
                     : 0;
             ghost.fc = mv || ghost.fc;
             ghost.x += mv * speed;
@@ -776,9 +776,9 @@ const start = async (transitionType = 0) => {
                             if (this.dx == null) return;
                             if (this.opacity == null) return;
                             /* #EndIfDev */
-                            this.y -= 0.5;
                             this.x += this.dx;
                             this.opacity -= this.fadeRate;
+                            this.y -= 0.5;
                         },
                     })
                     ghostParticles.addChild(particle);
@@ -827,7 +827,7 @@ const start = async (transitionType = 0) => {
                     /* #EndIfDev */
                 }
 
-                particle.x = distanceGhostPlayer2 > 0 ? 0 : canvas_width;
+                particle.x = distanceGhostPlayer > 0 ? 0 : canvas_width;
                 particle.y = Math.random() * 200;
                 particle.radius = Math.random() * 6 + 3;
                 particle.fadeRate = Math.random() * 0.08;

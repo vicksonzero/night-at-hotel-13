@@ -35,12 +35,11 @@ const tile_h = 32;  // tiles height in px
 const player_speed1 = 0.2 * 32;    // player move speed (walking) in tiles/frame²
 const player_speed2 = 0.4 * 32;    // player move speed (running) in tiles/frame²
 
-const map_room_w = 7;
-
 const introMessages = [
-    "Let's play hide and seek.",
-    "You can't escape until you find the exit at 13/F",
-    "However you don't know what numbers\nare superstitious and are skipped..."
+    "Oh no, i fear the 13/F so much i dream about it!",
+    "I can't escape until I find the exit at the true 13/F",
+    "But what numbers are skipped by the superstitious owner?",
+    "And what is this ghost that is chasing me???"
 ];
 
 // transitions:
@@ -92,8 +91,8 @@ const start = async (transitionType = 0) => {
 
     //#region Build level
 
-    /** @type {string[] & {w:number, h:number}} */
-    let map;
+    // /** @type {string[] & {w:number, h:number}} */
+    // let map;
 
 
     let floorId;
@@ -106,37 +105,8 @@ const start = async (transitionType = 0) => {
     /* #EndIfDev */
 
 
-    const buildMap = () => {
-        /* #IfDev */
-        console.log('buildMap');
-        /* #EndIfDev */
-        /** @type {string[] & {w:number, h:number}} */
-        // @ts-ignore
-        map = Array(7).fill('');
 
-        for (let room of building.floors[floorId].rooms) {
-            // @ts-ignore
-            // map = map.map((row, i) => i != 5
-            //     ? row + "0".repeat(map_room_w)
-            //     : row + '0000000000');
-            map = map.map((row, i) => row + "0000000");
-        }
-
-        map.w = map[0].length;  // map width in tiles
-        map.h = map.length;     // map height in tiles
-
-        map[0] = "1".repeat(map.w);
-        map[6] = "1".repeat(map.w);
-
-        /* #IfDev */
-        console.log('map.length: ', map.map(x => x.length));
-        /* #EndIfDev */
-
-
-        cache_map(a_room_cache, map);
-    };
-
-    buildMap();
+    cache_map(a_room_cache, building);
 
     // TODO: build plants
 
@@ -153,7 +123,7 @@ const start = async (transitionType = 0) => {
             transitionType = 5;
             transitioningUntil = Date.now() + transition_length_5;
         } else {
-            setTimeout(() => {
+            setTimeout(_ => {
                 restart();
             }, transition_length_3);
 
@@ -186,7 +156,6 @@ const start = async (transitionType = 0) => {
 
 
         setTimeout(() => {
-            buildMap();
             updateDoors();
             updateLiftFloors();
         }, transition_length_1 / 2);
@@ -234,7 +203,7 @@ const start = async (transitionType = 0) => {
         /* #IfDev */
         name: 'room_tilemap',
         /* #EndIfDev */
-        x: i * map.w * tile_w,        // starting x,y position of the sprite
+        x: i * a_room_cache.width,        // starting x,y position of the sprite
         y: 0,
         // color: '#5f1e09',  // fill color of the sprite rectangle
         width: a_room_cache.width,     // width and height of the sprite rectangle
@@ -284,7 +253,7 @@ const start = async (transitionType = 0) => {
             /* #IfDev */
             name: `door-${room.roomId}`,
             /* #EndIfDev */
-            x: room.roomId * map_room_w * tile_w + tile_w,        // starting x,y position of the sprite
+            x: room.roomId * 224 + tile_w,        // starting x,y position of the sprite
             y: 6 * tile_h,
             // color: 'red',  // fill color of the sprite rectangle
             // width: .6 * tile_w,     // width and height of the sprite rectangle
@@ -782,7 +751,7 @@ const start = async (transitionType = 0) => {
             const speed = 2;
             const distanceGhostPlayer2 = player.x - ghost.x;
             const distanceGhostPlayer = ghost.xx - ghost.x;
-            const shouldSpawnScreenParticle = Math.abs(distanceGhostPlayer2) / (map.w / 2 * tile_w);
+            const shouldSpawnScreenParticle = Math.abs(distanceGhostPlayer2) / a_room_cache.width * 2;
             let mv = distanceGhostPlayer < -speed ? -1
                 : distanceGhostPlayer > speed ? 1
                     : 0;
@@ -795,59 +764,76 @@ const start = async (transitionType = 0) => {
                 /* #IfDev */
                 // console.log(`ghostParticles`);
                 /* #EndIfDev */
-                ghostParticles.addChild(Sprite({
-                    x: ghost.x + Math.random() * ghost.width - ghost.width / 2,
-                    y: ghost.y + Math.random() * ghost.height * -2,
-                    color: '#000000',
-                    radius: Math.random() * 3 + 1,
-                    fadeRate: Math.random() * 0.05,
-                    dx: Math.random() - 0.5,
+                let particle = ghostParticles.children.find(x => x.opacity <= 0);
 
-                    update() {
-                        /* #IfDev */
-                        if (this.x == null) return;
-                        if (this.y == null) return;
-                        if (this.dx == null) return;
-                        if (this.opacity == null) return;
-                        /* #EndIfDev */
-                        this.y -= 0.5;
-                        this.x += this.dx;
-                        this.opacity -= this.fadeRate;
+                if (!particle) {
+                    particle = Sprite({
+                        color: '#000000',
 
-                        if (this.opacity < 0) ghostParticles.removeChild(this);
-                    },
-                }));
+                        update() {
+                            /* #IfDev */
+                            if (this.x == null) return;
+                            if (this.y == null) return;
+                            if (this.dx == null) return;
+                            if (this.opacity == null) return;
+                            /* #EndIfDev */
+                            this.y -= 0.5;
+                            this.x += this.dx;
+                            this.opacity -= this.fadeRate;
+                        },
+                    })
+                    ghostParticles.addChild(particle);
+                    /* #IfDev */
+                    console.log('Add ghostParticles', ghostParticles.children.length);
+                    /* #EndIfDev */
+                }
+                particle.x = ghost.x + Math.random() * ghost.width - ghost.width / 2;
+                particle.y = ghost.y + Math.random() * ghost.height * -2;
+                particle.radius = Math.random() * 3 + 1;
+                particle.fadeRate = Math.random() * 0.05;
+                particle.dx = Math.random() - 0.5;
+                particle.opacity = 1;
 
 
                 ghost.nextParticle += (Math.random() * 50) + 20;
             }
             // console.log('screenParticles', shouldSpawnScreenParticle);
-            if (introIndex >= introMessages.length && shouldSpawnScreenParticle > 0.2 && Math.random() > shouldSpawnScreenParticle) {
+            if (
+                // introIndex >= introMessages.length && shouldSpawnScreenParticle > 0.2 && Math.random() > shouldSpawnScreenParticle
+                true
+            ) {
                 /* #IfDev */
                 /* #EndIfDev */
-                screenParticles.addChild(Sprite({
-                    x: distanceGhostPlayer2 > 0 ? 0 : canvas_width,
-                    y: Math.random() * 200,
-                    color: '#000000',
-                    radius: Math.random() * 6 + 3,
-                    fadeRate: Math.random() * 0.08,
-                    dx: (Math.random() + 1) * mv,
-                    opacity: 0.7,
+                let particle = screenParticles.children.find(x => x.opacity <= 0);
+                if (!particle) {
+                    particle = Sprite({
+                        color: '#000000',
+                        opacity: 0.7,
+                        update() {
+                            /* #IfDev */
+                            // console.log('update', this.dx);
+                            if (this.x == null) return;
+                            if (this.y == null) return;
+                            if (this.dx == null) return;
+                            if (this.opacity == null) return;
+                            /* #EndIfDev */
+                            this.x += this.dx;
+                            this.opacity -= this.fadeRate;
+                            // console.log('this.opacity', this.opacity);
+                        },
+                    });
+                    screenParticles.addChild(particle);
+                    /* #IfDev */
+                    console.log('Add screenParticles', screenParticles.children.length);
+                    /* #EndIfDev */
+                }
 
-                    update() {
-                        /* #IfDev */
-                        // console.log('update', this.dx);
-                        if (this.x == null) return;
-                        if (this.y == null) return;
-                        if (this.dx == null) return;
-                        if (this.opacity == null) return;
-                        /* #EndIfDev */
-                        this.x += this.dx;
-                        this.opacity -= this.fadeRate;
-
-                        if (this.opacity < 0) ghostParticles.removeChild(this);
-                    },
-                }));
+                particle.x = distanceGhostPlayer2 > 0 ? 0 : canvas_width;
+                particle.y = Math.random() * 200;
+                particle.radius = Math.random() * 6 + 3;
+                particle.fadeRate = Math.random() * 0.08;
+                particle.dx = (Math.random() + 1) * mv;
+                particle.opacity = 0.7;
             }
             screenParticles.update();
             screenParticles.x = scene.camera.x - canvas_width_2;
@@ -856,12 +842,12 @@ const start = async (transitionType = 0) => {
 
             if (introIndex < introMessages.length) return;
 
-            if (
-                collides(player, ghost)
-                // Math.abs(player.x - ghost.x) < 10 // TODO: May want to use detailed collision detection
-            ) {
-                tryEscape();
-            }
+            // if (
+            //     collides(player, ghost)
+            //     // Math.abs(player.x - ghost.x) < 10 // TODO: May want to use detailed collision detection
+            // ) {
+            //     tryEscape();
+            // }
 
             mv = input.l ? -1 : input.r ? 1 : 0;
             if (!mv) player.sprint = false;
@@ -892,9 +878,9 @@ const start = async (transitionType = 0) => {
 
             scene.camera.x = player.x;
 
-            const loopIndex = Math.round((player.x + map.w * tile_w / 2) / map.w / tile_w) - 1;
+            const loopIndex = Math.round((player.x + a_room_cache.width / 2) / a_room_cache.width) - 1;
             for (let room_image of room_images) {
-                room_image.x = ((Math.floor((loopIndex + 1 - room_image.loopIndex) / 3)) * 3 + room_image.loopIndex) * map.w * tile_w;
+                room_image.x = ((Math.floor((loopIndex + 1 - room_image.loopIndex) / 3)) * 3 + room_image.loopIndex) * a_room_cache.width;
             }
             /* #IfDev */
             // console.log(`loopIndex`, loopIndex,
@@ -905,17 +891,17 @@ const start = async (transitionType = 0) => {
             /* #EndIfDev */
 
             for (let door of [...doors, ghost]) {
-                while (door.x - player.x > map.w * tile_w / 2) {
+                while (door.x - player.x > a_room_cache.width / 2) {
                     /* #IfDev */
                     console.log(`door[${door?.room?.roomId ?? 'ghost'}] is too right`);
                     /* #EndIfDev */
-                    door.x -= map.w * tile_w;
+                    door.x -= a_room_cache.width;
                 }
-                while (door.x - player.x < -map.w * tile_w / 2) {
+                while (door.x - player.x < -a_room_cache.width / 2) {
                     /* #IfDev */
                     console.log(`door[${door?.room?.roomId ?? 'ghost'}] is too left`);
                     /* #EndIfDev */
-                    door.x += map.w * tile_w;
+                    door.x += a_room_cache.width;
                 }
             }
 
@@ -1021,11 +1007,11 @@ const start = async (transitionType = 0) => {
     };
 };
 
-const cache_map = (cache, _map) => {
+const cache_map = (cache, building) => {
     const cache_c = cache.getContext('2d');
     // -10 bytes zipped compared to nested for-loops
-    cache.width = _map[0].length * tile_w;
-    cache.height = _map.length * tile_h;
+    cache.width = building.floors[0].rooms.length * 7 * tile_w;
+    cache.height = 7 * tile_h;
 
     // Create a linear gradient
     // The start gradient point is at x=20, y=0
@@ -1040,21 +1026,14 @@ const cache_map = (cache, _map) => {
     cache_c.fillStyle = gradient;
     cache_c.fillRect(0, 0, cache.width, cache.height);
 
-    _map.map((row, y) => row.split('').map((tile, x) => {
-        if (tile == '1') {
-            cache_c.fillStyle = "rgb(143, 41, 41)";
-            cache_c.fillRect(x * tile_w, y * tile_h, tile_w, tile_h);
+    cache_c.fillStyle = "rgb(143, 41, 41)";
+    cache_c.fillRect(0, 0, cache.width, tile_h);
 
-            if (y > 1 && _map[y - 1][x] != '1') {
-                cache_c.fillStyle = "rgb(132, 119, 110)";
-                cache_c.fillRect(x * tile_w, y * tile_h - 10, tile_w, 10);
-            }
-        }
-        // if (tile == 'w' || (tile != 'w' && row[x - 1] == 'w' && row[x + 1] == 'w')) {
-        //     cache_c.fillStyle = "#0B0";
-        //     cache_c.fillRect(x * tile_w, y * tile_h + 6, tile_w, tile_h - 6);
-        // }
-    }));
+    // cache_c.fillStyle = "rgb(143, 41, 41)";
+    cache_c.fillRect(0, 6 * tile_h, cache.width, tile_h);
+
+    cache_c.fillStyle = "rgb(132, 119, 110)";
+    cache_c.fillRect(0, 6 * tile_h - 10, cache.width, 10);
 };
 
 window.onload = start;

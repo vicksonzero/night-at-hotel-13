@@ -37,6 +37,12 @@ const player_speed2 = 0.4 * 32;    // player move speed (running) in tiles/frame
 
 const map_room_w = 7;
 
+const introMessages = [
+    "Let's play hide and seek.",
+    "You can't escape until you find the exit at 13/F",
+    "However you don't know what numbers\nare superstitious and are skipped..."
+];
+
 // transitions:
 // 0 = none, 
 // 1 = swipe up, 
@@ -51,11 +57,11 @@ const transition_length_4 = 4000;
 const transition_length_5 = 7000;
 
 let loopCount = -1;
-
+let introIndex = 0;
 
 //#endregion
 
-const start = async () => {
+const start = async (transitionType = 0) => {
     loopCount++;
     const a_room_cache = document.createElement("canvas");
     // loading
@@ -65,9 +71,8 @@ const start = async () => {
     // audio.volume = 0; // TODO: make mute button
 
     let gameIsOver = false;
-    let transitionType = 4;
     // transitions use real world time, while game time is paused
-    let transitioningUntil = Date.now() + transition_length_4;
+    let transitioningUntil = Date.now() + transitionType == 0 ? 0 : transition_length_4;
 
     let lastCorrectExit = 0;
     /* #IfDev */
@@ -238,7 +243,7 @@ const start = async () => {
         // dx: 2,
         // dy: 2,
         image: a_room_cache,
-        anchor: { x: 0, y: 0 },
+        // anchor: { x: 0, y: 0 },
 
         /* #IfDev */
         opacity: [0.9, 1, 0.95][i],
@@ -253,7 +258,7 @@ const start = async () => {
         name: 'player',
         /* #EndIfDev */
         x: 8 * 32,        // starting x,y position of the sprite
-        y: 4.5 * 32,
+        y: 6 * 32,
         // color: 'red',  // fill color of the sprite rectangle
         // width: .8 * tile_w,     // width and height of the sprite rectangle
         // height: 1.5 * tile_h,
@@ -358,17 +363,19 @@ const start = async () => {
         /* #IfDev */
         name: 'ghost',
         /* #EndIfDev */
-        x: 30 * tile_w,        // starting x,y position of the sprite
+        xx: 12 * tile_w,        // starting x,y position of the sprite
+        x: 12 * tile_w,        // starting x,y position of the sprite
         y: 6 * tile_h,
         // color: 'red',  // fill color of the sprite rectangle
         // width: .8 * tile_w,     // width and height of the sprite rectangle
         // height: 1.5 * tile_h,
         anchor: { x: 0.5, y: 1 },
         image: images.pdi,
-        // scaleX: 2, // is set in render()
+        scaleX: 2, // is set in render()
         scaleY: 2,
+        fc: -1,
 
-        next: 0,
+        next: 3000,
         nextParticle: 0,
     });
 
@@ -387,6 +394,51 @@ const start = async () => {
     });
 
     scene.add(room_images, doors, player, ghost, ghostParticles, screenParticles);
+
+    const introButton = Sprite({
+        /* #IfDev */
+        name: 'introBoxButton',
+        /* #EndIfDev */
+        x: canvas_width_2,
+        y: 99,
+        width: 99,
+        height: 40,
+        color: '#555',
+        anchor: { x: 0.5, y: 0.5 },
+        children: [
+            Text({
+                text: 'Next',
+                x: 0,
+                y: 0,
+                font: '20px Arial',
+                color: 'white',
+                anchor: { x: 0.5, y: 0.5 },
+            }),
+        ],
+        onDown() {
+            introIndex++
+        }
+    });
+    const introBox = Sprite({
+        /* #IfDev */
+        name: 'introBox',
+        /* #EndIfDev */
+        width: canvas_width,
+        height: 99,
+        color: '#000000',
+        children: [
+            Text({
+                text: '',
+                x: 8,
+                y: 8,
+                font: '20px Arial',
+                color: 'white',
+            }),
+            introButton,
+        ]
+    });
+
+    track(introButton);
 
     const addKnownFloorAliases = (floorAlias, type, index) => {
         // console.log('addKnownFloorAliases', floorAlias, type, index);
@@ -746,7 +798,7 @@ const start = async () => {
                 ghostParticles.addChild(Sprite({
                     x: ghost.x + Math.random() * ghost.width - ghost.width / 2,
                     y: ghost.y + Math.random() * ghost.height * -2,
-                    color: 'black',
+                    color: '#000000',
                     radius: Math.random() * 3 + 1,
                     fadeRate: Math.random() * 0.05,
                     dx: Math.random() - 0.5,
@@ -770,13 +822,13 @@ const start = async () => {
                 ghost.nextParticle += (Math.random() * 50) + 20;
             }
             // console.log('screenParticles', shouldSpawnScreenParticle);
-            if (shouldSpawnScreenParticle > 0.2 && Math.random() > shouldSpawnScreenParticle) {
+            if (introIndex >= introMessages.length && shouldSpawnScreenParticle > 0.2 && Math.random() > shouldSpawnScreenParticle) {
                 /* #IfDev */
                 /* #EndIfDev */
                 screenParticles.addChild(Sprite({
                     x: distanceGhostPlayer2 > 0 ? 0 : canvas_width,
                     y: Math.random() * 200,
-                    color: 'black',
+                    color: '#000000',
                     radius: Math.random() * 6 + 3,
                     fadeRate: Math.random() * 0.08,
                     dx: (Math.random() + 1) * mv,
@@ -801,6 +853,8 @@ const start = async () => {
             screenParticles.x = scene.camera.x - canvas_width_2;
             // console.log('camera', scene.camera.x, scene.camera.y);
             ghostParticles.update();
+
+            if (introIndex < introMessages.length) return;
 
             if (
                 collides(player, ghost)
@@ -838,10 +892,17 @@ const start = async () => {
 
             scene.camera.x = player.x;
 
-            const loopIndex = Math.round((player.x + map.w * tile_w / 2) / map.w * tile_w) - 1;
+            const loopIndex = Math.round((player.x + map.w * tile_w / 2) / map.w / tile_w) - 1;
             for (let room_image of room_images) {
                 room_image.x = ((Math.floor((loopIndex + 1 - room_image.loopIndex) / 3)) * 3 + room_image.loopIndex) * map.w * tile_w;
             }
+            /* #IfDev */
+            // console.log(`loopIndex`, loopIndex,
+            //     (Math.floor((loopIndex + 1 - -1) / 3)) * 3 + -1,
+            //     (Math.floor((loopIndex + 1 - 0) / 3)) * 3 + 0,
+            //     (Math.floor((loopIndex + 1 - 1) / 3)) * 3 + 1
+            // );
+            /* #EndIfDev */
 
             for (let door of [...doors, ghost]) {
                 while (door.x - player.x > map.w * tile_w / 2) {
@@ -860,6 +921,12 @@ const start = async () => {
 
             scene.render();
             knownFloorsGroup.render();
+
+            if (introIndex < introMessages.length) {
+                introBox.children[0].text = introMessages[introIndex];
+                introBox.render();
+                ghost.next = fixedGameTime + 3000;
+            }
 
             if (transitioningUntil > Date.now() || transitionType == 5) {
                 switch (transitionType) {
@@ -950,68 +1017,10 @@ const start = async () => {
         canvas.removeEventListener('pointerenter', _focus);
 
         // restart
-        start();
+        start(4);
     };
 };
 
-//#region  tryMoveX()
-// const tryMoveX = (/** @type {ITransform}*/ entity, dx, map, solidCallback) => {
-//     entity.x += dx;
-//     // if (dx <= 0) {
-//     //     entity.x = Math.max(entity.x, 0);
-//     // } else {
-//     //     entity.x = Math.min(map.w - entity.w, entity.x);
-//     // }
-
-//     let probeX = (dx <= 0 ? entity.x : entity.x + entity.w);
-//     while (probeX < 0) probeX += map.w;
-//     probeX = probeX % map.w;
-
-//     const tile1 = +map[~~(entity.y)][~~(probeX)];
-//     const tile2 = +map[~~(entity.y + 0.5 * entity.h)][~~(probeX)];
-//     const tile3 = +map[~~(entity.y + entity.h - .1)][~~(probeX)];
-
-//     // const oldX = entity.x;
-//     if (tile1 == 1 || tile2 == 1 || tile3 == 1) {
-//         // @ts-ignore (using && to do if-else)
-//         entity.x = (dx <= 0 ? Math.ceil(entity.x) : ~~(entity.x + (entity.x > 0 && entity.w)) - entity.w);
-//         if (solidCallback) solidCallback();
-//     }
-//     // if (dx != 0) {
-//     //     // console.log('tryMoveX', oldX, entity.x, entity.x + entity.w);
-//     //     console.log('tryMoveX', entity.x, Math.round((entity.x + map.w / 2) / map.w) - 1);
-//     // }
-
-//     return entity;
-// };
-
-//#endregion
-//#region tryMoveY()
-// const tryMoveY = (/** @type {ITransform}*/ entity, dy, map, solidCallback) => {
-//     entity.y += dy;
-//     if (dy <= 0) {
-//         entity.y = Math.max(entity.y, 0);
-//     } else {
-//         entity.y = Math.min(map.h - entity.h, entity.y);
-//     }
-
-//     let probeX = entity.x;
-//     while (probeX < 0) probeX += map.w;
-//     probeX = probeX % map.w;
-//     const probeY = (dy <= 0 ? entity.y : entity.y + entity.h);
-
-//     const tile1 = +map[~~(probeY)][~~(probeX)];
-//     const tile2 = +map[~~(probeY)][~~(probeX + entity.w - .1)];
-
-//     if (tile1 == 1 || tile2 == 1) {
-//         entity.y = (dy <= 0 ? Math.ceil(entity.y) : ~~(entity.y + entity.h) - entity.h);
-//         if (solidCallback) solidCallback();
-//     }
-
-//     return entity;
-// };
-
-//#endregion
 const cache_map = (cache, _map) => {
     const cache_c = cache.getContext('2d');
     // -10 bytes zipped compared to nested for-loops

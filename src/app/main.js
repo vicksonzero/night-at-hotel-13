@@ -674,7 +674,8 @@ const start = async (transitionType = 0) => {
 
         if (!gameIsFocused) return;
 
-        // toggles quick hack
+        // BEGIN toggles quick hack
+
         // if (input.c1 && 'c1' == keyMap[w]) {
         //     input.c1 = 0;
         // }
@@ -716,8 +717,6 @@ const start = async (transitionType = 0) => {
             player.sprint = true;
             input.sh = 0;
         }
-
-
 
         // END toggles quick hack
 
@@ -799,8 +798,8 @@ const start = async (transitionType = 0) => {
             }
             // console.log('screenParticles', shouldSpawnScreenParticle);
             if (
-                // introIndex >= introMessages.length && shouldSpawnScreenParticle > 0.2 && Math.random() > shouldSpawnScreenParticle
-                true
+                introIndex >= introMessages.length && shouldSpawnScreenParticle > 0.2 && Math.random() > shouldSpawnScreenParticle
+
             ) {
                 /* #IfDev */
                 /* #EndIfDev */
@@ -842,12 +841,12 @@ const start = async (transitionType = 0) => {
 
             if (introIndex < introMessages.length) return;
 
-            // if (
-            //     collides(player, ghost)
-            //     // Math.abs(player.x - ghost.x) < 10 // TODO: May want to use detailed collision detection
-            // ) {
-            //     tryEscape();
-            // }
+            if (
+                collides(player, ghost)
+                // Math.abs(player.x - ghost.x) < 10 // TODO: May want to use detailed collision detection
+            ) {
+                tryEscape();
+            }
 
             mv = input.l ? -1 : input.r ? 1 : 0;
             if (!mv) player.sprint = false;

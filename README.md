@@ -6,32 +6,32 @@ Made for the js13k game jam 2024
 
 # About
 
-You check-in to a hotel. It has skipped floors due to superstitions.\
-A kid in the same lift counted the floors normally,\
-and you find yourself given room 13 at the 13th floor,\
-even though it is not labelled such.
+You checked into the 17th floor of Hotel-13.
+You noticed that 17/F is actually 13/F if they haven't skipped 4/F, 7/F, 13/F, 14/F,
+so you couldn't sleep the whole night.
 
-You thought it was ok so you got in and slept immediately...
+You finally slept, but can you wake up from the nightmare?
 
-Now, get trapped in an infinite dream until you find out where the true 13/F is!
+Collect clues and deduce the actual 13/F, and/or the skipped floor numbers!
 
 
 # Controls
 
 - Use WASD, ZQSD, or Arrow keys to move.
-- Press Up or Down to ride lift.
+- Press Up or Down to take lift.
+- Press Up at the EXIT to attempt exit.
 - Click numbers to jot notes
 - Click notes to change color, click between note items to insert blanks.
 - Click blank notes to delete them.
 
+(Managed to not use road roller, at the cost of no bgm)
+
 
 # Credits
 
-- [Kenney.nl](https://kenney.nl) !!!!
 - [Kontra.js](https://github.com/straker/kontra) by straker
 - Webpack
-- mvasilkov for telling me about 1-bit sprite compression
-
+- jsfxr
 
 # How to compress images
 

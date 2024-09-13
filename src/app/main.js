@@ -1,9 +1,8 @@
 // @ts-check
 import {
     /* system */ init, Sprite, Text, GameLoop, Pool, Scene,
-    /* mouse  */ initPointer, track, getPointer, pointerPressed,
+    /* mouse  */ initPointer, track, getPointer, pointerPressed, untrack,
     /* maths  */ angleToTarget, clamp, movePoint, lerp, collides,
-    untrack,
     /* Vector is imported through Sprite, GameObject, Updatable */
 } from 'kontra';
 import { colors } from './colors.js';
@@ -38,8 +37,8 @@ const player_speed2 = 0.4 * 32;    // player move speed (running) in tiles/frame
 const introMessages = [
     "Oh no, i fear the 13/F so much i dream about it!",
     "I can't escape until I find the exit at the true 13/F",
-    "But what numbers are skipped by the superstitious owner?",
-    "And what is this ghost that is chasing me???"
+    "But what numbers are skipped by the\nsuperstitious owner of the hotel?",
+    "And why is this ghost chasing me???"
 ];
 
 // transitions:
@@ -60,14 +59,14 @@ let introIndex = 0;
 
 //#endregion
 
+const audio = new ArcadeAudio();
 const start = async (transitionType = 0) => {
     loopCount++;
     const a_room_cache = document.createElement("canvas");
     // loading
     const images = await loadImages();
 
-    const audio = new ArcadeAudio();
-    // audio.volume = 0; // TODO: make mute button
+    // audio.volume = 1; // TODO: make mute button
 
     let gameIsOver = false;
     // transitions use real world time, while game time is paused
@@ -136,6 +135,7 @@ const start = async (transitionType = 0) => {
             lastCorrectExit = building.floors[building.exitFloorId].fa;
             transitionType = 3;
             transitioningUntil = Date.now() + transition_length_3;
+            audio.play('death').addEventListener('ended', () => audio.play('trans'), { once: true });
         }
     };
 
@@ -164,6 +164,7 @@ const start = async (transitionType = 0) => {
         // player.y = canvas_height_2 + 50;
         transitionType = floorDir > 0 ? 1 : 2;
         transitioningUntil = Date.now() + transition_length_1;
+        audio.play(floorDir > 0 ? 'up' : 'down');
     };
 
 
@@ -385,6 +386,9 @@ const start = async (transitionType = 0) => {
             }),
         ],
         onDown() {
+            /* #IfDev */
+            console.log(`introButton`);
+            /* #EndIfDev */
             introIndex++
         }
     });
@@ -398,8 +402,8 @@ const start = async (transitionType = 0) => {
         children: [
             Text({
                 text: '',
-                x: 8,
-                y: 8,
+                x: 18,
+                y: 18,
                 font: '20px Arial',
                 color: 'white',
             }),
@@ -492,6 +496,7 @@ const start = async (transitionType = 0) => {
                 }
             });
             rearrange(floorAlias);
+            audio.play('coin');
 
             /* #IfDev */
             console.log('addKnownFloorAliases', floorAlias, knownFloorsGroup.children.map(x => x.fa));
@@ -679,10 +684,12 @@ const start = async (transitionType = 0) => {
         // if (input.c1 && 'c1' == keyMap[w]) {
         //     input.c1 = 0;
         // }
-        // if (input.s && 's' == keyMap[w]) {
-        //     audio.play('test');
-        //     input.s = 0;
-        // }
+        /* #IfDev */
+        if (input.s && 's' == keyMap[w]) {
+            audio.play('test');
+            input.s = 0;
+        }
+        /* #EndIfDev */
         if (input.u && 'u' == keyMap[w] && transitioningUntil <= Date.now() && !gameIsOver) {
             // move floor
             for (let door of doors) {
@@ -783,7 +790,7 @@ const start = async (transitionType = 0) => {
                     })
                     ghostParticles.addChild(particle);
                     /* #IfDev */
-                    console.log('Add ghostParticles', ghostParticles.children.length);
+                    // console.log('Add ghostParticles', ghostParticles.children.length);
                     /* #EndIfDev */
                 }
                 particle.x = ghost.x + Math.random() * ghost.width - ghost.width / 2;
@@ -823,7 +830,7 @@ const start = async (transitionType = 0) => {
                     });
                     screenParticles.addChild(particle);
                     /* #IfDev */
-                    console.log('Add screenParticles', screenParticles.children.length);
+                    // console.log('Add screenParticles', screenParticles.children.length);
                     /* #EndIfDev */
                 }
 
@@ -849,7 +856,11 @@ const start = async (transitionType = 0) => {
             }
 
             mv = input.l ? -1 : input.r ? 1 : 0;
-            if (!mv) player.sprint = false;
+            if (!mv) {
+                player.sprint = false;
+            } else {
+                Math.ceil(fixedGameTime / (fixedDeltaTime * 10)) % 2 == 0 && audio.play('step');
+            }
 
             player.x += mv * (player.sprint ? player_speed2 : player_speed1);
 

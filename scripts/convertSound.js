@@ -1,3 +1,4 @@
+// generate sound from https://sfxr.me/
 const sounds = [
     {
         name: 'coin',
@@ -473,6 +474,14 @@ const sounds = [
     },
 ]
 for (const { name, sound } of sounds) {
-    console.log(name + ': ' + JSON.stringify(Object.values(sound).map(a => Math.floor(a * 1000) / 1000).slice(1)))
+    console.log(name + ': ' +
+        JSON.stringify(
+            Object.values(sound)
+                .map(a => Math.floor(a * 1000) / 1000)
+                .slice(1)
+        )
+            .replace(/\b0,/g, ',') // turns 0 to empty
+            .replace(/,0\./g, ',.') // turns 0.1 to .1
+    );
 
 }

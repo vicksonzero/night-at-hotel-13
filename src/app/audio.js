@@ -43,6 +43,7 @@ export class ArcadeAudio {
     }
 
     add(key, allowAtSameTime, settings) {
+        // TODO: not use string key for sound
         this.sounds[key] = [];
         settings.map((elem, variantIndex) => {
             this.sounds[key].push({
